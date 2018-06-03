@@ -1,0 +1,2 @@
+wget -O - http://kokkinizita.linuxaudio.org/linuxaudio/downloads/zita-njbridge-0.4.2.tar.bz2 | tar xvjf -
+mv zita-njbridge-* zita-njbridge

@@ -1,0 +1,4 @@
+git clone https://github.com/nettings/lv2rdf2html.git
+ln -s ../../mod-host.cmd lv2rdf2html/
+
+
