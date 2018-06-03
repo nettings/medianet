@@ -4,17 +4,11 @@
 # throughout the distribution file system.
 
 OLDPWD=$PWD
-if [[ "$0" == "mn_deploy_boot_files" || "$0" == "00" ]] ; then
-	# we're deploying boot files
-	cd /medianet/boot
-	# we must copy files, because the /medianet overlay is not mounted at boot time.
-	MODE=copy
-else
-	# we're deploying the main overlay
-	cd /medianet/overlay
-	# we can link into the overlay
-	MODE=link
-fi
+
+# we're deploying the main overlay
+cd /medianet/overlay
+# we can link into the overlay
+MODE=link
 
 # Iterate over all files in overlay
 for SOURCE in `find -P * \! -name README \! -type d` ; do
