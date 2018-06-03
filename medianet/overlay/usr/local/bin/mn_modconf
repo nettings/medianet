@@ -1,0 +1,12 @@
+#!/bin/bash
+
+. /medianet/medianet.conf
+
+# wait for mod-host to become ready
+until echo "" | nc -N localhost 5555; do sleep 1; done
+cat "$MOD_CMDFILE" | while read -r line ; do
+	echo $line | nc -N localhost 5555
+done
+# make systemd happy if mod-host chokes on a trailing newline with non-zero exit code
+exit 0
+

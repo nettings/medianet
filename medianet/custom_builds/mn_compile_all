@@ -1,0 +1,13 @@
+#!/bin/bash
+
+for i in `find -maxdepth 1 -mindepth 1 -type d` ; do
+	cd "$i"
+	echo "Compiling \"$i\"..."
+	./mn_compile
+	cd ..
+done
+
+echo
+echo
+echo
+echo "Compiled programs have been installed to /medianet/overlay. Deploy with 'sudo /medianet/bin/mn_deploy_medianet_overlay' to activate them."

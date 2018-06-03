@@ -1,0 +1,7 @@
+#!/bin/sh
+
+while : ; do
+  ls -l /dev/shm/jack-* > /dev/null || exit
+  touch /tmp/JACK_SHM_LAST_OK
+  sleep 1
+done

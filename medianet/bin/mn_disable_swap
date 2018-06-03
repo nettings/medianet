@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo "Disabling swap:"
+if [[ -n `which dphys-swapfile 2> /dev/null` ]] ; then
+	echo -n "Trying dphys-swapfile... "
+	dphys-swapfile swapoff && dphys-swapfile uninstall\
+		&& echo "succeeded." \
+		|| echo "failed." 
+else
+	echo -n "Trying manual method... "
+	swapoff -a && sed -i '/^[^#]/ s/\(^.*swap.*$\)/#\ \1/' /etc/fstab \
+		&& echo "succeeded." \
+		|| echo "failed."
+fi
+

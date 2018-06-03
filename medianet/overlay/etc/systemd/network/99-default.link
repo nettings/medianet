@@ -1,0 +1,6 @@
+[Match]
+Driver=smsc95xx
+[Link]
+Name=medianet0
+#NamePolicy=kernel database onboard slot path
+MACAddressPolicy=persistent

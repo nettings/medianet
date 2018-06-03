@@ -1,0 +1,171 @@
+	@prefix doap:  <http://usefulinc.com/ns/doap#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
+
+
+<http://stackingdwarves.net/lv2/sm>
+	a lv2:Plugin, lv2:UtilityPlugin, doap:Project ;
+	doap:name "Speaker Management";
+	doap:license <http://opensource.org/licenses/GPL-3.0> ;
+	doap:developer [
+	        a foaf:Person ;
+        	foaf:name "Jörn Nettingsmeier" ;
+       		foaf:mbox <mailto:nettings@stackingdwarves.net> ;
+        	rdfs:seeAlso <http://stackingdwarves.net>
+ 	];
+	lv2:optionalFeature lv2:hardRTCapable ;
+	lv2:port [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 0;
+		lv2:symbol "gain";
+		lv2:name "Gain";
+		rdfs:comment "Overall level control";
+		lv2:default 0.0;
+		lv2:minimum -120.0;
+		lv2:maximum 10.0;
+		units:unit units:db;
+		lv2:scalePoint 
+			[ rdfs:label "+10"; rdf:value 10.0 ],
+			[ rdfs:label " +5"; rdf:value 5.0 ], 
+			[ rdfs:label "  0"; rdf:value 0.0 ], 
+			[ rdfs:label " -5"; rdf:value -5.0],
+			[ rdfs:label "-10"; rdf:value -10.0],
+			[ rdfs:label "-20"; rdf:value 20.0],
+			[ rdfs:label "-30"; rdf:value -30.0],
+			[ rdfs:label "-50"; rdf:value -50.0],
+			[ rdfs:label "-90"; rdf:value -70.0],
+			[ rdfs:label "-oo"; rdf:value -120.0];
+	], [
+		a lv2:AudioPort, lv2:InputPort;
+		lv2:index 1;
+		lv2:symbol "inL";
+		lv2:name "Input L";
+	] , [
+		a lv2:AudioPort, lv2:OutputPort;
+		lv2:index 2;
+		lv2:symbol "outL";
+		lv2:name "Output L";
+	] , [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 3;
+		lv2:symbol "attL";
+		lv2:name "Attenuation L";
+		rdfs:comment "to calibrate sound pressure at the listening position";
+		lv2:default 0.0;
+		lv2:minimum -12.0;
+		lv2:maximum 0.0;
+		units:unit units:db;
+		lv2:scalePoint 
+			[ rdfs:label "  0"; rdf:value 0.0 ],
+			[ rdfs:label " -1"; rdf:value -1.0 ], 
+			[ rdfs:label " -2"; rdf:value -2.0 ], 
+			[ rdfs:label " -3"; rdf:value -3.0],
+			[ rdfs:label " -6"; rdf:value -6.0],
+			[ rdfs:label "-12"; rdf:value -12.0];
+	] , [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 4;
+		lv2:symbol "attOnL";
+		lv2:name "Attenuation L on";
+		lv2:default 1.0;
+		lv2:minimum 0.0;
+		lv2:maximum 1.0;
+		lv2:portProperty lv2:toggled;
+	], [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 5;
+		lv2:symbol "delayL";
+		lv2:name "Delay L";
+		rdfs:comment "run-time compensation at the listening spot";
+		lv2:default 0.0;
+		lv2:minimum 0.0;
+		lv2:maximum 50.0;
+		units:unit units:ms;
+	], [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 6;
+		lv2:symbol "delayLOn";
+		lv2:name "Delay L on";
+		lv2:default 1.0;
+		lv2:minimum 0.0;
+		lv2:maximum 1.0;
+		lv2:portProperty lv2:toggled;
+	], [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 7;
+		lv2:symbol "activeL";
+		lv2:name "On L";
+		lv2:default 1.0;
+		lv2:minimum 0.0;
+		lv2:maximum 1.0;
+		lv2:portProperty lv2:toggled;
+	], [
+		a lv2:InputPort, lv2:AudioPort;
+		lv2:index 8;
+		lv2:symbol "inR";
+		lv2:name "Input R";
+	] , [
+		a lv2:OutputPort, lv2:AudioPort;
+		lv2:index 9;
+		lv2:symbol "outR";
+		lv2:name "Output R";
+	] , [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 10;
+		lv2:symbol "attR";
+		lv2:name "Attenuation R";
+		rdfs:comment "to calibrate sound pressure at the listening position";
+		lv2:default 0.0;
+		lv2:minimum -12.0;
+		lv2:maximum 0.0;
+		units:unit units:db;
+		lv2:scalePoint 
+			[ rdfs:label "  0"; rdf:value 0.0 ],
+			[ rdfs:label " -1"; rdf:value -1.0 ], 
+			[ rdfs:label " -2"; rdf:value -2.0 ], 
+			[ rdfs:label " -3"; rdf:value -3.0],
+			[ rdfs:label " -6"; rdf:value -6.0],
+			[ rdfs:label "-12"; rdf:value -12.0];
+	] , [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 11;
+		lv2:symbol "attOnR";
+		lv2:name "Attenuation R on";
+		lv2:default 1.0;
+		lv2:minimum 0.0;
+		lv2:maximum 1.0;
+		lv2:portProperty lv2:toggled;
+	], [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 12;
+		lv2:symbol "delayR";
+		lv2:name "Delay R";
+		rdfs:comment "run-time compensation at the listening spot";
+		lv2:default 0.0;
+		lv2:minimum 0.0;
+		lv2:maximum 50.0;
+		units:unit units:ms;
+	], [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 13;
+		lv2:symbol "delayROn";
+		lv2:name "Delay R on";
+		lv2:default 1.0;
+		lv2:minimum 0.0;
+		lv2:maximum 1.0;
+		lv2:portProperty lv2:toggled;
+	], [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 14;
+		lv2:symbol "activeR";
+		lv2:name "On R";
+		lv2:default 1.0;
+		lv2:minimum 0.0;
+		lv2:maximum 1.0;
+		lv2:portProperty lv2:toggled;
+	].
+
+

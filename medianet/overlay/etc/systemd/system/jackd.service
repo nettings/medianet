@@ -1,0 +1,19 @@
+[Unit]
+Description=JACK Audio Connection Kit
+After=sound.target
+After=time-sync.target
+Wants=cpufreq.service
+
+[Service]
+EnvironmentFile=-/medianet/medianet.conf
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket"
+ExecStartPre=/bin/sleep 20
+ExecStart=/usr/bin/jackd $JACK_OPTIONS
+RestartSec=5
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

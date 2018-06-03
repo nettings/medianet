@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# This helper creates a unique machine ID for DBUS.
+
+MID=`/usr/bin/dbus-uuidgen`
+echo -n "Setting machine ID to new random value \'$MID\'..."
+echo "$MID" > /etc/machine-id \
+	&& echo "succeeded." \
+	|| echo "failed."
+

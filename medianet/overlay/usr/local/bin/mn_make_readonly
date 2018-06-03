@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mount -oremount,ro /
+mount -oremount,ro /boot

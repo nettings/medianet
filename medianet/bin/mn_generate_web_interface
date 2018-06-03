@@ -1,0 +1,9 @@
+#!/bin/bash
+
+OLDPWD=`pwd`
+
+cd /medianet/lv2rdf2html
+./generate.sh
+rm /var/www/html/index.lighttpd.html
+cd "$OLDPWD"
+

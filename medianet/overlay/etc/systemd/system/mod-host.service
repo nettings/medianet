@@ -1,0 +1,21 @@
+[Unit]
+Description=mod-host LV2 plugin host for JACK
+After=jackd.service
+After=zita-njbridge.service
+Requires=jackd.service
+Wants=zita-njbridge.service
+
+[Service]
+EnvironmentFile=-/medianet/medianet.conf
+Type=forking
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+ExecStartPre=/usr/local/bin/mn_jackwait zita-n2j:out_2
+ExecStart=/usr/local/bin/mod-host
+ExecStartPost=/usr/local/bin/mn_modconf
+RestartSec=5
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+sudo apt-get update
+sudo apt-get upgrade
+
+# basic system packages
+sudo apt-get -y install ntpdate ntp cpufrequtils joe screen ufw lsof
+# basic audio packages
+echo "We're about to install JACK. Please enable realtime permissions when prompted."
+read -n1 -r -p "Ok?"
+sudo apt-get -y install jackd2 x42-plugins fomp zam-plugins invada-studio-plugins-lv2 calf-plugins mda-lv2 abgate guitarix-lv2 swh-lv2
+# build dependencies for mod-host and zita-njbridge
+sudo apt-get -y install git libjack-jackd2-dev liblilv-dev \
+	lilv-utils libreadline-dev libzita-resampler-dev
+# telnet for mod-host debugging
+sudo apt-get -y install telnet
+# tools to generate web lv2rdf2html interface locally
+sudo apt-get -y install xsltproc raptor-utils
+# local lightweight webserver to run  lv2rdf2html interface
+sudo apt-get -y install lighttpd php7.0 php7.0-cgi php7.0-fpm
+# local mplayer
+sudo apt-get -y install mplayer
+# local monitoring
+sudo apt-get -y install icecast2 darkice

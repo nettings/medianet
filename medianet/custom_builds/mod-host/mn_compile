@@ -1,0 +1,4 @@
+#!/bin/bash
+make clean
+DESTDIR=/medianet/overlay CFLAGS="-march=armv8-a+crc -mfpu=neon-fp-armv8 -mtune=cortex-a53" make -j4
+sudo DESTDIR=/medianet/overlay CFLAGS="-march=armv8-a+crc -mfpu=neon-fp-armv8 -mtune=cortex-a53" make install

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+./waf configure --prefix=/medianet/overlay/usr/local
+./waf clean
+./waf -j4
+sudo ./waf install

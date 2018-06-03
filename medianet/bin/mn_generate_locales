@@ -1,0 +1,25 @@
+#!/bin/bash
+
+TIMEZONE="Europe/Berlin"
+DEFAULTLOCALE="en_US.UTF-8"
+OTHERLOCALES="en_GB.UTF-8 de_DE.UTF-8"
+
+echo -n "Setting timezone to \'$TIMEZONE\'... "
+echo "$TIMEZONE" > /etc/timezone \
+	&& dpkg-reconfigure -f noninteractive tzdata \
+	&& echo "succeeded." \
+	|| echo "failed."
+echo -n "Activating locales"
+for i in $DEFAULTLOCALE $OTHERLOCALES ; do
+	echo -n " $i"
+	sed -i -e 's/# $i/$i/' /etc/locale.gen
+done
+echo "."
+
+echo "Setting default locale to \'$DEFAULTLOCALE\'... "
+echo 'LANG="en_US.UTF-8"'>/etc/default/locale && \
+	dpkg-reconfigure --frontend=noninteractive locales && \
+	update-locale LANG=en_US.UTF-8 \
+	&& echo "succeded." \
+	|| echo "failed."
+

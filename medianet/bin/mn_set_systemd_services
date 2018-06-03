@@ -1,0 +1,19 @@
+#!/bin/bash
+
+ENABLE="ufw.service jackd.service mod-host.service zita-njbridge.service"
+DISABLE="hciuart.service cron.service apt-daily-upgrade.timer apt-daily.service apt-daily-upgrade.service apt-daily.timer phpsessionclean.timer"
+ 
+
+
+for i in $ENABLE; do
+  echo -n "Enabling $i... "
+  systemctl enable "$i" && echo "done." || echo "failed."
+done
+
+for i in $DISABLE; do
+  echo -n "Stopping  $i... "
+  systemctl stop "$i" && echo "done." || echo "failed."
+  echo -n "Disabling $i... "
+  systemctl disable "$i" && echo "done." || echo "failed." 
+done
+

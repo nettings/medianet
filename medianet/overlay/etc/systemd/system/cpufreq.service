@@ -1,0 +1,14 @@
+[Unit]
+Description=Set CPU speed range
+After=sound.target
+Requires=cpufrequtils.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=-/medianet/medianet.conf
+ExecStart=/usr/bin/cpufreq-set $CPUFREQSET_OPTIONS
+ExecStop=/usr/bin/cpufreq-set --min 600MHz --max 1200MHz
+
+[Install]
+WantedBy=multi-user.target

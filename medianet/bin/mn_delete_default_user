@@ -1,0 +1,17 @@
+#!/bin/bash
+echo -n "Deleting user pi..."
+userdel pi \
+	&& echo " succeeded." \
+	|| echo "failed. Is the user still logged in?"
+echo -n "Deleting sudo entry for pi..."
+rm /etc/sudoers.d/010_pi-nopasswd \
+	&& echo " succeeded." \
+	|| echo " failed." 
+echo -n "Deleting home directory"
+rm -rf /home/pi/ \
+	&& echo " succeeded." \
+	|| echo " failed."
+
+echo "Locking password of root user. MAKE SURE YOU HAVE CREATED A SUDO-ENABLED USER ALREADY!"
+read -n1 -r -p "Ok?" && passwd -l root
+
