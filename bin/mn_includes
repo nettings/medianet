@@ -1,0 +1,13 @@
+function success {
+
+  echo  -e " \033[1;32msucceeded.\033[0m"
+
+}
+
+
+function failure {
+
+  echo  -e " \033[1;31mfailed with return code $?.\033[0m"
+  exit 1
+
+}
