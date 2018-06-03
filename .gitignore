@@ -1,2 +1,4 @@
 *~
 *.old
+custom_builds/*
+!custom_builds/README
