@@ -1,0 +1,2 @@
+* make overlay deployment script create intermediate directories if necessary (causes bug in sm.lv2 and icecast deployment)
+* remove code duplication between boot and overlay deployment scripts
