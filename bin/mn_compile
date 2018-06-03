@@ -1,0 +1,17 @@
+#!/bin/bash
+
+BASEDIR=`dirname $0`
+OLDPWD=`pwd`
+TARGET=`realpath "$BASEDIR"/../overlay`
+cd "$BASEDIR"/../custom_builds
+for i in `find . -maxdepth 1 -mindepth 1 -type d -exec basename {} \;` ; do
+	cd "$i"
+	echo "Compiling \"$i\"..."
+	../../bin/mn_compile."$i" "$TARGET"
+	cd ..
+done
+
+echo
+echo
+echo
+echo "Compiled programs have been installed to $TARGET. Deploy with 'sudo "$BASEDIR"/mn_deploy_medianet_overlay' to activate them."
