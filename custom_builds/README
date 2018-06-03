@@ -1,6 +1,6 @@
 This directory holds git checkouts of any additional software.
-You can automatically populate it with bin/mn_checkout.all, 
-and build all components in one go with bin/mn_compile.all.
+You can automatically populate it with bin/mn_checkout, 
+and build all components in one go with bin/mn_compile.
 To include a new custom component FOO, you need to write two little modules:
 bin/mn_checkout.FOO, which fetches the software, and
 bin/mn_compile.FOO, which builds it, adding all necessary fixes and compiler flags.
