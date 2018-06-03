@@ -1,5 +1,3 @@
-#!/bin/bash
-
 cd source
 make clean
 DESTDIR="$1" CXXFLAGS="-march=armv8-a+crc -mfpu=neon-fp-armv8 -mtune=cortex-a53" make -j4
