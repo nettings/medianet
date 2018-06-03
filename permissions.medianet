@@ -65,7 +65,6 @@
 'overlay/usr/local/bin/mn_is_writable' root:root 755
 'overlay/usr/local/bin/zita-n2j' root:root 755
 'overlay/usr/local/bin/mn_jack_watchdog' root:root 755
-'overlay/usr/local/bin/mod-host.mn_' root:root 755
 'overlay/usr/local/bin/mod-host' root:root 755
 'overlay/usr/local/bin/mn_make_writable' root:root 755
 'overlay/usr/local/bin/zita-j2n' root:root 755

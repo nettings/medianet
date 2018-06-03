@@ -8,6 +8,14 @@ function success {
 function failure {
 
   echo  -e " \033[1;31mfailed with return code $?.\033[0m"
-  exit 1
 
+}
+
+
+function bail {
+
+  failure
+  echo -e "\033[1;31mExiting.\033[0m"
+
+  exit 1
 }
