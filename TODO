@@ -1,11 +1,3 @@
-* make overlay deployment script create intermediate directories if necessary (causes bug in sm.lv2 and icecast deployment)
 * remove code duplication between boot and overlay deployment scripts
-
-* fix bug in deployment script:
-/usr/local/man/man1/mod-host.1.mn_.mn_: No backup required. Linked.
-/usr/local/man/man1/mod-host.1: mv: failed to access '/usr/local/man/man1/mod-host.1.mn_': Too many levels of symbolic links
-Failed to create backup '/usr/local/man/man1/mod-host.1.mn_'.ln: '/medianet/overlay/usr/local/man/man1/mod-host.1' and '/usr/local/man/man1/mod-host.1' are the same file
- Failed to link.
-/usr/local/man/man1/mod-host.1.mn_.mn_.mn_: Created backup '/usr/local/man/man1/mod-host.1.mn_.mn_.mn_.mn_' Linked.
 
 * fix problem with locale generation (subsequent errors, locale still not found)

@@ -1,0 +1,54 @@
+#!/bin/bash
+
+BASEDIR=`dirname $0`/..
+. "$BASEDIR"/bin/mn_includes
+
+# This script deploys all files in the /medianet/overlay directory as symbolic links
+# throughout the distribution file system.
+
+OLDPWD=$PWD
+# we're deploying the main overlay
+cd "$BASEDIR"/overlay
+
+scream "Checking directory tree..."
+# Iterate over all directories in overlay
+for DIR in `find -P * -type d` ; do
+	TARGET=/"$DIR"
+	echo -n "$TARGET:"
+	if [[ ! -d "$TARGET" && ! -L "$TARGET" ]] ; then
+		echo " creating..."
+		mkdir "$TARGET" && success || bail
+	else
+		echo " exists."
+	fi
+done
+
+scream "Deploying overlay..."
+# Iterate over all files in overlay
+for SOURCE in `find -P * \! -name README \! -type d` ; do
+	TARGET=/"$SOURCE"
+	BACKUP=/"$SOURCE".mn_
+
+	echo "$TARGET:" 
+	echo -en "\tBackup"
+	# Check if regular file or dir (not link, that would be us!)
+	# exists in distribution file system, if so: back it up.
+	if [[ ( -f "$TARGET" && ! -L "$TARGET" ) || ( -d "$TARGET" && ! -L "$TARGET" ) ]] ; then
+		# Do not overwrite existing backups.
+		if [[ ! -e "$BACKUP" ]] ; then
+			mv "$TARGET" "$BACKUP" \
+				&& success || bail
+		else echo " already exists."
+		fi
+	else
+		echo " not required."
+	fi
+	# Replace original file with symbolic link to medianet overlay.
+	echo -ne "\tRemoving existing..."
+	rm -r "$TARGET" && success || failure
+	echo -ne "\tLinking..."
+	ln -Tn -r -s "$PWD"/"$SOURCE" "$TARGET" \
+		&& success || bail
+done
+
+cd "$OLDPWD"
