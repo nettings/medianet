@@ -18,7 +18,8 @@ mkdir /home/medianet/.ssh && success || failure
 echo -n "Installing public key for SSH authorization..."
 cp /medianet/medianet.pub /home/medianet/.ssh/authorized_keys && success || failure
 echo -n "Adding medianet user to sudoers..."
-cp /medianet/overlay/etc/sudoers.d/10_medianet-nopasswd /etc/sudoers.d/00_medianet-dontbreakme && success || failure
+# prevent user lockout from permission breakage in the overlay tree
+cp /medianet/overlay/etc/sudoers.d/10_medianet-nopasswd /etc/sudoers.d/00_medianet-nopasswd_dontbreakme && success || failure
 echo -n "Creating /is_writable test file..."
 touch /is_writable && chmod 1666 /is_writable && success || failure
 
