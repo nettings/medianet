@@ -4,26 +4,39 @@ BASEDIR=`dirname $0`
 . "$BASEDIR"/mn_includes
 
 OLDPWD=`pwd`
-FILE="permissions.medianet"
+PERMFILE="permissions.medianet"
+DEFOWNER="root:root"
+DEFPERMS="u=rwX,g=rX,o=rX"
 
 cd "$BASEDIR"/../
-# default settings:
-scream "Setting default permissions (rwXr-Xr-X root:root)..."
-chown -R root:root overlay/ boot/ \
-  && chmod u=rwX,g=rX,o=rX overlay/ boot/ \
-  && success || bail
 
-echo
+for FILE in `find -P overlay/ boot/` ; do
+  echo -n "$FILE: "
+  RULE=`grep -E "^.$FILE." $PERMFILE`
+  if [[ -n "$RULE" ]] ; then
+    OWNER=`echo $RULE | cut -d ' ' -f 2`
+    PERMS=`echo $RULE | cut -d ' ' -f 3`
+    CUROWNER=`stat -c "%U:%G" "$FILE"`
+    CURPERMS=`stat -c "%a" "$FILE"`
+    if [[ "$CUROWNER" != "$OWNER" ]] ; then
+      echo -n "Changing ownership to $OWNER..."
+      chown "$OWNER" "$FILE" && success || failure
+    else 
+      echo "Ownership already set to $OWNER."
+    fi
+    if [[ "$CURPERMS" != "$PERMS" ]] ; then
+      echo -n "Changing permissions of $NAME to $PERMS..."
+      chmod "$PERMS" "$NAME" && success || failure
+    else
+      echo "Permissions already at $PERMS."
+    fi
+  else
+    echo -n "Resetting to default owner $DEFOWNER..."
+    chown "$DEFOWNER" "$FILE" && success || failure
+    echo -n "Resetting to default permissions $DEFPERMS..."
+    chmod "$DEFPERMS" "$FILE" && success || failure 
+  fi
+done
+exit
 
-scream "Setting individual file permissions..."
-while read line; do
-  NAME=`echo $line | cut -d ' ' -f 1 | tr -d \' `
-  OWNER=`echo $line | cut -d ' ' -f 2`
-  PERMS=`echo $line | cut -d ' ' -f 3`
-  echo -n "Changing ownership of $NAME to $OWNER..."
-  chown "$OWNER" "$NAME" && success || failure
-  echo -n "Changing permissions of $NAME to $PERMS..."
-  chmod "$PERMS" "$NAME" && success || failure
-  
-done < $FILE
 cd $OLDPWD
