@@ -1,19 +1,8 @@
 #!/bin/bash
 
-. /medianet/bin/mn_includes
-
-OLDPWD=`pwd`
 FILE="permissions.medianet"
-
+OLDPWD=`pwd`
 cd /medianet
-while read line; do
-  NAME=`echo $line | cut -d ' ' -f 1 | tr -d \' `
-  OWNER=`echo $line | cut -d ' ' -f 2`
-  PERMS=`echo $line | cut -d ' ' -f 3`
-  echo -n "Changing ownership of $NAME to $OWNER..."
-  chown "$OWNER" "$NAME" || failure && success
-  echo -n "Changing permissions of $NAME to $PERMS..."
-  chmod "$PERMS" "$NAME" || failure && success
-  
-done < $FILE
-cd $OLDPWD
+mv "$FILE" "$FILE".old
+find overlay boot ! -type l -exec stat -c "%N %U:%G %a" {} \; >>permissions.medianet
+cd "$OLDPWD"

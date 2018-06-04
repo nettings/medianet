@@ -1,0 +1,29 @@
+#!/bin/bash
+
+BASEDIR=`dirname $0`
+. "$BASEDIR"/mn_includes
+
+OLDPWD=`pwd`
+FILE="permissions.medianet"
+
+cd "$BASEDIR"/../
+# default settings:
+scream "Setting default permissions (rwXr-Xr-X root:root)..."
+chown -R root:root overlay/ boot/ \
+  && chmod u=rwX,g=rX,o=rX overlay/ boot/ \
+  && success || bail
+
+echo
+
+scream "Setting individual file permissions..."
+while read line; do
+  NAME=`echo $line | cut -d ' ' -f 1 | tr -d \' `
+  OWNER=`echo $line | cut -d ' ' -f 2`
+  PERMS=`echo $line | cut -d ' ' -f 3`
+  echo -n "Changing ownership of $NAME to $OWNER..."
+  chown "$OWNER" "$NAME" && success || failure
+  echo -n "Changing permissions of $NAME to $PERMS..."
+  chmod "$PERMS" "$NAME" && success || failure
+  
+done < $FILE
+cd $OLDPWD
