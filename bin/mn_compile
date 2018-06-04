@@ -4,7 +4,7 @@ BASEDIR=`dirname $0`
 . "$BASEDIR"/mn_includes
 
 OLDPWD=`pwd`
-TARGET=`realpath "$BASEDIR"/../overlay`
+DESTDIR=`realpath "$BASEDIR"/../overlay`
 cd "$BASEDIR"/../custom_builds
 
 find "$BASEDIR" -name "mn_compile.*.*" ! -name "*~" | sort | while read line ; do
@@ -12,8 +12,8 @@ find "$BASEDIR" -name "mn_compile.*.*" ! -name "*~" | sort | while read line ; d
   WORKDIR=`echo "$line" | cut -d "." -f 3-`
   cd "$WORKDIR"
   scream "Compiling \"$line\"..."
-  . "$line" "$TARGET" && success || bail
+  . "$line" "$DESTDIR" && success || bail
   cd ..
 done
 
-echo "Compiled programs have been installed to $TARGET. Deploy with 'sudo "$BASEDIR"/mn_deploy_medianet_overlay' to activate them."
+echo "Compiled programs have been installed to $DESTDIR. Deploy with 'sudo "$BASEDIR"/mn_deploy_medianet_overlay' to activate them."
