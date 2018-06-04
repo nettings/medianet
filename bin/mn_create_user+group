@@ -1,22 +1,25 @@
 #!/bin/bash
 
+BASENAME=`dirname $0`
+. $BASENAME/mn_includes
+
 echo -n "Creating group medianet..."
-/usr/sbin/groupadd medianet && echo " succeeded." || echo " failed."
+/usr/sbin/groupadd medianet && success || failure
 echo -n "Creating home directory..."
-mkdir /home/medianet && echo " succeeded." || echo " failed."
+mkdir /home/medianet && success || failure
 echo -n "Creating user medianet..."
-/usr/sbin/useradd -c "medianet Maintenance account" -g medianet -G users,audio -d /home/medianet medianet && echo " succeeded." || echo " failed."
+/usr/sbin/useradd -c "medianet Maintenance account" -g medianet -G users,audio -d /home/medianet medianet && success || failure
 echo -n "Changing ownership of home directory..."
-chown -R medianet:medianet /home/medianet && echo " succeeded." || echo " failed."
+chown -R medianet:medianet /home/medianet && success || failure
 echo -n "Changing login shell to /bin/bash..."
-chsh -s /bin/bash medianet && echo " succeeded." || echo " failed."
+chsh -s /bin/bash medianet && success || failure
 echo -n "Creating .ssh dir..."
-mkdir /home/medianet/.ssh && echo " succeeded." || echo " failed."
+mkdir /home/medianet/.ssh && success || failure
 echo -n "Installing public key for SSH authorization..."
-cp /medianet/medianet.pub /home/medianet/.ssh/authorized_keys && echo " succeeded." || echo " failed."
+cp /medianet/medianet.pub /home/medianet/.ssh/authorized_keys && success || failure
 echo -n "Adding medianet user to sudoers..."
-ln -rfs /medianet/overlay/etc/sudoers.d/10_medianet-nopasswd /etc/sudoers.d && echo " succeeded." || echo " failed."
+cp /medianet/overlay/etc/sudoers.d/10_medianet-nopasswd /etc/sudoers.d/00_medianet-dontbreakme && success || failure
 echo -n "Creating /is_writable test file..."
-touch /is_writable && chmod 1666 /is_writable && echo " succeeded." || echo " failed."
+touch /is_writable && chmod 1666 /is_writable && success || failure
 
 
