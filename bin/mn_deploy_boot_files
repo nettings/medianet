@@ -1,44 +1,56 @@
 #!/bin/bash
 
-# This script deploys all files in the /medianet/overlay directory as symbolic links
+BASEDIR=`dirname $0`/..
+. "$BASEDIR"/bin/mn_includes
+
+# This script deploys all files in the medianet/boot directory as symbolic links
 # throughout the distribution file system.
 
 OLDPWD=$PWD
+# we're deploying the main overlay
+cd "$BASEDIR"/boot
 
-# we're deploying boot files
-cd /medianet/boot
-# we must copy files, because the /medianet overlay is not mounted at boot time.
-MODE=copy
-
-# Iterate over all files in overlay
-for SOURCE in `find -P * \! -name README \! -type d` ; do
-	TARGET=/"$SOURCE"
-	BACKUP=/"$SOURCE".mn_
-
-	echo -n "$TARGET: "
-	# Check if regular file or dir (not link, that would be us!)
-	# exists in distribution file system, if so: back it up.
-	if [[ ( -f "$TARGET" && ! -L "$TARGET" ) || ( -d "$TARGET" && ! -L "$TARGET" ) ]] ; then
-		# Do not overwrite existing backups.
-		if [[ ! -e "$BACKUP" ]] ; then
-			mv "$TARGET" "$BACKUP" \
-				&& echo -n "Created backup '$BACKUP'" \
-				|| echo -n "Failed to create backup '$BACKUP'."
-		else echo -n "Backup already exists."
-		fi
+scream "Checking directory tree..."
+# Iterate over all directories in overlay
+for DIR in `find -P * -type d` ; do
+	TARGET=/boot/"$DIR"
+	echo -n "$TARGET:"
+	if [[ ! -d "$TARGET" ]] ; then
+		echo " creating..."
+		mkdir "$TARGET" && success || bail
 	else
-		echo -n "No backup required."
-	fi
-        if [[ "$MODE" == "link" ]] ; then
-  		# Replace original file with symbolic link to medianet overlay.
-		ln -Tnf -r -s "$PWD"/"$SOURCE" "$TARGET" \
-			&& echo " Linked." \
-			|| echo " Failed to link."
-	elif [[ "$MODE" == "copy" ]] ; then
-		cp "$PWD"/"$SOURCE" "$TARGET" \
-			&& echo " Installed." \
-			|| echo " Failed to install."
+		echo " exists."
 	fi
 done
 
+scream "Deploying overlay..."
+# Iterate over all files in overlay
+for SOURCE in `find -P * \! -name README \! -type d` ; do
+	TARGET=/boot/"$SOURCE"
+	BACKUP=/"$SOURCE".mn_
+
+	echo "$TARGET:" 
+	echo -en "\tBackup"
+	# Check if regular file exists in distribution file system, if so: back it up.
+	if [[ ( -f "$TARGET" && ! -L "$TARGET" ) ]] ; then
+		# Do not overwrite existing backups.
+		if [[ ! -e "$BACKUP" ]] ; then
+			mv "$TARGET" "$BACKUP" \
+				&& success || bail
+		else echo " already exists."
+		fi
+	else
+		echo " not required."
+	fi
+	# Replace original file with symbolic link to medianet overlay.
+	if [[ -e "$TARGET" ]] ; then
+		echo -ne "\tRemoving existing..."
+		rm -r "$TARGET" && success || failure
+	fi
+	echo -ne "\tInstalling..."
+	cp "$PWD"/"$SOURCE" "$TARGET" \
+		&& success || bail
+done
+
 cd "$OLDPWD"
+

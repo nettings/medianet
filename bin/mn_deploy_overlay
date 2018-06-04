@@ -44,8 +44,10 @@ for SOURCE in `find -P * \! -name README \! -type d` ; do
 		echo " not required."
 	fi
 	# Replace original file with symbolic link to medianet overlay.
-	echo -ne "\tRemoving existing..."
-	rm -r "$TARGET" && success || failure
+        if [[ -e "$TARGET" ]] ; then
+                echo -ne "\tRemoving existing..."
+                rm -r "$TARGET" && success || failure
+        fi
 	echo -ne "\tLinking..."
 	ln -Tn -r -s "$PWD"/"$SOURCE" "$TARGET" \
 		&& success || bail
