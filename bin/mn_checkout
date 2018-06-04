@@ -7,5 +7,5 @@ OLDPWD=`pwd`
 cd "$BASEDIR/../custom_builds"
 find "$BASEDIR" -name "mn_checkout.*" ! -name "*~" | while read line ; do
   scream "Running "`basename $line`"..."
-  . $line || failure && success
+  . $line && success || failure
 done
