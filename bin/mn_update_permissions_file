@@ -1,8 +1,0 @@
-#!/bin/bash
-
-FILE="permissions.medianet"
-OLDPWD=`pwd`
-cd /medianet
-mv "$FILE" "$FILE".old
-find overlay boot ! -type l -exec stat -c "%N %U:%G %a" {} \; >>permissions.medianet
-cd "$OLDPWD"
