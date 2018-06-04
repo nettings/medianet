@@ -30,7 +30,7 @@ for SOURCE in `find -P * \! -name README \! -type d` ; do
 	BACKUP=/"$SOURCE".mn_
 
 	echo "$TARGET:" 
-	echo -en "\tBackup"
+	echo -ne "\tBackup..."
 	# Check if regular file or dir (not link, that would be us!)
 	# exists in distribution file system, if so: back it up.
 	if [[ ( -f "$TARGET" && ! -L "$TARGET" ) || ( -d "$TARGET" && ! -L "$TARGET" ) ]] ; then
@@ -44,8 +44,8 @@ for SOURCE in `find -P * \! -name README \! -type d` ; do
 		echo " not required."
 	fi
 	# Replace original file with symbolic link to medianet overlay.
-        if [[ -e "$TARGET" ]] ; then
-                echo -ne "\tRemoving existing..."
+        if [[ -e "$TARGET" || -L "$TARGET" ]] ; then
+                echo -ne "\tRemoving old file/link..."
                 rm -r "$TARGET" && success || failure
         fi
 	echo -ne "\tLinking..."
