@@ -1,3 +1,2 @@
-* remove code duplication between boot and overlay deployment scripts
 
 * fix problem with locale generation (subsequent errors, locale still not found)
