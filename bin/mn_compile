@@ -12,7 +12,7 @@ find "$BASEDIR" -name "mn_compile.*.*" ! -name "*~" | sort | while read line ; d
   WORKDIR=`echo "$line" | cut -d "." -f 3-`
   cd "$WORKDIR"
   scream "Compiling \"$line\"..."
-  . "$line" "$TARGET" || bail && success
+  . "$line" "$TARGET" && success || bail
   cd ..
 done
 
