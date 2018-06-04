@@ -1,3 +1,4 @@
+./make.sh clean
 ./make.sh build
-sudo ./make.sh install
+sudo DESTDIR="$DESTDIR" ./make.sh install
 
