@@ -9,14 +9,14 @@ echo -n "Creating home directory..."
 mkdir /home/medianet && success || failure
 echo -n "Creating user medianet..."
 /usr/sbin/useradd -c "medianet Maintenance account" -g medianet -G users,audio -d /home/medianet medianet && success || failure
-echo -n "Changing ownership of home directory..."
-chown -R medianet:medianet /home/medianet && success || failure
 echo -n "Changing login shell to /bin/bash..."
 chsh -s /bin/bash medianet && success || failure
 echo -n "Creating .ssh dir..."
 mkdir /home/medianet/.ssh && success || failure
 echo -n "Installing public key for SSH authorization..."
 cp /medianet/medianet.pub /home/medianet/.ssh/authorized_keys && success || failure
+echo -n "Changing ownership of home directory..."
+chown -R medianet:medianet /home/medianet && success || failure
 echo -n "Adding medianet user to sudoers..."
 # prevent user lockout from permission breakage in the overlay tree
 cp /medianet/overlay/etc/sudoers.d/10_medianet-nopasswd /etc/sudoers.d/00_medianet-nopasswd_dontbreakme && success || failure
