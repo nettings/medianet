@@ -3,17 +3,11 @@
 BASEDIR=`dirname $0`
 . "$BASEDIR"/mn_includes
 
-
 TIMEZONE="Europe/Berlin"
 DEFAULTLOCALE="en_US.UTF-8"
 OTHERLOCALES="en_GB.UTF-8 de_DE.UTF-8"
 
-echo -n "Setting timezone to \'$TIMEZONE\'... "
-echo "$TIMEZONE" > /etc/timezone \
-	&& dpkg-reconfigure -f noninteractive tzdata \
-	&& success || bail
 echo "Activating locales"
-
 for i in $DEFAULTLOCALE $OTHERLOCALES ; do
 	echo -ne "\t$i"
 	sed -i "s/\#.*$i/$i/" /etc/locale.gen && success || failure
@@ -24,4 +18,10 @@ echo 'LANG="en_US.UTF-8"'>/etc/default/locale && \
 	dpkg-reconfigure --frontend=noninteractive locales && \
 	update-locale LANG=en_US.UTF-8 \
 	&& success || bail
+
+echo -n "Setting timezone to $TIMEZONE... "
+echo "$TIMEZONE" > /etc/timezone \
+	&& dpkg-reconfigure -f noninteractive tzdata \
+	&& success || bail
+
 

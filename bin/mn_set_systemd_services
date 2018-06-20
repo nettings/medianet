@@ -1,19 +1,20 @@
 #!/bin/bash
 
-ENABLE="ufw.service jackd.service mod-host.service zita-njbridge.service"
-DISABLE="hciuart.service cron.service apt-daily-upgrade.timer apt-daily.service apt-daily-upgrade.service apt-daily.timer phpsessionclean.timer"
- 
+BASEDIR=`dirname $0`
+. "$BASEDIR"/mn_includes
+
+. "$MEDIANETCONF"
 
 
-for i in $ENABLE; do
+for i in $SYSTEMD_ENABLE; do
   echo -n "Enabling $i... "
-  systemctl enable "$i" && echo "done." || echo "failed."
+  systemctl enable "$i" && success || failure
 done
 
-for i in $DISABLE; do
+for i in $SYSTEMD_DISABLE; do
   echo -n "Stopping  $i... "
-  systemctl stop "$i" && echo "done." || echo "failed."
+  systemctl stop "$i" && success || failure
   echo -n "Disabling $i... "
-  systemctl disable "$i" && echo "done." || echo "failed." 
+  systemctl disable "$i" && success || failure
 done
 
