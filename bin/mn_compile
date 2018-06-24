@@ -16,4 +16,4 @@ find "$BASEDIR" -name "mn_compile.*.*" ! -name "*~" | sort | while read line ; d
   cd ..
 done
 
-echo "Compiled programs have been installed to $DESTDIR. Deploy with 'sudo "$BASEDIR"/mn_deploy_medianet_overlay' to activate them."
+echo "Compiled programs have been installed to $DESTDIR. Deploy with 'sudo "$BASEDIR"/mn_deploy_overlay' to activate them."
