@@ -1,5 +1,8 @@
 [Match]
+# for RPi 3B
 Driver=smsc95xx
+# for RPi 3B+
+Driver=lan78xx
 [Link]
 Name=medianet0
 #NamePolicy=kernel database onboard slot path
