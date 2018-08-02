@@ -22,3 +22,5 @@ sudo apt-get -y install lighttpd php7.0 php7.0-cgi php7.0-fpm
 sudo apt-get -y install mplayer
 # local monitoring
 sudo apt-get -y install icecast2 darkice
+# i2c tools for peripheral devices such as SenseHat or HifiBerries
+sudo apt-get -y install i2c-tools
