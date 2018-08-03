@@ -1,4 +1,6 @@
 #!/bin/bash
+BASEDIR=`dirname $0`/..
+. "$BASEDIR"/bin/mn_includes
 
 sudo apt-get update
 sudo apt-get upgrade

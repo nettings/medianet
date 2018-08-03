@@ -1,15 +1,14 @@
 #!/bin/bash
 
+BASEDIR=`dirname $0`/..
+. "$BASEDIR"/bin/mn_includes
+
 echo "Disabling swap:"
 if [[ -n `which dphys-swapfile 2> /dev/null` ]] ; then
 	echo -n "Trying dphys-swapfile... "
-	dphys-swapfile swapoff && dphys-swapfile uninstall\
-		&& echo "succeeded." \
-		|| echo "failed." 
+	dphys-swapfile swapoff && dphys-swapfile uninstall && success || failure
 else
 	echo -n "Trying manual method... "
-	swapoff -a && sed -i '/^[^#]/ s/\(^.*swap.*$\)/#\ \1/' /etc/fstab \
-		&& echo "succeeded." \
-		|| echo "failed."
+	swapoff -a && sed -i '/^[^#]/ s/\(^.*swap.*$\)/#\ \1/' /etc/fstab && success || failure
 fi
 
