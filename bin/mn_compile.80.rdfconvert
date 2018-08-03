@@ -1,0 +1,12 @@
+
+TARGET=/medianet/overlay/usr/local/bin/rdfconvert
+cp rdfconvert.py /usr/local/lib/
+
+cat << EOF > "$TARGET" 
+#!/bin/bash
+python3 /usr/local/lib/rdfconvert.py $@
+
+
+EOF
+
+chmod +x "$TARGET"
