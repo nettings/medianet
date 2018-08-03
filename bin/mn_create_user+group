@@ -20,7 +20,5 @@ chown -R medianet:medianet /home/medianet && success || failure
 echo -n "Adding medianet user to sudoers..."
 # prevent user lockout from permission breakage in the overlay tree
 cp /medianet/overlay/etc/sudoers.d/10_medianet-nopasswd /etc/sudoers.d/00_medianet-nopasswd_dontbreakme && success || failure
-echo -n "Creating /is_writable test file..."
-touch /is_writable && chmod 1666 /is_writable && success || failure
 
 
