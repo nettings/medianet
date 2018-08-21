@@ -20,14 +20,14 @@ function success {
 
 function failure {
 
-  echo  -e " \033[1;31mfailed with return code $?.\033[0m"
+  echo  -e " \033[1;31mfailed with return code $?. $@\033[0m"
 
 }
 
 
 function bail {
 
-  failure
+  failure $@
   echo -e "\033[1;31mExiting.\033[0m"
 
   exit 1
