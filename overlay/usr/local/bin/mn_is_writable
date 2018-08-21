@@ -1,5 +1,5 @@
 #!/bin/sh
-
-/usr/bin/touch /is_writable > /dev/null 2>&1 && exit 0
-exit 1
+PWD=`pwd`
+cat /proc/mounts | grep `df -h --output=source "$PWD" | tail -1` | grep -Eq [[:space:],]ro[[:space:],] && exit 1
+exit 0
 
