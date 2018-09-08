@@ -25,7 +25,7 @@ for FILE in `find -P overlay/ boot/ ! -type l`; do
       echo "Ownership already set to $OWNER."
     fi
     if [[ "$CURPERMS" != "$PERMS" ]] ; then
-      echo -n "Changing permissions of $FILE to $PERMS..."
+      echo -n "Changing permissions to $PERMS..."
       chmod "$PERMS" "$FILE" && success || failure
     else
       echo "Permissions already at $PERMS."
