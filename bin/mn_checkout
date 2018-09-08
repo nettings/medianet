@@ -18,6 +18,7 @@ from_git() {
   else
     cd "$2"
     git pull
+    cd ..
   fi
 }
 
@@ -39,6 +40,7 @@ from_tar() {
       ;;
   esac
   wget -O - "$1" | tar --strip-components=1 -x -v -$ALGO -f -
+  cd ..
 }
 
 scream "Iterating over \"$TARGET\"."
