@@ -1,2 +1,7 @@
-git clone https://github.com/moddevices/mod-host.git
+if [[ ! -d mod-host ]] ; then
+  git clone https://github.com/moddevices/mod-host.git
+else
+  cd mod-host
+  git pull
+fi
 
