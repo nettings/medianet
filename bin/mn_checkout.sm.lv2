@@ -1,6 +1,1 @@
-if [[ ! -d lv2rdf2html ]] ; then
-  git clone https://github.com/nettings/sm.lv2.git
-else
-  cd sm.lv2
-  git pull
-fi
+from_git https://github.com/nettings/sm.lv2.git sm.lv2

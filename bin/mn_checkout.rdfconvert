@@ -1,3 +1,1 @@
-git clone https://github.com/WimPessemier/rdfconvert.git
-
-
+from_git https://github.com/WimPessemier/rdfconvert.git rdfconvert

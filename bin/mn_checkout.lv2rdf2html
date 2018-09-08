@@ -1,9 +1,2 @@
-if [[ ! -d lv2rdf2html ]] ; then
-  git clone https://github.com/nettings/lv2rdf2html.git
-  ln -s ../../mod-host.cmd lv2rdf2html/
-else
-  cd lv2rdf2html
-  git pull
-fi
-
-
+from_git https://github.com/nettings/lv2rdf2html.git lv2rdf2html
+ln -s ../../mod-host.cmd lv2rdf2html/
