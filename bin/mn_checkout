@@ -10,6 +10,22 @@ else
   TARGET='mn_checkout.'$1
 fi
 
+
+# from_FOO <URL> <dirname>
+from_git() {
+  if [[ ! -d "$2" ]] ; then
+    git clone "$1" "$2"
+  else
+    cd "$2"
+    git pull
+  fi
+}
+
+from_tar() {
+  wget -O - "$1" | tar xvf -
+  mv -T "$2"* "$2"
+}
+
 scream "Iterating over \"$TARGET\"."
 
 cd "$BASEDIR/../custom_builds"
