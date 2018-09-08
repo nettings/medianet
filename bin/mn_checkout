@@ -4,8 +4,16 @@ BASEDIR=`dirname $0`
 . "$BASEDIR"/mn_includes
 
 OLDPWD=`pwd`
+if [[ -z "$1" ]] ; then
+  TARGET='mn_checkout.*'
+else
+  TARGET='mn_checkout.'$1
+fi
+
+scream "Iterating over \"$TARGET\"."
+
 cd "$BASEDIR/../custom_builds"
-find "$BASEDIR" -name "mn_checkout.*" ! -name "*~" | while read line ; do
+find "$BASEDIR" -name "$TARGET" ! -name "*~" | while read line ; do
   scream "Running "`basename $line`"..."
   . $line && success || failure
 done
