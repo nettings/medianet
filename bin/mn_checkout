@@ -22,8 +22,23 @@ from_git() {
 }
 
 from_tar() {
-  wget -O - "$1" | tar xvf -
-  mv -T "$2"* "$2"
+  if [[ ! -d "$2" ]] ; then
+    mkdir "$2"
+  fi
+  cd "$2"
+  ALGO=
+  case `basename "$1"` in
+    *.gz|*.tgz)
+      ALGO=z
+      ;;
+    *.bz2|*.tbz)
+      ALGO=j
+      ;;
+    *.xz)
+      ALGO=J
+      ;;
+  esac
+  wget -O - "$1" | tar --strip-components=1 -x -v -$ALGO -f -
 }
 
 scream "Iterating over \"$TARGET\"."
