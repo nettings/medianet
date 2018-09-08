@@ -1,0 +1,2 @@
+wget -O - http://kokkinizita.linuxaudio.org/linuxaudio/downloads/zita-lrx-0.1.2.tar.bz2 | tar xvjf -
+mv zita-lrx-* zita-lrx
