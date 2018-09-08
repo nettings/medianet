@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rpi-update
+sudo /usr/bin/rpi-update

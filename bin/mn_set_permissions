@@ -10,7 +10,7 @@ DEFPERMS="u=rwX,g=rX,o=rX"
 
 cd "$BASEDIR"/../
 
-for FILE in `find -P overlay/ boot/ ! -type l`; do
+for FILE in `sudo find -P overlay/ boot/ ! -type l`; do
   echo -n "$FILE: "
   RULE=`grep -E "^.$FILE." $PERMFILE`
   if [[ -n "$RULE" ]] ; then
@@ -20,21 +20,21 @@ for FILE in `find -P overlay/ boot/ ! -type l`; do
     CURPERMS=`stat -c "%a" "$FILE"`
     if [[ "$CUROWNER" != "$OWNER" ]] ; then
       echo -n "Changing ownership to $OWNER..."
-      chown "$OWNER" "$FILE" && success || failure
+      sudo chown "$OWNER" "$FILE" && success || failure
     else 
       echo "Ownership already set to $OWNER."
     fi
     if [[ "$CURPERMS" != "$PERMS" ]] ; then
       echo -n "Changing permissions to $PERMS..."
-      chmod "$PERMS" "$FILE" && success || failure
+      sudo chmod "$PERMS" "$FILE" && success || failure
     else
       echo "Permissions already at $PERMS."
     fi
   else
     echo -n "Resetting to default owner $DEFOWNER..."
-    chown "$DEFOWNER" "$FILE" && success || failure
+    sudo chown "$DEFOWNER" "$FILE" && success || failure
     echo -n "Resetting to default permissions $DEFPERMS..."
-    chmod "$DEFPERMS" "$FILE" && success || failure 
+    sudo chmod "$DEFPERMS" "$FILE" && success || failure 
   fi
 done
 exit

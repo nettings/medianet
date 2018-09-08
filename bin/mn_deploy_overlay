@@ -17,7 +17,7 @@ for DIR in `find -P * -type d` ; do
 	echo -n "$TARGET:"
 	if [[ ! -d "$TARGET" && ! -L "$TARGET" ]] ; then
 		echo " creating..."
-		mkdir "$TARGET" && success || bail
+		sudo mkdir "$TARGET" && success || bail
 	else
 		echo " exists."
 	fi
@@ -36,7 +36,7 @@ for SOURCE in `find -P * \! -name README \! -type d` ; do
 	if [[ ( -f "$TARGET" && ! -L "$TARGET" ) || ( -d "$TARGET" && ! -L "$TARGET" ) ]] ; then
 		# Do not overwrite existing backups.
 		if [[ ! -e "$BACKUP" ]] ; then
-			mv "$TARGET" "$BACKUP" \
+			sudo mv "$TARGET" "$BACKUP" \
 				&& success || bail
 		else echo " already exists."
 		fi
@@ -46,10 +46,10 @@ for SOURCE in `find -P * \! -name README \! -type d` ; do
 	# Replace original file with symbolic link to medianet overlay.
         if [[ -e "$TARGET" || -L "$TARGET" ]] ; then
                 echo -ne "\tRemoving old file/link..."
-                rm -r "$TARGET" && success || failure
+                sudo rm -r "$TARGET" && success || failure
         fi
 	echo -ne "\tLinking..."
-	ln -Tn -r -s "$PWD"/"$SOURCE" "$TARGET" \
+	sudo ln -Tn -r -s "$PWD"/"$SOURCE" "$TARGET" \
 		&& success || bail
 done
 

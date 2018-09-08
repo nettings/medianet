@@ -3,12 +3,12 @@ BASEDIR=`dirname $0`/..
 . "$BASEDIR"/bin/mn_includes
 
 echo -n "Deleting user pi..."
-userdel pi && success || bail "Is the user still logged in?"
+sudo userdel pi && success || bail "Is the user still logged in?"
 echo -n "Deleting sudo entry for pi..."
-rm /etc/sudoers.d/010_pi-nopasswd && succes || failure
+sudo rm /etc/sudoers.d/010_pi-nopasswd && succes || failure
 echo -n "Deleting home directory"
-rm -rf /home/pi/ && success || failure
+sudo rm -rf /home/pi/ && success || failure
 
 echo "Locking password of root user. MAKE SURE YOU HAVE CREATED A SUDO-ENABLED USER ALREADY!"
-read -n1 -r -p "Ok?" && passwd -l root && success || failure
+read -n1 -r -p "Ok?" && sudo passwd -l root && success || failure
 

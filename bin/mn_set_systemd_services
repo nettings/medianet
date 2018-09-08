@@ -8,13 +8,13 @@ BASEDIR=`dirname $0`
 
 for i in $SYSTEMD_ENABLE; do
   echo -n "Enabling $i... "
-  systemctl enable "$i" && success || failure
+  sudo systemctl enable "$i" && success || failure
 done
 
 for i in $SYSTEMD_DISABLE; do
   echo -n "Stopping  $i... "
-  systemctl stop "$i" && success || failure
+  sudo systemctl stop "$i" && success || failure
   echo -n "Disabling $i... "
-  systemctl disable "$i" && success || failure
+  sudo systemctl disable "$i" && success || failure
 done
 
