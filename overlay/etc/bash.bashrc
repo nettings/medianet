@@ -62,3 +62,6 @@ alias ...="cd ../../"
 alias ....="cd ../../../"
 alias rm="rm -i"
 
+echo -e "\033[1;33mMedia node prototype version:"
+mn_get_version
+echo -e "\033[0m"

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+OLDPWD=`pwd`
+cd /medianet
+git log | head -n 5 | grep commit
+git log | head -n 5 | grep Date
+cd $OLDPWD 
