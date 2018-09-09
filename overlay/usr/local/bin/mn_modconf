@@ -2,12 +2,13 @@
 
 . /medianet/medianet.conf
 
+unset -v CFILE
+
 case $1 in
   --base-setup)
     CFILE=$MOD_CMDFILE
     ;;
   --parameters)
-    unset -v CFILE
     # look for latest file in dir:
     for file in "$MOD_SETTINGSDIR"/*; do
       test "$file" -nt "$CFILE" && CFILE=$file
@@ -16,6 +17,7 @@ case $1 in
   --all|*)
     $0 --base-setup
     $0 --parameters
+    exit 0
     ;;
 esac
 
