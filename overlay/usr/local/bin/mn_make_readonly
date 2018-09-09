@@ -1,4 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
-mount -oremount,ro /
-mount -oremount,ro /boot
+. /medianet/bin/mn_includes
+
+for i in "/" "/boot"; do
+  echo -n "Remounting $i read-only..."
+  sudo mount -oremount,ro "$i" && success || failure
+    # add nice sudo fuser -uva $i magic here...
+done

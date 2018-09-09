@@ -1,5 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
-mount -oremount,rw /
-mount -oremount,rw /boot
+. /medianet/bin/mn_includes
+
+for i in "/" "/boot"; do
+  echo -n "Remounting $i read-write..."
+  sudo mount -oremount,rw "$i" && success || failure
+done
 
