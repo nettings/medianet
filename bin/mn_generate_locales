@@ -13,14 +13,14 @@ for i in $DEFAULTLOCALE $OTHERLOCALES ; do
 	sudo sed -i "s/\#.*$i/$i/" /etc/locale.gen && success || failure
 done
 
-echo "Setting default locale to \'$DEFAULTLOCALE\'... "
-sudo echo 'LANG="en_US.UTF-8"'>/etc/default/locale && \
+echo "Setting default locale to $DEFAULTLOCALE... "
+sudo /bin/bash -c 'echo LANG="en_US.UTF-8" > /etc/default/locale' && \
 	sudo dpkg-reconfigure --frontend=noninteractive locales && \
 	sudo update-locale LANG=en_US.UTF-8 \
 	&& success || bail
 
 echo -n "Setting timezone to $TIMEZONE... "
-sudo echo "$TIMEZONE" > /etc/timezone \
+sudo /bin/bash -c 'echo "$TIMEZONE" > /etc/timezone' \
 	&& sudo dpkg-reconfigure -f noninteractive tzdata \
 	&& success || bail
 

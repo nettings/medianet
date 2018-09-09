@@ -7,5 +7,5 @@ BASEDIR=`dirname $0`/..
 
 MID=`/usr/bin/dbus-uuidgen`
 echo -n "Setting machine ID to new random value \'$MID\'..."
-sudo echo "$MID" > /etc/machine-id && success || failure
+sudo /bin/bash -c 'echo "$MID" > /etc/machine-id' && success || failure
 

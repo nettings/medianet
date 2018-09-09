@@ -1,12 +1,12 @@
 
-TARGET=/medianet/overlay/usr/local/bin/rdfconvert
-sudo cp rdfconvert.py /usr/local/lib/
+sudo cp rdfconvert.py /medianet/overlay/usr/local/lib/
 
-sudo cat << EOF > "$TARGET" 
+sudo /bin/bash -c 'cat << EOF > /medianet/overlay/usr/local/bin/rdfconvert
 #!/bin/bash
-python3 /usr/local/lib/rdfconvert.py $@
+python3 /medianet/overlay/usr/local/lib/rdfconvert.py $@
 
 
 EOF
+'
+sudo chmod +x /medianet/overlay/usr/local/bin/rdfconvert
 
-sudo chmod +x "$TARGET"
