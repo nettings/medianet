@@ -1,0 +1,17 @@
+[Unit]
+Description=zita LRX fourth-order crossover
+After=sound.target
+Requires=jackd.service
+
+[Service]
+EnvironmentFile=-/medianet/medianet.conf
+User=medianet
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+ExecStartPre=/usr/local/bin/mn_jackwait
+ExecStart=/usr/local/bin/zita-lrx $ZITALRX_CONFIG
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
