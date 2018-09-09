@@ -16,8 +16,12 @@ for DIR in `find -P * -type d` ; do
 	TARGET=/"$DIR"
 	echo -n "$TARGET:"
 	if [[ ! -d "$TARGET" && ! -L "$TARGET" ]] ; then
-		echo " creating..."
+		echo -n " creating..."
 		sudo mkdir "$TARGET" && success || bail
+		echo -en "\tsetting file permissions..."
+		sudo chown --reference "$DIR" "$TARGET"\
+		&& sudo chmod --reference "$DIR" "$TARGET"\
+		&& success || fail		
 	else
 		echo " exists."
 	fi
