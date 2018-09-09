@@ -91,7 +91,8 @@
 'overlay/etc/motd' root:root 644
 'overlay/var' root:root 755
 'overlay/var/medianet' medianet:medianet 755
-'overlay/var/medianet/README' root:root 644
+'overlay/var/medianet/mod-host' medianet:medianet 755
+'overlay/var/medianet/mod-host/README' medianet:medianet 644
 'overlay/var/cache' root:root 755
 'overlay/var/cache/lighttpd' root:root 755
 'overlay/var/lib' root:root 755
