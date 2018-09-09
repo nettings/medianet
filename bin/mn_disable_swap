@@ -6,9 +6,9 @@ BASEDIR=`dirname $0`/..
 echo "Disabling swap:"
 if [[ -n `which dphys-swapfile 2> /dev/null` ]] ; then
 	echo -n "Trying dphys-swapfile... "
-	sudo dphys-swapfile swapoff && dphys-swapfile uninstall && success || failure
+	sudo dphys-swapfile swapoff && sudo dphys-swapfile uninstall && success || failure
 else
 	echo -n "Trying manual method... "
-	sudo swapoff -a && sed -i '/^[^#]/ s/\(^.*swap.*$\)/#\ \1/' /etc/fstab && success || failure
+	sudo swapoff -a && sudo sed -i '/^[^#]/ s/\(^.*swap.*$\)/#\ \1/' /etc/fstab && success || failure
 fi
 
