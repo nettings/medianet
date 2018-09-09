@@ -1,7 +1,4 @@
-BASEDIR=`realpath "$BASEDIR"`
-
-MEDIANETCONF="$BASEDIR/../medianet.conf"
-
+MEDIANETCONF="/medianet/medianet.conf"
 
 function scream {
 
