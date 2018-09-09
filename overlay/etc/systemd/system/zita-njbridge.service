@@ -1,8 +1,8 @@
 [Unit]
 Description=zita Network-to-JACK bridge
-After=sound.target
+After=jackd.target
 After=network-online.target
-Requires=jackd.service
+Requires=jackd.target
 
 [Service]
 EnvironmentFile=-/medianet/medianet.conf

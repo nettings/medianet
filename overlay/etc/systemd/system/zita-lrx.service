@@ -1,7 +1,7 @@
 [Unit]
 Description=zita LRX fourth-order crossover
 After=sound.target
-Requires=jackd.service
+Requires=jackd.target
 
 [Service]
 EnvironmentFile=-/medianet/medianet.conf
