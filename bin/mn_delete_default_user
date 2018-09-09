@@ -5,7 +5,7 @@ BASEDIR=`dirname $0`/..
 echo -n "Deleting user pi..."
 sudo userdel pi && success || bail "Is the user still logged in?"
 echo -n "Deleting sudo entry for pi..."
-sudo rm /etc/sudoers.d/010_pi-nopasswd && succes || failure
+sudo rm /etc/sudoers.d/010_pi-nopasswd && success || failure
 echo -n "Deleting home directory"
 sudo rm -rf /home/pi/ && success || failure
 
