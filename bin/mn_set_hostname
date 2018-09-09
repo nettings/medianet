@@ -7,7 +7,7 @@ BASEDIR=`dirname $0`/..
 MAC_LOCALPART=`ip link show |  awk '$1 ~ /ether/ { print $2 }' | sed 's/\://g' | head -n 1 | cut -c 7-12`
 NEW_HOSTNAME="mn_$MAC_LOCALPART"
 echo -n "Setting hostname to $NEW_HOSTNAME..."
-sudo /bin/bash -c 'echo "$NEW_HOSTNAME" > /etc/hostname' && success || failure
+sudo /bin/bash -c "echo $NEW_HOSTNAME > /etc/hostname" && success || failure
 echo -n "Modifying hosts file..."
 sudo sed -i "s/$HOSTNAME/$NEW_HOSTNAME/g" /etc/hosts && success || failure
 
