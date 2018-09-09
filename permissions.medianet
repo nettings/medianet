@@ -17,9 +17,11 @@
 'overlay/usr/local/bin/rdfconvert' root:root 755
 'overlay/usr/local/bin/mn_make_writable' root:root 755
 'overlay/usr/local/bin/zita-j2n' root:root 755
+'overlay/usr/local/bin/mn_modpurge' root:root 755
 'overlay/usr/local/bin/mn_make_readonly' root:root 755
 'overlay/usr/local/bin/mn_is_writable' root:root 755
 'overlay/usr/local/bin/mn_jackwait' root:root 755
+'overlay/usr/local/bin/mn_modsave' root:root 755
 'overlay/usr/local/bin/zita-n2j' root:root 755
 'overlay/usr/local/bin/mn_jack_watchdog' root:root 755
 'overlay/usr/local/lib' root:root 755
@@ -41,6 +43,7 @@
 'overlay/etc/systemd/network/99-default.link' root:root 644
 'overlay/etc/systemd/system' root:root 755
 'overlay/etc/systemd/system/mod-host.service' root:root 644
+'overlay/etc/systemd/system/jackd.target' root:root 644
 'overlay/etc/systemd/system/zita-lrx.service' root:root 644
 'overlay/etc/systemd/system/zita-njbridge.service' root:root 644
 'overlay/etc/systemd/system/jackd.service' root:root 644
@@ -75,6 +78,7 @@
 'overlay/etc/icecast2/log/README' icecast2:icecast 644
 'overlay/etc/darkice.cfg' root:root 644
 'overlay/etc/bash.bashrc' root:root 644
+'overlay/etc/cron.monthly' root:root 755
 'overlay/etc/sudoers.d' root:root 755
 'overlay/etc/sudoers.d/10_medianet-nopasswd' root:root 440
 'overlay/etc/lighttpd' root:root 755
@@ -89,6 +93,7 @@
 'overlay/etc/ufw/user6.rules' root:root 640
 'overlay/etc/ufw/ufw.conf' root:root 644
 'overlay/etc/motd' root:root 644
+'overlay/etc/cron.hourly' root:root 755
 'overlay/var' root:root 755
 'overlay/var/medianet' medianet:medianet 755
 'overlay/var/medianet/mod-host' medianet:medianet 755

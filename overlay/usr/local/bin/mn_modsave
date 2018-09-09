@@ -1,0 +1,5 @@
+#!/bin/bash
+
+. /medianet/medianet.conf
+
+wget -q -O - http://localhost:80/lv2rdf.php?dumpPersistenceCommands > "$MOD_SETTINGSDIR"/state.`date -Is`
