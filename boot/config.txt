@@ -58,6 +58,6 @@ dtparam=spi=on
 # medianet-specific settings:
 
 dtoverlay=pi3-disable-wifi
-# dtoverlay=pi3-disable-bt
+dtoverlay=pi3-disable-bt
 dtoverlay=hifiberry-dacplus
 sdtv_mode=2
