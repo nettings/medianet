@@ -1,0 +1,77 @@
+#!/bin/bash
+
+. /medianet/bin/mn_includes
+
+. $MEDIANETCONF
+
+case $1 in
+  down)
+    MODE=down
+    ;;
+  up)
+    MODE=up
+    ;;
+  *) cat << EOF 
+$0 controls the soundcard's hardware volume in a smooth way
+$0 [down|up]
+"down" fades from current value to zero.
+"up" fades from current value to target value stored in "$ALSA_VOLUME_FILE".
+EOF
+    exit 1
+    ;;
+esac
+
+
+CURVALS=`amixer sget "$ALSA_VOLUME" | grep -Eo \[[0-9]+%\] | grep -Eo [0-9]+`
+STEP=1
+WAIT=0.1
+k=0
+for i in $CURVALS ; do
+  CURRENT[$((k++))]=$i
+done  
+case $MODE in
+  down)
+    for (( i=0; i<k; i++ )) ; do
+      TARGET[$i]=0
+    done
+    ;;
+  up)
+    i=0
+    while read line; do
+        TARGET[$((i++))]=$line
+    done < $ALSA_VOLUME_FILE
+    ;;
+esac      
+      
+TODO=$k
+while [[ "$TODO" -gt 0 ]] ; do
+  CMD=
+  for (( i=0; i<k; i++ )) ; do
+  
+    if (( ${CURRENT[$i]} + $STEP < ${TARGET[$i]} )) ; then
+      (( CURRENT[$i] += $STEP ))
+    elif (( ${CURRENT[$i]} < ${TARGET[$i]} )) ; then
+      (( CURRENT[$i] = ${TARGET[$i]} ))
+      (( TODO-- ))
+    elif (( ${CURRENT[$i]} - $STEP > ${TARGET[$i]} )) ; then
+      (( CURRENT[$i] -= $STEP ))
+    elif (( ${CURRENT[$i]} > ${TARGET[$i]} )) ; then
+      (( CURRENT[$i] = ${TARGET[$i]} ))
+      (( TODO-- ))
+    fi
+#    if (( ${VALUE[$i]} <= $STEP && ${VALUE[$i]} > 0 )) ; then 
+#      VALUE[$i]=0
+#      (( TODO-- ))
+#    elif (( ${VALUE[$i]} >= $STEP )) ; then
+#      VALUE[$i]=$(( ${VALUE[$i]} + $STEP ))
+#    fi
+    CMD+=${CURRENT[$i]}
+    CMD+="%," 
+  done
+  if [[ $CMD = $OLDCMD ]] ; then
+    break # we're done
+  fi
+  amixer -q sset "$ALSA_VOLUME" $CMD
+  sleep $WAIT
+  OLDCMD=$CMD
+done
