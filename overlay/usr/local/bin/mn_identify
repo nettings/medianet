@@ -1,0 +1,18 @@
+#!/bin/bash
+
+. /medianet/bin/mn_includes
+
+LEDDIR=/sys/class/leds/led0
+OLD_TRIGGER=`cat $LEDDIR/trigger | grep -Eo "\[[a-z0-9-]+\]" | grep -Eo "[a-z0-9-]+"`
+
+for (( i=0 ; i<20 ; i++)) ; do
+  sudo /bin/bash -c "echo 0 > $LEDDIR/brightness"
+  sleep 0.2
+  sudo /bin/bash -c "echo 1 > $LEDDIR/brightness"
+  sleep 0.8
+done
+
+sudo /bin/bash -c "echo 0 > $LEDDIR/brightness"
+sudo /bin/bash -c "echo $OLD_TRIGGER > $LEDDIR/trigger"
+
+
