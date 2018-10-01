@@ -1,6 +1,9 @@
 #!/bin/bash
 
-BASEDIR=`dirname $0`
+BASEDIR=`readlink -f $0`
+echo $BASEDIR
+BASEDIR=`dirname $BASEDIR`
+echo $BASEDIR
 . "$BASEDIR"/mn_includes
 
 OLDPWD=`pwd`

@@ -28,4 +28,4 @@ sudo apt-get -y install icecast2 darkice
 # i2c tools for peripheral devices such as SenseHat or HifiBerries
 sudo apt-get -y install i2c-tools
 # rdf to json-ld conversion for lv2 plugin gui generator
-sudo apt-get install python3-rdflib python3-rdflib-jsonld
+sudo apt-get -y install python3-rdflib python3-rdflib-jsonld
