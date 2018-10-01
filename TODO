@@ -1,4 +1,4 @@
 FIXME: move mn_mod* cronjobs to system crontab and run as user medianet
 FIXME: properly integrate alsa-restore.service for smooth fade in and out on reboot
 FIXME: refactor fading code (constant fade time, automatic step size, curve)
-
+FIXME: don't optimize custom builds so agressively (they don't run on RPi2 anymore). Maybe find a good march=native setting?
