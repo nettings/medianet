@@ -21,6 +21,7 @@
 'overlay/usr/local/bin/mn_make_readonly' root:root 755
 'overlay/usr/local/bin/mn_is_writable' root:root 755
 'overlay/usr/local/bin/mn_jackwait' root:root 755
+'overlay/usr/local/bin/mn_fade' root:root 755
 'overlay/usr/local/bin/mn_modsave' root:root 755
 'overlay/usr/local/bin/zita-n2j' root:root 755
 'overlay/usr/local/bin/mn_jack_watchdog' root:root 755
@@ -102,8 +103,6 @@
 'overlay/var/cache/lighttpd' root:root 755
 'overlay/var/lib' root:root 755
 'overlay/var/lib/sudo' root:root 755
-'overlay/var/lib/alsa' root:root 755
-'overlay/var/lib/alsa/asound.state' root:root 644
 'overlay/var/www' root:root 755
 'overlay/var/www/html' root:root 755
 'overlay/var/www/html/lv2rdf.css' root:root 644
