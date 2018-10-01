@@ -1,6 +1,9 @@
 #!/bin/bash
 
-BASEDIR=`dirname $0`
+BASEDIR=`readlink -f $0`
+echo $BASEDIR
+BASEDIR=`dirname $BASEDIR`
+echo $BASEDIR
 . "$BASEDIR"/mn_includes
 
 OLDPWD=`pwd`
@@ -46,6 +49,7 @@ from_tar() {
 scream "Iterating over \"$TARGET\"."
 
 cd "$BASEDIR/../custom_builds"
+echo $BASEDIR
 find "$BASEDIR" -name "$TARGET" ! -name "*~" | while read line ; do
   scream "Running "`basename $line`"..."
   . $line && success || failure
