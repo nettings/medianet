@@ -16,6 +16,6 @@ ExecStartPost=/usr/local/bin/mn_modconf --all
 RestartSec=5
 Restart=on-failure
 ExecStop=/usr/local/bin/mn_modsave
-
+ExecStop=/usr/local/bin/mn_fade down
 [Install]
 WantedBy=multi-user.target

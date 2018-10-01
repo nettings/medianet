@@ -11,6 +11,7 @@ LimitRTPRIO=85
 LimitMEMLOCK=700000000
 ExecStartPre=/usr/local/bin/mn_jackwait
 ExecStart=/usr/local/bin/zita-n2j $ZITANJ_OPTIONS
+ExecStartPost=/usr/local/bin/mn_fade up
 RestartSec=5
 Restart=always
 

@@ -12,6 +12,7 @@ LimitMEMLOCK=700000000
 User=medianet
 Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket"
 ExecStartPre=/bin/sleep 20
+ExecStartPre=/usr/bin/amixer -q sset $ALSA_VOLUME 0
 ExecStart=/usr/bin/jackd $JACK_OPTIONS
 RestartSec=5
 Restart=on-failure
