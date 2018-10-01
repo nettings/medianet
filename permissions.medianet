@@ -25,6 +25,7 @@
 'overlay/usr/local/bin/mn_modsave' root:root 755
 'overlay/usr/local/bin/zita-n2j' root:root 755
 'overlay/usr/local/bin/mn_jack_watchdog' root:root 755
+'overlay/usr/local/bin/mn_identify' root:root 755
 'overlay/usr/local/lib' root:root 755
 'overlay/usr/local/lib/rdfconvert.py' root:root 644
 'overlay/usr/local/lib/lv2' root:root 755
