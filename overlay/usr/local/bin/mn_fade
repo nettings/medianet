@@ -37,9 +37,9 @@ case $MODE in
     ;;
   up)
     i=0
-    while read line; do
-        TARGET[$((i++))]=$line
-    done < $ALSA_VOLUME_FILE
+    for (( i=0; i<k; i++ )) ; do
+        TARGET[$i]=$ALSA_VOLUME_DEFAULT
+    done
     ;;
 esac      
       
