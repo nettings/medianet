@@ -8,7 +8,7 @@ LED1DIR=/sys/class/leds/led1
 OLD_LED0TRIG=`cat $LED0DIR/trigger | grep -Eo "\[[a-z0-9-]+\]" | grep -Eo "[a-z0-9-]+"`
 OLD_LED1TRIG=`cat $LED1DIR/trigger | grep -Eo "\[[a-z0-9-]+\]" | grep -Eo "[a-z0-9-]+"`
 
-sudo /bin/bash << EOF
+sudo -b /bin/bash << EOF
 
 for (( i=0 ; i<20 ; i++)) ; do
   echo 0 > $LED0DIR/brightness
