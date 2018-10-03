@@ -34,25 +34,22 @@ for SOURCE in `find -P * \! -name README \! -type d` ; do
 	BACKUP=/"$SOURCE".mn_
 
 	echo "$TARGET:" 
-	echo -ne "\tBackup..."
 	# Check if regular file or dir (not link, that would be us!)
 	# exists in distribution file system, if so: back it up.
 	if [[ ( -f "$TARGET" && ! -L "$TARGET" ) || ( -d "$TARGET" && ! -L "$TARGET" ) ]] ; then
 		# Do not overwrite existing backups.
 		if [[ ! -e "$BACKUP" ]] ; then
+			echo -ne "\tCreate backup..."
 			sudo mv "$TARGET" "$BACKUP" \
 				&& success || bail
-		else echo " already exists."
 		fi
-	else
-		echo " not required."
 	fi
 	# Replace original file with symbolic link to medianet overlay.
         if [[ -e "$TARGET" || -L "$TARGET" ]] ; then
                 echo -ne "\tRemoving old file/link..."
-                sudo rm -r "$TARGET" && success || failure
+                sudo rm -r "$TARGET" || failure
         fi
-	echo -ne "\tLinking..."
+	echo -ne " Linking..."
 	sudo ln -Tn -r -s "$PWD"/"$SOURCE" "$TARGET" \
 		&& success || bail
 done
