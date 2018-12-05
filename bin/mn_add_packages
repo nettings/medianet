@@ -29,3 +29,5 @@ sudo apt-get -y install icecast2 darkice
 sudo apt-get -y install i2c-tools
 # rdf to json-ld conversion for lv2 plugin gui generator
 sudo apt-get -y install python3-rdflib python3-rdflib-jsonld
+# some graphics tools in case we want to use the hdmi output
+sudo apt-get -y install fbi omxplayer
