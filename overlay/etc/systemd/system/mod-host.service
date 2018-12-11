@@ -10,12 +10,9 @@ Type=forking
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-ExecStartPre=/usr/local/bin/mn_jackwait zita-n2j:out_2
-ExecStart=/usr/local/bin/mod-host
+ExecStartPre=/usr/local/bin/mn_jackwait $MOD_HOST_WAITPORT
+ExecStart=/usr/local/bin/mod-host $MOD_HOST_OPTIONS
 ExecStartPost=/usr/local/bin/mn_modconf --all
 RestartSec=5
 Restart=on-failure
 ExecStop=/usr/local/bin/mn_modsave
-ExecStop=/usr/local/bin/mn_fade down
-[Install]
-WantedBy=multi-user.target
