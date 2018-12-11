@@ -15,7 +15,7 @@ case $1 in
 $0 controls the soundcard's hardware volume in a smooth way
 $0 [down|up]
 "down" fades from current value to zero.
-"up" fades from current value to target value stored in "$ALSA_VOLUME_FILE".
+"up" fades from current value to target value configured in "$ALSA_VOLUME_DEFAULT" in file $MEDIANETCONF.
 EOF
     exit 1
     ;;
