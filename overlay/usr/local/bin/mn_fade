@@ -22,7 +22,14 @@ EOF
 esac
 
 
+if [[ -z "$ALSA_VOLUME" ]] ; then
+  fail "No ALSA_VOLUME configured in $MEDIANETCONF. Skipping."
+fi
+
 CURVALS=`amixer sget "$ALSA_VOLUME" | grep -Eo \[[0-9]+%\] | grep -Eo [0-9]+`
+if [[ "$?" -ne 0 ]]  ; then
+  bail "Could not get mixer control $ALSA_VOLUME - maybe it does not exist on this hardware?"
+fi
 STEP=1
 WAIT=0.1
 k=0
