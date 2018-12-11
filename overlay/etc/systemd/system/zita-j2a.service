@@ -1,0 +1,15 @@
+[Unit]
+Description=zita JACK-to-ALSA bridge
+After=jackd.target
+Requires=jackd.target
+
+[Service]
+EnvironmentFile=-/medianet/medianet.conf
+User=medianet
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+ExecStartPre=/usr/local/bin/mn_jackwait $ZITA_J2A_WAITPORT
+ExecStart=/usr/bin/zita-j2a $ZITA_J2A_OPTIONS
+RestartSec=5
+Restart=always
+

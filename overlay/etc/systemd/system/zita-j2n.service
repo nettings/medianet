@@ -1,0 +1,18 @@
+[Unit]
+Description=zita JACK-to-Network bridge
+After=jackd.target
+After=network-online.target
+Requires=jackd.target
+
+[Service]
+EnvironmentFile=-/medianet/medianet.conf
+User=medianet
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+ExecStartPre=/usr/local/bin/mn_jackwait $ZITA_J2N_WAITPORT
+ExecStart=/usr/local/bin/zita-j2n $ZITA_J2N_OPTIONS
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
