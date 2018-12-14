@@ -28,9 +28,10 @@ fi
 
 CURVALS=`amixer sget "$ALSA_VOLUME" | grep -Eo \[[0-9]+%\] | grep -Eo [0-9]+`
 if [[ "$?" -ne 0 ]]  ; then
-  bail "Could not get mixer control $ALSA_VOLUME - maybe it does not exist on this hardware?"
+  echo "Could not get mixer control $ALSA_VOLUME - maybe it does not exist on this hardware?"
+  exit 0;
 fi
-STEP=1
+STEP=3
 WAIT=0.1
 k=0
 for i in $CURVALS ; do
