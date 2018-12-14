@@ -13,3 +13,6 @@ ExecStart=/usr/bin/zita-a2j $ZITA_A2J_OPTIONS
 RestartSec=5
 Restart=always
 
+[Install]
+WantedBy=multi-user.target
+
