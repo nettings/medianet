@@ -3,54 +3,26 @@
 BASEDIR=`dirname $0`/..
 . "$BASEDIR"/bin/mn_includes
 
-# This script deploys all files in the medianet/boot directory as symbolic links
-# throughout the distribution file system.
 
-OLDPWD=$PWD
-# we're deploying the main overlay
-cd "$BASEDIR"/boot
+CONF="medianet.txt"
 
-scream "Checking directory tree..."
-# Iterate over all directories in overlay
-for DIR in `find -P * -type d` ; do
-	TARGET=/boot/"$DIR"
-	echo -n "$TARGET:"
-	if [[ ! -d "$TARGET" ]] ; then
-		echo " creating..."
-		sudo mkdir "$TARGET" && success || bail
-	else
-		echo " exists."
-	fi
-done
 
-scream "Deploying overlay..."
-# Iterate over all files in overlay
-for SOURCE in `find -P * \! -name README \! -type d` ; do
-	TARGET=/boot/"$SOURCE"
-	BACKUP=/"$SOURCE".mn_
+echo -n "Checking for $CONF..."
+if [[ ! -f /boot/"$CONF" ]] ; then
+  echo -n " not found. Installing..."
+  sudo cp /medianet/config/this/$CONF /boot || failure && success
+else
+  echo " found."
+fi
 
-	echo "$TARGET:" 
-	echo -en "\tBackup"
-	# Check if regular file exists in distribution file system, if so: back it up.
-	if [[ ( -f "$TARGET" && ! -L "$TARGET" ) ]] ; then
-		# Do not overwrite existing backups.
-		if [[ ! -e "$BACKUP" ]] ; then
-			sudo mv "$TARGET" "$BACKUP" \
-				&& success || bail
-		else echo " already exists."
-		fi
-	else
-		echo " not required."
-	fi
-	# Replace original file with symbolic link to medianet overlay.
-	if [[ -e "$TARGET" ]] ; then
-		echo -ne "\tRemoving existing..."
-		sudo rm -r "$TARGET" && success || failure
-	fi
-	echo -ne "\tInstalling..."
-	sudo cp "$PWD"/"$SOURCE" "$TARGET" \
-		&& success || bail
-done
+echo -n "Checking if $CONF is included from config.txt..."
+LINE="include $CONF"
+if ! grep "$LINE" /boot/config.txt > /dev/null ; then
+  echo -n " no. Including..."
+  sudo bash -c "echo $LINE >> /boot/config.txt" || failure && success
+else
+  echo " yes."
+fi
 
-cd "$OLDPWD"
 
+  
