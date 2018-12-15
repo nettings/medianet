@@ -6,7 +6,7 @@ After=time-sync.target
 Wants=cpufreq.service
 
 [Service]
-EnvironmentFile=-/medianet/medianet.conf
+EnvironmentFile=-/medianet/config/this/medianet.conf
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet

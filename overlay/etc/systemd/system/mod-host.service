@@ -5,7 +5,7 @@ Requires=jackd.target
 Wants=zita-njbridge.service lighttpd.service
 
 [Service]
-EnvironmentFile=-/medianet/medianet.conf
+EnvironmentFile=-/medianet/config/this/medianet.conf
 Type=forking
 LimitRTPRIO=85
 LimitMEMLOCK=700000000

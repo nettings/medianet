@@ -5,7 +5,7 @@ After=network-online.target
 Requires=jackd.target
 
 [Service]
-EnvironmentFile=-/medianet/medianet.conf
+EnvironmentFile=-/medianet/config/this/medianet.conf
 User=medianet
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
