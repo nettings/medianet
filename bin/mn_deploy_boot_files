@@ -7,12 +7,12 @@ BASEDIR=`dirname $0`/..
 CONF="medianet.txt"
 
 
-echo -n "Checking for $CONF..."
-if [[ ! -f /boot/"$CONF" ]] ; then
-  echo -n " not found. Installing..."
+echo -n "Checking if $CONF is up to date..."
+if ! cmp /medianet/config/this/$CONF /boot/"$CONF" > /dev/null ; then
+  echo -n " no. Installing..."
   sudo cp /medianet/config/this/$CONF /boot || failure && success
 else
-  echo " found."
+  echo " yes."
 fi
 
 echo -n "Checking if $CONF is included from config.txt..."
@@ -31,7 +31,7 @@ OLDPWD=`pwd`
 cd /medianet/boot
 for i in `/usr/bin/find -type f` ; do 
   echo -n "Checking if $i is already installed..."
-  if ! cmp "$i" /boot/"$i" ; then
+  if ! cmp "$i" /boot/"$i" > /dev/null; then
     echo -n " no. Installing..."
     sudo cp "$i" /boot || failure && success
   else
