@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./medianet/bin/mn_includes
+. /medianet/bin/mn_includes
 
 . $MEDIANETCONF
 
