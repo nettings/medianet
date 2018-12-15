@@ -1,4 +1,4 @@
-MEDIANETCONF="/medianet/medianet.conf"
+MEDIANETCONF="/medianet/config/this/medianet.conf"
 
 function scream {
 
