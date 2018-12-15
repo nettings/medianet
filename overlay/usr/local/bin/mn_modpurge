@@ -1,5 +1,7 @@
 #!/bin/bash
 
-. /medianet/medianet.conf
+. /medianet/bin/mn_includes
+
+. $MEDIANETCONF
 
 /usr/bin/find "$MOD_SETTINGSDIR" -name "state.*" -cmin +180 -delete

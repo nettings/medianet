@@ -1,6 +1,8 @@
 #!/bin/bash
 
-. /medianet/medianet.conf
+./medianet/bin/mn_includes
+
+. $MEDIANETCONF
 
 unset -v CFILE
 
