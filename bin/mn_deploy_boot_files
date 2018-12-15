@@ -17,12 +17,27 @@ fi
 
 echo -n "Checking if $CONF is included from config.txt..."
 LINE="include $CONF"
-if ! grep "$LINE" /boot/config.txt > /dev/null ; then
+
+if ! /bin/grep "$LINE" /boot/config.txt > /dev/null ; then
   echo -n " no. Including..."
   sudo bash -c "echo $LINE >> /boot/config.txt" || failure && success
 else
   echo " yes."
 fi
 
+scream "Iterating over boot/:"
+
+OLDPWD=`pwd`
+cd /medianet/boot
+for i in `/usr/bin/find -type f` ; do 
+  echo -n "Checking if $i is already installed..."
+  if ! cmp "$i" /boot/"$i" ; then
+    echo -n " no. Installing..."
+    sudo cp "$i" /boot || failure && success
+  else
+    echo " yes."
+  fi
+done
+cd $OLDPWD
 
   
