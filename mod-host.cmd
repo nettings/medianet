@@ -1,1 +1,0 @@
-config/HifiBerry_Digi+IO/mod-host.cmd
