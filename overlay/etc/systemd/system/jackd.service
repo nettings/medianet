@@ -2,6 +2,7 @@
 Description=JACK Audio Connection Kit
 After=sound.target
 Before=jackd.target
+After=ntp.service
 After=time-sync.target
 Wants=cpufreq.service
 
