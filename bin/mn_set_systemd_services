@@ -6,15 +6,27 @@ BASEDIR=`dirname $0`
 . "$MEDIANETCONF"
 
 
-for i in $SYSTEMD_ENABLE; do
-  echo -n "Enabling $i... "
-  sudo systemctl enable "$i" && success || failure
-done
 
-for i in $SYSTEMD_DISABLE; do
-  echo -n "Stopping  $i... "
-  sudo systemctl stop "$i" && success || failure
-  echo -n "Disabling $i... "
-  sudo systemctl disable "$i" && success || failure
+OLDWD=`pwd`
+cd /medianet/overlay/usr/lib/systemd/system/
+for i in *.service ; do 
+  echo "$i: "
+  echo $SYSTEMD_ENABLE | grep $i > /dev/null && {
+    sudo systemctl --quiet is-enabled "$i" && {
+      echo -e "\talready enabled."
+    } || {
+      echo -ne "\tenabling..."
+      sudo systemctl enable "$i" | tr "\n" " " && success || failure
+    }
+  } || {
+    sudo systemctl --quiet is-active "$i" 2> /dev/null && {
+      echo -ne "\tstopping..." 
+      sudo systemctl stop "$i" | tr "\n" " " && success || failure
+    } || echo -e "\talready stopped."
+    sudo systemctl --quiet is-enabled "$i" 2> /dev/null && {
+      echo -ne "\tdisabling..."
+      sudo systemctl disable "$i" | tr "\n " " " && success || failure
+    } || echo -e "\talready disabled."
+  }
 done
-
+cd "$OLDWD"
