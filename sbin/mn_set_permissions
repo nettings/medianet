@@ -2,6 +2,8 @@
 
 . /medianet/lib/mn_includes
 
+BASEDIR=`dirname $0`
+
 OLDPWD=`pwd`
 PERMFILE="permissions.medianet"
 DEFOWNER="root:root"
