@@ -1,8 +1,0 @@
-# medianet-specific settings:
-
-dtparam=audio=off
-dtoverlay=pi3-disable-wifi
-dtoverlay=pi3-disable-bt
-#dtoverlay=hifiberry-dacplus
-dtoverlay=hifiberry-digi
-
