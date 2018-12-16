@@ -4,28 +4,36 @@
 
 . $MEDIANETCONF
 
-unset -v CFILE
-
 case $1 in
   --base-setup)
-    CFILE=$MOD_CMDFILE
+    # get base configuration from system-wide config file:
+    CONF="$MOD_HOST_CONFIG"
     ;;
   --parameters)
-    # look for latest file in dir:
+    # get user parameter settings from persistent storage,
+    # look for latest (=most current) file in dir:
     for file in "$MOD_SETTINGSDIR"/*; do
       test "$file" -nt "$CFILE" && CFILE=$file
     done
+    CONF="`cat $CFILE`"
     ;;
-  --all|*)
+  --all)
     $0 --base-setup
     $0 --parameters
     exit 0
+    ;;
+  *)
+    echo "$0 [--base-setup ][--parameters ][--all]"
+    echo "configures a running mod-host instance via its local telnet interface."
+    echo "--base-setup sets the mod-host base configuration defined in $MEDIANETCONF."
+    echo "--parameters restores the most recent user settings of the plugin chain."
+    echo "--all does both."
     ;;
 esac
 
 # wait for mod-host to become ready
 until echo "" | nc -N localhost 5555 > /dev/null; do sleep 1; done
-cat "$CFILE" | grep -v -e "^#" | while read -r line ; do
+echo "$CONF" | grep -v -e "^#" | while read -r line ; do
 	echo "$line"
 	test -n "$line" && echo $line | nc -N localhost 5555
 	echo 
