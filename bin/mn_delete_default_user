@@ -1,6 +1,5 @@
 #!/bin/bash
-BASEDIR=`dirname $0`/..
-. "$BASEDIR"/bin/mn_includes
+. /medianet/lib/mn_includes
 
 echo -n "Deleting user pi..."
 sudo userdel pi && success || bail "Is the user still logged in?"

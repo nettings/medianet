@@ -1,7 +1,6 @@
 #!/bin/bash
 
-BASEDIR=`dirname $0`
-. "$BASEDIR"/mn_includes
+. /medianet/lib/mn_includes
 
 TIMEZONE="Europe/Berlin"
 DEFAULTLOCALE="en_US.UTF-8"

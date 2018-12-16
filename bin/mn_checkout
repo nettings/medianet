@@ -4,7 +4,7 @@ BASEDIR=`readlink -f $0`
 echo $BASEDIR
 BASEDIR=`dirname $BASEDIR`
 echo $BASEDIR
-. "$BASEDIR"/mn_includes
+. /medianet/lib/mn_includes
 
 OLDPWD=`pwd`
 if [[ -z "$1" ]] ; then

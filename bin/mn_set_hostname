@@ -1,6 +1,5 @@
 #!/bin/bash
-BASEDIR=`dirname $0`/..
-. "$BASEDIR"/bin/mn_includes
+. /medianet/lib/mn_includes
 
 
 # This helper creates a unique host name based on the non-vendor part of the ethernet MAC address.

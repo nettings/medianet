@@ -1,7 +1,6 @@
 #!/bin/bash
 
-BASENAME=`dirname $0`
-. $BASENAME/mn_includes
+. /medianet/lib/mn_includes
 
 echo -n "Creating group medianet..."
 sudo /usr/sbin/groupadd medianet && success || failure

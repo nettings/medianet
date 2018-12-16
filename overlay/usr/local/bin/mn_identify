@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. /medianet/bin/mn_includes
-
 LED0DIR=/sys/class/leds/led0
 LED1DIR=/sys/class/leds/led1
 

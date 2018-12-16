@@ -1,7 +1,8 @@
 #!/bin/bash
 
+. /medianet/lib/mn_includes
+
 BASEDIR=`dirname $0`/..
-. "$BASEDIR"/bin/mn_includes
 
 # This script deploys all files in the /medianet/overlay directory as symbolic links
 # throughout the distribution file system.
