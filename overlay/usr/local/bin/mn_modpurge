@@ -4,4 +4,8 @@
 
 . $MEDIANETCONF
 
-/usr/bin/find "$MOD_SETTINGSDIR" -name "state.*" -cmin +180 -delete
+MAX_AGE_MIN=180
+# check if newer versions actually exist before nuking old ones:
+if /usr/bin/find "$MOD_SETTINGSDIR" -name "state.*" -cmin -$MAX_AGE_MIN ; then
+  /usr/bin/find "$MOD_SETTINGSDIR" -name "state.*" -cmin +$MAX_AGE_MIN -delete
+fi
