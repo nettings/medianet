@@ -9,7 +9,7 @@ CONF=/boot/medianet.txt
 echo "Boot options from $MEDIANETCONF:"
 echo "$CONFIG_TXT_OPTIONS"
 echo -n "Writing to $CONF..."
-sudo bash -c "echo $CONFIG_TXT_OPTIONS > $CONF" > /dev/null || failure && success
+sudo bash -c "echo \"$CONFIG_TXT_OPTIONS\" > $CONF" || failure && success
 
 echo -n "Checking if `basename $CONF` is included from config.txt..."
 LINE="include `basename $CONF`"
