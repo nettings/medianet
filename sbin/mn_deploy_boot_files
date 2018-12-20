@@ -2,20 +2,17 @@
 
 . /medianet/lib/mn_includes
 
+. $MEDIANETCONF
 
-CONF="medianet.txt"
+CONF=/boot/medianet.txt
 
+echo "Boot options from $MEDIANETCONF:"
+echo "$CONFIG_TXT_OPTIONS"
+echo -n "Writing to $CONF..."
+sudo bash -c "echo $CONFIG_TXT_OPTIONS > $CONF" > /dev/null || failure && success
 
-echo -n "Checking if $CONF is up to date..."
-if ! cmp /medianet/config/this/$CONF /boot/"$CONF" > /dev/null ; then
-  echo -n " no. Installing..."
-  sudo cp /medianet/config/this/$CONF /boot || failure && success
-else
-  echo " yes."
-fi
-
-echo -n "Checking if $CONF is included from config.txt..."
-LINE="include $CONF"
+echo -n "Checking if `basename $CONF` is included from config.txt..."
+LINE="include `basename $CONF`"
 
 if ! /bin/grep "$LINE" /boot/config.txt > /dev/null ; then
   echo -n " no. Including..."
