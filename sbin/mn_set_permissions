@@ -11,7 +11,7 @@ DEFPERMS="u=rwX,g=rX,o=rX"
 
 cd "$BASEDIR"/../
 
-for FILE in `sudo find -P overlay/ boot/ ! -type l`; do
+for FILE in `sudo find overlay/etc/sudoers.d` `sudo find -P overlay/ boot/ ! -type l `; do
   echo -n "$FILE: "
   RULE=`grep -E "^.$FILE." $PERMFILE`
   if [[ -n "$RULE" ]] ; then
