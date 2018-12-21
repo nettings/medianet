@@ -5,27 +5,29 @@
 . "$MEDIANETCONF"
 
 
+SRCPATH=/medianet/systemd
+
+#FIXME iterate over SYSTEMD_DISABLE first!
 
 OLDWD=`pwd`
-cd /medianet/overlay/usr/lib/systemd/system/
-for i in *.service ; do 
-  echo "$i: "
+cd "$SRCPATH"
+for i in *service *target ; do 
+  echo "`basename $i`: "
   echo $SYSTEMD_ENABLE | grep $i > /dev/null && {
-    sudo systemctl --quiet is-enabled "$i" && {
+    sudo systemctl --quiet is-enabled "$i" 2> /dev/null && {
       echo -e "\talready enabled."
     } || {
       echo -ne "\tenabling..."
-      sudo systemctl enable "$i" | tr "\n" " " && success || failure
+      sudo systemctl enable "$SRCPATH/$i" | tr "\n" " " && success || failure
     }
   } || {
     sudo systemctl --quiet is-active "$i" 2> /dev/null && {
       echo -ne "\tstopping..." 
       sudo systemctl stop "$i" | tr "\n" " " && success || failure
     } || echo -e "\talready stopped."
-    sudo systemctl --quiet is-enabled "$i" 2> /dev/null && {
+    sudo systemctl --quiet is-enabled "$SRCPATH/$i" 2> /dev/null && {
       echo -ne "\tdisabling..."
       sudo systemctl disable "$i" | tr "\n " " " && success || failure
     } || echo -e "\talready disabled."
   }
 done
-cd "$OLDWD"
