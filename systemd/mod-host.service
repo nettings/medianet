@@ -1,8 +1,8 @@
 [Unit]
 Description=mod-host LV2 plugin host for JACK
-After=jackd.target zita-njbridge.service lighttpd.service
-Requires=jackd.target
-Wants=zita-njbridge.service lighttpd.service
+After=jackd.target 
+After=lighttpd.service
+Wants=lighttpd.service
 
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf

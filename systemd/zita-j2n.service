@@ -2,7 +2,6 @@
 Description=zita JACK-to-Network bridge
 After=jackd.target
 After=network-online.target
-Requires=jackd.target
 
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf

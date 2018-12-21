@@ -1,7 +1,6 @@
 [Unit]
 Description=zita JACK-to-ALSA bridge
 After=jackd.target
-Requires=jackd.target
 
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf

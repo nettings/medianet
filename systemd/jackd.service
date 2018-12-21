@@ -1,10 +1,12 @@
 [Unit]
 Description=JACK Audio Connection Kit
+After=cpufreq.service
 After=sound.target
-Before=jackd.target
 After=ntp.service
 After=time-sync.target
+Before=jackd.target
 Wants=cpufreq.service
+Requires=jackd.target
 
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf
