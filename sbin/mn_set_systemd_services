@@ -7,11 +7,25 @@
 
 SRCPATH=/medianet/systemd
 
-#FIXME iterate over SYSTEMD_DISABLE first!
+scream "Services to disable:"
+
+for i in $SYSTEMD_DISABLE ; do
+  echo "$i: "
+  sudo systemctl --quiet is-enabled 2> /dev/null && {
+    echo -ne "\t disabling..."
+    sudo systemctl disable "$i" && success || failure
+  } || {
+    echo -e "\t already disabled."
+  } 
+done
+
+scream "Services to enable:"
+  
+#FIXME: improve logic so that non-custom services can be enabled as well.
 
 OLDWD=`pwd`
 cd "$SRCPATH"
-for i in *service *target ; do 
+for i in *service ; do 
   echo "`basename $i`: "
   echo $SYSTEMD_ENABLE | grep $i > /dev/null && {
     sudo systemctl --quiet is-enabled "$i" 2> /dev/null && {
