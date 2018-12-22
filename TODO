@@ -1,3 +1,4 @@
+FIXME: use BindTo=jackd.service for all jack clients.
 FIXME: figure out why time-sync.target does not work on raspbian stretch
 FIXME: move checkout and compile scriptlets into neat sub-directories of custom-builds/ - what was I thinking?
 FIXME: move mn_mod* cronjobs to system crontab and run as user medianet
