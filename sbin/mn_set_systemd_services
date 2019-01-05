@@ -13,7 +13,7 @@ for i in $SYSTEMD_DISABLE ; do
   echo "$i: "
   sudo systemctl --quiet is-enabled 2> /dev/null && {
     echo -ne "\t disabling..."
-    sudo systemctl disable "$i" && success || failure
+    sudo systemctl disable "$i"  && success || failure
   } || {
     echo -e "\t already disabled."
   } 
@@ -25,6 +25,12 @@ scream "Services to enable:"
 
 OLDWD=`pwd`
 cd "$SRCPATH"
+for i in *target ; do
+  echo -n "Disabling existing `basename $i`... "
+  sudo systemctl disable "$i"  && success || failure
+  echo -n "Linking `basename $i`: "
+  sudo systemctl link "$SRCPATH/$i" && success || failure
+done
 for i in *service ; do 
   echo "`basename $i`: "
   echo $SYSTEMD_ENABLE | grep $i > /dev/null && {
