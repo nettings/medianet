@@ -3,5 +3,8 @@ FIXME: figure out why time-sync.target does not work on raspbian stretch
 FIXME: move checkout and compile scriptlets into neat sub-directories of custom-builds/ - what was I thinking?
 FIXME: move mn_mod* cronjobs to system crontab and run as user medianet
 FIXME: properly integrate alsa-restore.service for smooth fade in and out on reboot
+FIXME: handle device name for fades in case it's not hw:0 (USB!)
 FIXME: refactor fading code (constant fade time, automatic step size, curve)
+FIXME: RPi3B+ with externally powered USB interface does not reboot cleanly (back-powering?)
+FIXME: USB audio interface dies when filesystems are remounted read-only.
 DONE: don't optimize custom builds so agressively (they don't run on RPi2 anymore). Maybe find a good march=native setting?
