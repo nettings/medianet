@@ -45,6 +45,7 @@
 'overlay/etc/systemd' root:root 755
 'overlay/etc/systemd/network' root:root 755
 'overlay/etc/systemd/network/99-default.link' root:root 644
+'overlay/etc/systemd/system' root:root 755
 'overlay/etc/systemd/journald.conf' root:root 644
 'overlay/etc/systemd/logind.conf' root:root 644
 'overlay/etc/dbus-1' root:root 755
@@ -101,10 +102,12 @@
 'overlay/var/lib/sudo' root:root 755
 'overlay/var/www' root:root 755
 'overlay/var/www/html' root:root 755
+'overlay/var/www/html/jquery-3.3.1.min.js' root:root 644
 'overlay/var/www/html/lv2rdf.css' root:root 644
+'overlay/var/www/html/jquery-ui.css' root:root 644
+'overlay/var/www/html/jquery-ui.min.js' root:root 644
 'overlay/var/www/html/lv2rdf.php' root:root 644
-'overlay/var/www/html/lv2rdf.html' root:root 644
 'overlay/var/www/html/lv2rdf.js' root:root 644
-'overlay/lib' root:root 755
+'overlay/var/www/html/index.html' root:root 644
 'boot' root:root 755
 'boot/cmdline.txt' root:root 755
