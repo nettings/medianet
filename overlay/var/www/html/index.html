@@ -1,1 +1,446 @@
-/var/www/html/lv2rdf.html
+
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <script src="jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous">​</script>
+    <script src="jquery-ui.min.js" integrity="sha384-Dziy8F2VlJQLMShA6FHWNul/veM9bCkRUaLqr199K94ntO5QUrLJBEbYegdSkkqX" crossorigin="anonymous">​</script>
+    <link rel="stylesheet" href="jquery-ui.css" integrity="sha384-xewr6kSkq3dBbEtB6Z/3oFZmknWn7nHqhLVLrYgzEFRbU/DHSxW7K3B44yWUN60D" crossorigin="anonymous"/>
+    <script src="lv2rdf.js">​</script>
+    <link rel="stylesheet" href="lv2rdf.css"/>
+  </head>
+  <body>
+    <main id="pluginList">
+      <section class="pluginGUI" id="plugin1">
+        <h1>x42-eq - Parametric Equalizer Mono</h1>
+        <div>
+          <div class="info">
+            <p>License: GPL</p>
+          </div>
+          <div class="ports">
+            <p>Audio inputs:
+           <span title="effect_1:in">In</span></p>
+          </div>
+          <form>
+            <fieldset>
+              <label for="plugin1-genid20">Enable</label>
+              <input id="plugin1-genid20_" name="enable_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin1-genid20" name="enable" type="hidden" value="1"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid31">Gain</label>
+              <div class="slider" id="plugin1-genid31_">​</div>
+              <input id="plugin1-genid31" class="value" name="gain" type="text" value="0" min="-18" max="18" title="[-18 ; 18]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid38" title="toggle to reset the peak">Reset Peak Hold</label>
+              <input id="plugin1-genid38_" name="peakreset_" type="checkbox" value="1" title="toggle to reset the peak" checked="checked"/>
+              <input id="plugin1-genid38" name="peakreset" type="hidden" value="1"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid39">Highpass</label>
+              <input id="plugin1-genid39_" name="HighPass_" type="checkbox" value="1"/>
+              <input id="plugin1-genid39" name="HighPass" type="hidden" value="0"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid40">Highpass Frequency</label>
+              <div class="slider" id="plugin1-genid40_">​</div>
+              <input id="plugin1-genid40" class="value" name="HPfreq" type="text" value="20" min="5" max="1250" title="[5 ; 1250]"/>
+              <abbr title="Hertz [1/s]">Hz</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid44">HighPass Resonance</label>
+              <div class="slider" id="plugin1-genid44_">​</div>
+              <input id="plugin1-genid44" class="value" name="HPQ" type="text" value="0.7" min="0" max="1.4" title="[0 ; 1.4]"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid2">Lowpass</label>
+              <input id="plugin1-genid2_" name="LowPass_" type="checkbox" value="1"/>
+              <input id="plugin1-genid2" name="LowPass" type="hidden" value="0"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid3">Lowpass Frequency</label>
+              <div class="slider" id="plugin1-genid3_">​</div>
+              <input id="plugin1-genid3" class="value" name="LPfreq" type="text" value="20000" min="500" max="20000" title="[500 ; 20000]"/>
+              <abbr title="Hertz [1/s]">Hz</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid7">LowPass Resonance</label>
+              <div class="slider" id="plugin1-genid7_">​</div>
+              <input id="plugin1-genid7" class="value" name="LPQ" type="text" value="1" min="0" max="1.4" title="[0 ; 1.4]"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid8">Lowshelf</label>
+              <input id="plugin1-genid8_" name="LSsec_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin1-genid8" name="LSsec" type="hidden" value="1"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid10">Lowshelf Frequency</label>
+              <div class="slider" id="plugin1-genid10_">​</div>
+              <input id="plugin1-genid10" class="value" name="LSfreq" type="text" value="80" min="25" max="400" title="[25 ; 400]"/>
+              <abbr title="Hertz [1/s]">Hz</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid11">Lowshelf Bandwidth</label>
+              <div class="slider" id="plugin1-genid11_">​</div>
+              <input id="plugin1-genid11" class="value" name="LSq" type="text" value="1" min="0.0625" max="4" title="[0.0625 ; 4]"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid12">Lowshelf Gain</label>
+              <div class="slider" id="plugin1-genid12_">​</div>
+              <input id="plugin1-genid12" class="value" name="LSgain" type="text" value="0" min="-18" max="18" title="[-18 ; 18]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid13">Section 1</label>
+              <input id="plugin1-genid13_" name="sec1_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin1-genid13" name="sec1" type="hidden" value="1"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid14">Frequency 1</label>
+              <div class="slider" id="plugin1-genid14_">​</div>
+              <input id="plugin1-genid14" class="value" name="freq1" type="text" value="160" min="20" max="2000" title="[20 ; 2000]"/>
+              <abbr title="Hertz [1/s]">Hz</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid15">Bandwidth 1</label>
+              <div class="slider" id="plugin1-genid15_">​</div>
+              <input id="plugin1-genid15" class="value" name="q1" type="text" value="0.6" min="0.0625" max="4" title="[0.0625 ; 4]"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid16">Gain 1</label>
+              <div class="slider" id="plugin1-genid16_">​</div>
+              <input id="plugin1-genid16" class="value" name="gain1" type="text" value="0" min="-18" max="18" title="[-18 ; 18]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid17">Section 2</label>
+              <input id="plugin1-genid17_" name="sec2_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin1-genid17" name="sec2" type="hidden" value="1"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid18">Frequency 2</label>
+              <div class="slider" id="plugin1-genid18_">​</div>
+              <input id="plugin1-genid18" class="value" name="freq2" type="text" value="397" min="40" max="4000" title="[40 ; 4000]"/>
+              <abbr title="Hertz [1/s]">Hz</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid19">Bandwidth 2</label>
+              <div class="slider" id="plugin1-genid19_">​</div>
+              <input id="plugin1-genid19" class="value" name="q2" type="text" value="0.6" min="0.0625" max="4" title="[0.0625 ; 4]"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid21">Gain 2</label>
+              <div class="slider" id="plugin1-genid21_">​</div>
+              <input id="plugin1-genid21" class="value" name="gain2" type="text" value="0" min="-18" max="18" title="[-18 ; 18]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid22">Section 3</label>
+              <input id="plugin1-genid22_" name="sec3_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin1-genid22" name="sec3" type="hidden" value="1"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid23">Frequency 3</label>
+              <div class="slider" id="plugin1-genid23_">​</div>
+              <input id="plugin1-genid23" class="value" name="freq3" type="text" value="1250" min="100" max="10000" title="[100 ; 10000]"/>
+              <abbr title="Hertz [1/s]">Hz</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid24">Bandwidth 3</label>
+              <div class="slider" id="plugin1-genid24_">​</div>
+              <input id="plugin1-genid24" class="value" name="q3" type="text" value="0.6" min="0.0625" max="4" title="[0.0625 ; 4]"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid25">Gain 3</label>
+              <div class="slider" id="plugin1-genid25_">​</div>
+              <input id="plugin1-genid25" class="value" name="gain3" type="text" value="0" min="-18" max="18" title="[-18 ; 18]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid26">Section 4</label>
+              <input id="plugin1-genid26_" name="sec4_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin1-genid26" name="sec4" type="hidden" value="1"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid27">Frequency 4</label>
+              <div class="slider" id="plugin1-genid27_">​</div>
+              <input id="plugin1-genid27" class="value" name="freq4" type="text" value="2500" min="200" max="20000" title="[200 ; 20000]"/>
+              <abbr title="Hertz [1/s]">Hz</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid28">Bandwidth 4</label>
+              <div class="slider" id="plugin1-genid28_">​</div>
+              <input id="plugin1-genid28" class="value" name="q4" type="text" value="0.6" min="0.0625" max="4" title="[0.0625 ; 4]"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid29">Gain 4</label>
+              <div class="slider" id="plugin1-genid29_">​</div>
+              <input id="plugin1-genid29" class="value" name="gain4" type="text" value="0" min="-18" max="18" title="[-18 ; 18]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid30">Highshelf</label>
+              <input id="plugin1-genid30_" name="HSsec_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin1-genid30" name="HSsec" type="hidden" value="1"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid32">Highshelf Frequency</label>
+              <div class="slider" id="plugin1-genid32_">​</div>
+              <input id="plugin1-genid32" class="value" name="HSfreq" type="text" value="8000" min="1000" max="16000" title="[1000 ; 16000]"/>
+              <abbr title="Hertz [1/s]">Hz</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid33">Highshelf Bandwidth</label>
+              <div class="slider" id="plugin1-genid33_">​</div>
+              <input id="plugin1-genid33" class="value" name="HSq" type="text" value="1" min="0.0625" max="4" title="[0.0625 ; 4]"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin1-genid34">Highshelf Gain</label>
+              <div class="slider" id="plugin1-genid34_">​</div>
+              <input id="plugin1-genid34" class="value" name="HSgain" type="text" value="0" min="-18" max="18" title="[-18 ; 18]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+          </form>
+          <div class="ports">
+            <p>Control outputs:
+           <span title="peak">Peak</span></p>
+            <p>Audio outputs:
+           <span title="effect_1:out">Out</span></p>
+          </div>
+        </div>
+      </section>
+      <section class="pluginGUI" id="plugin2">
+        <h1>ZamComp</h1>
+        <div>
+          <div class="info">
+            <p>License: not specified</p>
+            <p>Author: Damien Zammit</p>
+          </div>
+          <div class="ports">
+            <p>Audio inputs:
+           <span title="effect_2:lv2_audio_in_1">Audio Input 1</span><span title="effect_2:lv2_sidechain_in">Sidechain Input</span></p>
+          </div>
+          <form>
+            <fieldset>
+              <label for="plugin2-genid11">Attack</label>
+              <div class="slider" id="plugin2-genid11_">​</div>
+              <input id="plugin2-genid11" class="value" name="att" type="text" value="10" min="0.1" max="100" title="[0.1 ; 100]"/>
+              <abbr title="milliseconds">ms</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin2-genid12">Release</label>
+              <div class="slider" id="plugin2-genid12_">​</div>
+              <input id="plugin2-genid12" class="value" name="rel" type="text" value="80" min="1" max="500" title="[1 ; 500]"/>
+              <abbr title="milliseconds">ms</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin2-genid13">Knee</label>
+              <div class="slider" id="plugin2-genid13_">​</div>
+              <input id="plugin2-genid13" class="value" name="kn" type="text" value="0" min="0" max="8" title="[0 ; 8]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin2-genid15">Ratio</label>
+              <div class="slider" id="plugin2-genid15_">​</div>
+              <input id="plugin2-genid15" class="value" name="rat" type="text" value="4" min="1" max="20" title="[1 ; 20]"/>
+              <abbr title=" "> </abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin2-genid16">Threshold</label>
+              <div class="slider" id="plugin2-genid16_">​</div>
+              <input id="plugin2-genid16" class="value" name="thr" type="text" value="0" min="-80" max="0" title="[-80 ; 0]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin2-genid2">Makeup</label>
+              <div class="slider" id="plugin2-genid2_">​</div>
+              <input id="plugin2-genid2" class="value" name="mak" type="text" value="0" min="0" max="30" title="[0 ; 30]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin2-genid4">Slew</label>
+              <div class="slider" id="plugin2-genid4_">​</div>
+              <input id="plugin2-genid4" class="value" name="slew" type="text" value="1" min="1" max="150" title="[1 ; 150]"/>
+              <abbr title=" "> </abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin2-genid8">Sidechain</label>
+              <div class="slider" id="plugin2-genid8_">​</div>
+              <input id="plugin2-genid8" class="value" name="sidech" type="text" value="0" min="0" max="1" title="[0 ; 1]"/>
+              <abbr title=" "> </abbr>
+            </fieldset>
+          </form>
+          <div class="ports">
+            <p>Control outputs:
+           <span title="gr">Gain Reduction</span><span title="outlevel">Output Level</span></p>
+            <p>Audio outputs:
+           <span title="effect_2:lv2_audio_out_1">Audio Output 1</span></p>
+          </div>
+        </div>
+      </section>
+      <section class="pluginGUI" id="plugin10">
+        <h1>Speaker Management</h1>
+        <div>
+          <div class="info">
+            <p>License:  <a href="http://opensource.org/licenses/GPL-3.0">GPL-3.0</a></p>
+            <p>Author: Jörn Nettingsmeier</p>
+          </div>
+          <div class="ports">
+            <p>Audio inputs:
+           <span title="effect_10:inL">Input L</span><span title="effect_10:inR">Input R</span></p>
+          </div>
+          <form>
+            <fieldset>
+              <label for="plugin10-genid19" title="Overall level control">Gain</label>
+              <div class="slider" id="plugin10-genid19_" title="Overall level control">​</div>
+              <input id="plugin10-genid19" class="value" name="gain" type="text" value="0" min="-90" max="10" title="[-90 ; 10]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin10-genid9" title="to calibrate sound pressure at the listening position">Attenuation L</label>
+              <div class="slider" id="plugin10-genid9_" title="to calibrate sound pressure at the listening position">​</div>
+              <input id="plugin10-genid9" class="value" name="attL" type="text" value="0" min="-12" max="0" title="[-12 ; 0]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin10-genid20">Attenuation L on</label>
+              <input id="plugin10-genid20_" name="attOnL_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin10-genid20" name="attOnL" type="hidden" value="1.0"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin10-genid21" title="run-time compensation at the listening spot">Delay L</label>
+              <div class="slider" id="plugin10-genid21_" title="run-time compensation at the listening spot">​</div>
+              <input id="plugin10-genid21" class="value" name="delayL" type="text" value="0" min="0" max="50" title="[0 ; 50]"/>
+              <abbr title="milliseconds">ms</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin10-genid22">Delay L on</label>
+              <input id="plugin10-genid22_" name="delayLOn_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin10-genid22" name="delayLOn" type="hidden" value="1.0"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin10-genid23">On L</label>
+              <input id="plugin10-genid23_" name="activeL_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin10-genid23" name="activeL" type="hidden" value="1.0"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin10-genid32" title="to calibrate sound pressure at the listening position">Attenuation R</label>
+              <div class="slider" id="plugin10-genid32_" title="to calibrate sound pressure at the listening position">​</div>
+              <input id="plugin10-genid32" class="value" name="attR" type="text" value="0" min="-12" max="0" title="[-12 ; 0]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin10-genid33">Attenuation R on</label>
+              <input id="plugin10-genid33_" name="attOnR_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin10-genid33" name="attOnR" type="hidden" value="1.0"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin10-genid34" title="run-time compensation at the listening spot">Delay R</label>
+              <div class="slider" id="plugin10-genid34_" title="run-time compensation at the listening spot">​</div>
+              <input id="plugin10-genid34" class="value" name="delayR" type="text" value="0" min="0" max="50" title="[0 ; 50]"/>
+              <abbr title="milliseconds">ms</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin10-genid35">Delay R on</label>
+              <input id="plugin10-genid35_" name="delayROn_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin10-genid35" name="delayROn" type="hidden" value="1.0"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin10-genid36">On R</label>
+              <input id="plugin10-genid36_" name="activeR_" type="checkbox" value="1" checked="checked"/>
+              <input id="plugin10-genid36" name="activeR" type="hidden" value="1.0"/>
+            </fieldset>
+          </form>
+          <div class="ports">
+            <p>Control outputs:
+          </p>
+            <p>Audio outputs:
+           <span title="effect_10:outL">Output L</span><span title="effect_10:outR">Output R</span></p>
+          </div>
+        </div>
+      </section>
+      <section class="pluginGUI" id="plugin11">
+        <h1>Glame Lowpass Filter</h1>
+        <div>
+          <div class="info">
+            <p>License: GPL</p>
+            <p>Author: Steve Harris</p>
+          </div>
+          <div class="ports">
+            <p>Audio inputs:
+           <span title="effect_11:input">Input</span></p>
+          </div>
+          <form>
+            <fieldset>
+              <label for="plugin11-genid1">Cutoff Frequency</label>
+              <div class="slider" id="plugin11-genid1_">​</div>
+              <input id="plugin11-genid1" class="value" name="cutoff" type="text" value="16201.2" min="4.8" max="21600" title="[4.8 ; 21600]"/>
+            </fieldset>
+            <fieldset>
+              <label for="plugin11-genid2">Stages(2 poles per stage)</label>
+              <div class="slider" id="plugin11-genid2_">​</div>
+              <input id="plugin11-genid2" class="value" name="stages" type="text" value="1" min="1" max="10" title="[1 ; 10]"/>
+            </fieldset>
+          </form>
+          <div class="ports">
+            <p>Control outputs:
+          </p>
+            <p>Audio outputs:
+           <span title="effect_11:output">Output</span></p>
+          </div>
+        </div>
+      </section>
+      <section class="pluginGUI" id="plugin12">
+        <h1>ZaMaximX2</h1>
+        <div>
+          <div class="info">
+            <p>License: not specified</p>
+            <p>Author: Damien Zammit</p>
+          </div>
+          <div class="ports">
+            <p>Audio inputs:
+           <span title="effect_12:lv2_audio_in_1">Audio Input 1</span><span title="effect_12:lv2_audio_in_2">Audio Input 2</span></p>
+          </div>
+          <form>
+            <fieldset>
+              <label for="plugin12-genid7">Release</label>
+              <div class="slider" id="plugin12-genid7_">​</div>
+              <input id="plugin12-genid7" class="value" name="rel" type="text" value="25" min="1" max="100" title="[1 ; 100]"/>
+              <abbr title="milliseconds">ms</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin12-genid8">Output Ceiling</label>
+              <div class="slider" id="plugin12-genid8_">​</div>
+              <input id="plugin12-genid8" class="value" name="ceil" type="text" value="0" min="-30" max="0" title="[-30 ; 0]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+            <fieldset>
+              <label for="plugin12-genid9">Threshold</label>
+              <div class="slider" id="plugin12-genid9_">​</div>
+              <input id="plugin12-genid9" class="value" name="thresh" type="text" value="0" min="-30" max="0" title="[-30 ; 0]"/>
+              <abbr title="deciBel">dB</abbr>
+            </fieldset>
+          </form>
+          <div class="ports">
+            <p>Control outputs:
+           <span title="outlevel">Output Level</span><span title="lv2_latency">Latency</span><span title="gr">Gain Reduction</span></p>
+            <p>Audio outputs:
+           <span title="effect_12:lv2_audio_out_1">Audio Output 1</span><span title="effect_12:lv2_audio_out_2">Audio Output 2</span></p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <section id="ajaxDebug">
+        <h1>AJAX Debugging</h1>
+        <div id="ajaxLog">
+          <div id="ajaxTX">
+            Transmitted:  <span>​</span></div>
+          <div id="ajaxRX">
+            Received:  <span>​</span></div>
+        </div>
+      </section>
+    </footer>
+  </body>
+</html>
