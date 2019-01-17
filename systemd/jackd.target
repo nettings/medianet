@@ -1,4 +1,4 @@
 [Unit]
 Description=jackd sound server target
-After=sound.target jackd.service 
-Requires=sound.target jackd.service
+After=jackd.service 
+BindsTo=jackd.service
