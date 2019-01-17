@@ -14,7 +14,7 @@ After=sound.target
 
 # make sure time is monotonic before we start (USB devices can explode when
 # system time jumps):
-After=time-sync.target
+After=ntp-synced.target
 
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf
