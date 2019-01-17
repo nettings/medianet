@@ -1,12 +1,20 @@
 [Unit]
 Description=JACK Audio Connection Kit
-After=cpufreq.service
-After=sound.target
-After=ntp.service
-After=time-sync.target
-Before=jackd.target
-Wants=cpufreq.service
+
+# "pull in" jackd.target since we're the provider of that target:
 Requires=jackd.target
+Before=jackd.target
+
+# make sure we have a well defined cpu core frequency:
+After=cpufreq.service
+
+# we do not use Requires="sound.target" in case a dsp node runs without
+# actual sound hardware (netjack or streaming only)
+After=sound.target
+
+# make sure time is monotonic before we start (USB devices can explode when
+# system time jumps):
+After=time-sync.target
 
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf
@@ -14,7 +22,7 @@ LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
 Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket"
-ExecStartPre=/bin/sleep 10
+#ExecStartPre=/bin/sleep 10
 ExecStart=/usr/bin/jackd $JACKD_OPTIONS
 RestartSec=5
 Restart=on-failure
