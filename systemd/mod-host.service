@@ -1,8 +1,9 @@
 [Unit]
 Description=mod-host LV2 plugin host for JACK
+BindsTo=jackd.target
 After=jackd.target 
-After=lighttpd.service
 Wants=lighttpd.service
+After=lighttpd.service
 
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf
