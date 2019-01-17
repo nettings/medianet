@@ -10,13 +10,20 @@ SRCPATH=/medianet/systemd
 scream "Services to disable:"
 
 for i in $SYSTEMD_DISABLE ; do
-  echo "$i: "
-  sudo systemctl --quiet is-enabled 2> /dev/null && {
-    echo -ne "\t disabling..."
-    sudo systemctl disable "$i"  && success || failure
-  } || {
-    echo -e "\t already disabled."
-  } 
+  s=`sudo systemctl is-enabled "$i" 2>&1`
+  echo -n "$i "
+  case "$s" in
+    enabled)
+      echo -n "disabling..."
+      sudo systemctl --quiet disable "$i"  && success || failure
+      ;;
+    disabled)
+      echo - "already disabled."
+      ;;
+    *)
+      echo "[$s]."
+      ;;
+  esac  
 done
 
 scream "Services to enable:"
