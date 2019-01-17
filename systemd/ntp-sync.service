@@ -1,12 +1,12 @@
 [Unit]
 Description=Check whether ntp has successfully synchronized the system time
 Requires=ntp-synced.target
-Before=ntp-sync.target
+Before=ntp-synced.target
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/sbin/ntp-wait
+ExecStart=/usr/sbin/ntp-wait -n 1000000 -s 1
 
 [Install]
 WantedBy=multi-user.target
