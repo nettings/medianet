@@ -1,0 +1,4 @@
+[Unit]
+Description=System time is monotonic after ntp synchronization
+After=ntp-sync.target
+BindsTo=ntp-sync.target
