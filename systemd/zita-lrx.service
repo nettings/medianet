@@ -1,7 +1,7 @@
 [Unit]
 Description=zita LRX fourth-order crossover
-After=sound.target
-Requires=jackd.target
+BindsTo=jackd.target
+After=jackd.target
 
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf
@@ -13,8 +13,6 @@ ExecStart=/usr/local/bin/zita-lrx $ZITA_LRX_OPTIONS
 RestartSec=5
 Restart=always
 
-[Install]
-WantedBy=multi-user.target
 [Install]
 WantedBy=multi-user.target
 

@@ -1,6 +1,8 @@
 [Unit]
 Description=zita JACK-to-Network bridge
+BindsTo=jackd.target
 After=jackd.target
+BindsTo=network-online.target
 After=network-online.target
 
 [Service]

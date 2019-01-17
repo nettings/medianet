@@ -1,6 +1,9 @@
 [Unit]
 Description=zita JACK-to-ALSA bridge
+BindsTo=jackd.target
 After=jackd.target
+BindsTo=sound.target
+After=sound.target
 
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf
