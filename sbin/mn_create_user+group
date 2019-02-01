@@ -7,7 +7,7 @@ sudo /usr/sbin/groupadd medianet && success || failure
 echo -n "Creating home directory..."
 sudo mkdir /home/medianet && success || failure
 echo -n "Creating user medianet..."
-sudo /usr/sbin/useradd -c "medianet Maintenance account" -g medianet -G users,audio -d /home/medianet medianet && success || failure
+sudo /usr/sbin/useradd -c "medianet Maintenance account" -g medianet -G users,audio,gpio -d /home/medianet medianet && success || failure
 echo -n "Changing login shell to /bin/bash..."
 sudo chsh -s /bin/bash medianet && success || failure
 echo -n "Creating .ssh dir..."
