@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <signal.h>
 #include <unistd.h>
+#include <errno.h>
+#include <pthread.h>
 #include <wiringPi.h>
 #include <jack/jack.h>
 #include <jack/midiport.h>
 #include <jack/ringbuffer.h>
 
-#define JACK_CLIENT_NAME "rot2mid"
+#define JACK_CLIENT_NAME "rot2midi"
 #define JACK_PORT_NAME "midi_out"
 #define MIDI_CC 0xb
 #define MIDI_CHN 0x0
@@ -19,17 +21,19 @@
 jack_client_t *client;
 jack_port_t *output_port;
 
+// command buffer for GPIO configuration
 #define MAX_CMD 256
 unsigned char cmd[MAX_CMD];
 
+// GPIO pin handling
 #define MAX_PIN 3
 enum { CLK, DT, SW };
 int pin[MAX_PIN] = { 17, 27, 6 };
 
-#define BUF_SIZE 32
-jack_ringbuffer_t *buf_rotary;
-jack_ringbuffer_t *buf_switch;
-
+// event ringbuffer and lock
+#define BUF_SIZE 128
+jack_ringbuffer_t *buf;
+pthread_mutex_t buflock = PTHREAD_MUTEX_INITIALIZER;
 
 void syscmd(unsigned char* cmd) {
    int e;
@@ -48,8 +52,7 @@ static void signal_handler(int sig) {
     fprintf(stderr, "Received signal, terminating.\n");
     /* JACK cleanup */
     jack_client_close(client);
-    jack_ringbuffer_free(buf_rotary);
-    jack_ringbuffer_free(buf_switch);
+    jack_ringbuffer_free(buf);
     
     /* wiringPi cleanup */
     wiringPiISR(pin[CLK], INT_EDGE_BOTH, handle_off);
@@ -66,8 +69,8 @@ static void signal_handler(int sig) {
 void handle_rotary() {
     static unsigned int prevClk;
     static unsigned char value;
-    unsigned int clk, dt;
-    static unsigned char msg[3] = { 
+    unsigned int clk, dt, nbytes;
+    static unsigned char msg[MIDI_SIZE] = { 
         (MIDI_CC << 4) + MIDI_CHN,
         MIDI_CCN,
         0
@@ -82,16 +85,19 @@ void handle_rotary() {
             if (value > 0) value--;
         }   
         msg[2] = value;
-        fprintf(stdout,"<R%d|%d|%s> ", clk, value, msg);
-        if (jack_ringbuffer_write(buf_rotary, msg, MIDI_SIZE) != MIDI_SIZE) {
-            fprintf(stderr, "handle_rotary(): Ringbuffer overflow. Aborting.\n");
-            signal_handler(SIGABRT);
+        fprintf(stdout,"<R%d|0x%02x%02x%02x>\n", clk, msg[0], msg[1], msg[2]);
+        pthread_mutex_lock(&buflock);
+        nbytes = jack_ringbuffer_write(buf, msg, MIDI_SIZE);
+        pthread_mutex_unlock(&buflock);
+        if (nbytes != MIDI_SIZE) {
+            fprintf(stderr, "handle_rotary(): Ringbuffer overflow.\n");
         } 
     }
     prevClk = clk;
 }
 
 void handle_switch() {
+    unsigned int nbytes;
     static unsigned char msg[3] = {
         (MIDI_CC << 4) + MIDI_CHN,
         MIDI_CCN + 1,
@@ -99,11 +105,13 @@ void handle_switch() {
     };
     
     int sw = digitalRead(pin[SW]);
-    msg[2] = sw;
-    fprintf(stdout,"<S%d> ", sw);
-    if (jack_ringbuffer_write(buf_switch, msg, MIDI_SIZE) != MIDI_SIZE){
-        fprintf(stderr, "handle_switch(): Ringbuffer overflow. Aborting.\n"); 
-        signal_handler(SIGABRT);
+    msg[2] = sw ? 0 : 0x7f;
+    fprintf(stdout,"<S%d|0x%02x%02x%02x>\n", sw, msg[0], msg[1], msg[2]);
+    pthread_mutex_lock(&buflock);
+    nbytes = jack_ringbuffer_write(buf, msg, MIDI_SIZE);
+    pthread_mutex_unlock(&buflock);
+    if (nbytes != MIDI_SIZE){
+        fprintf(stderr, "handle_switch(): Ringbuffer overflow.\n"); 
     }
 }
 
@@ -113,9 +121,10 @@ static int process(jack_nframes_t nframes, void *arg) {
     jack_midi_data_t *dest;
     jack_nframes_t time = 0;
     jack_midi_clear_buffer(port_buf);
-    while (jack_ringbuffer_read(buf_rotary, buffer, MIDI_SIZE) == MIDI_SIZE) {
-        dest = jack_midi_event_reserve(port_buf, time++, MIDI_SIZE);
-        dest = buffer;
+    while (jack_ringbuffer_read(buf, buffer, MIDI_SIZE) == MIDI_SIZE) {
+        if (jack_midi_event_write(port_buf, time++, buffer, MIDI_SIZE) == ENOBUFS) {
+            //error handling goes here
+        }
     }
     return 0;
 }
@@ -135,10 +144,8 @@ int main(int argc, char *argv[]) {
     wiringPiISR(pin[SW], INT_EDGE_BOTH, handle_switch);
 
     /* JACK setup */
-    buf_rotary = jack_ringbuffer_create(BUF_SIZE);
-    buf_switch = jack_ringbuffer_create(BUF_SIZE);
-    jack_ringbuffer_mlock(buf_rotary);
-    jack_ringbuffer_mlock(buf_switch);
+    buf = jack_ringbuffer_create(BUF_SIZE);
+    jack_ringbuffer_mlock(buf);
     jack_nframes_t nframes;
     if((client = jack_client_open(JACK_CLIENT_NAME, JackNullOption, NULL)) == 0) {
         fprintf(stderr, "Failed to create client. Is the JACK server running?");
