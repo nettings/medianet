@@ -27,15 +27,16 @@ unsigned char cmd[MAX_CMD];
 
 // GPIO pin handling
 #define MAX_PIN 3
+#define INACTIVE -1
 enum { CLK, DT, SW };
-int pin[MAX_PIN] = { 17, 27, 6 };
+int pin[MAX_PIN] = { 17, 27, INACTIVE };
 
 int verbose = 0;
 unsigned char midi_chn = 1;
 unsigned char rotary_cc = 0;
 unsigned char rotary_val = 0;
 unsigned char rotary_msg[3];
-unsigned char switch_cc = NONE;
+unsigned char switch_cc = 1;
 unsigned char switch_val = 0;
 unsigned char switch_msg[3];
 int switch_toggled = 0;
@@ -48,8 +49,9 @@ pthread_mutex_t buflock = PTHREAD_MUTEX_INITIALIZER;
 void usage()
 {
 	printf
-	    ("Creates JACK MIDI CC messages at %s:%s from a rotary encoder connected to Raspberry Pi GPIOs.\n\n",
+	    ("Creates JACK MIDI CC messages at %s:%s from a rotary encoder connected to Raspberry Pi GPIOs.\n",
 	     JACK_CLIENT_NAME, JACK_PORT_NAME);
+	printf("All pins are pulled up, so the return connectors be connected to ground.\n\n");
 	printf("-h|--help                  This help.\n");
 	printf("-v|--verbose               Print current controller values.\n");
 	printf
@@ -235,7 +237,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'S':
 			pin[SW] = atoi(optarg);
-			if (pin[SW] < 2 || pin[DT] > SW) {
+			if (pin[SW] < 2 || pin[SW] > 27) {
 				fprintf(stderr,
 					"%d is not a valid GPIO number.\n",
 					pin[SW]);
@@ -289,7 +291,7 @@ int main(int argc, char *argv[])
 
 		}
 	}
-	rotary_msg[0] = switch_msg[0] = (MIDI_CC << 4) + midi_chn;
+	rotary_msg[0] = switch_msg[0] = (MIDI_CC << 4) + (midi_chn - 1);
 	rotary_msg[1] = rotary_cc;
 	switch_msg[1] = switch_cc;
 
@@ -302,7 +304,7 @@ int main(int argc, char *argv[])
 	}
 	wiringPiSetupSys();
 	wiringPiISR(pin[CLK], INT_EDGE_BOTH, handle_rotary);
-	if (switch_cc != NONE) {
+	if (pin[SW] != INACTIVE) {
 		wiringPiISR(pin[SW], INT_EDGE_BOTH, handle_switch);
 	}
 	/* JACK setup */
