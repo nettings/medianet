@@ -98,8 +98,11 @@ void setup_GPIO() {
 
 void shutdown_GPIO() {
         wiringPiISR(pin[CLK], INT_EDGE_BOTH, handle_off);
-        wiringPiISR(pin[SW], INT_EDGE_BOTH, handle_off);
+        if (pin[SW] != PIN_INACTIVE) {
+        	wiringPiISR(pin[SW], INT_EDGE_BOTH, handle_off);
+        }
         for (int i = 0; i < NPINS; i++) {
+        	if (pin[i] == PIN_INACTIVE) continue;
                 snprintf(cmd, MAX_CMD, "%s edge %d none", GPIO, pin[i]);
                 syscmd(cmd);
                 snprintf(cmd, MAX_CMD, "%s unexport %d", GPIO, pin[i]);
