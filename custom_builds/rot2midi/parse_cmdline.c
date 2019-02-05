@@ -137,4 +137,5 @@ int parse_cmdline(int argc, char *argv[])
 
 		}
 	}
+	return EXIT_CLEAN;
 }

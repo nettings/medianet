@@ -26,7 +26,6 @@ static void handle_rotary()
 	unsigned int clk, dt;
 
 	clk = digitalRead(pin[CLK]);
-	fprintf(stdout, "ping\n");
 	if (clk != prevClk) {
 		dt = digitalRead(pin[DT]);
 		if (dt != clk) {
@@ -80,7 +79,7 @@ static void handle_off() {
 
 void setup_GPIO() {
 	for (int i = 0; i < NPINS; i++) {
-		if (!pin[i] == PIN_INACTIVE) {
+		if (pin[i] != PIN_INACTIVE) {
 			snprintf(cmd, MAX_CMD, "%s export %d in", GPIO, pin[i]);
 			syscmd(cmd);
 			snprintf(cmd, MAX_CMD, "%s -g mode %d up", GPIO, pin[i]);

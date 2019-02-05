@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <signal.h>
 #include <errno.h>
 #include "globals.h"
@@ -31,8 +32,11 @@ static void signal_handler(int sig)
 
 int main(int argc, char *argv[])
 {
-	parse_cmdline(argc, argv);
-
+	int rval = parse_cmdline(argc, argv);
+	if (rval != EXIT_CLEAN) {
+		exit(rval);
+	}
+	
 	rotary_msg[0] = switch_msg[0] = (MIDI_CC << 4) + (midi_chn - 1);
 	rotary_msg[1] = rotary_cc;
 	switch_msg[1] = switch_cc;
