@@ -19,13 +19,14 @@ static int process(jack_nframes_t nframes, void *arg)
 	while (ringbuffer_read(buffer, MSG_SIZE) == MSG_SIZE) {
 		if (jack_midi_event_write(port_buf, time++, buffer, MSG_SIZE)
 		    == ENOBUFS) {
-			// error handling goes here			
+			// error handling goes here                     
 		}
 	}
 	return 0;
 }
 
-int setup_JACK() {
+int setup_JACK()
+{
 	jack_nframes_t nframes;
 	if ((client =
 	     jack_client_open(JACK_CLIENT_NAME, JackNullOption, NULL)) == 0) {
@@ -45,7 +46,7 @@ int setup_JACK() {
 	}
 }
 
-int shutdown_JACK() {
-        jack_client_close(client);
+int shutdown_JACK()
+{
+	jack_client_close(client);
 }
-

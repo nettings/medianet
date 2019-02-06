@@ -9,7 +9,8 @@ void usage()
 	printf
 	    ("Creates JACK MIDI CC messages at %s:%s from a rotary encoder connected to Raspberry Pi GPIOs.\n",
 	     JACK_CLIENT_NAME, JACK_PORT_NAME);
-	printf("All pins are pulled up, so the return connectors be connected to ground.\n\n");
+	printf
+	    ("All pins are pulled up, so the return connectors be connected to ground.\n\n");
 	printf("-h|--help                  This help.\n");
 	printf("-v|--verbose               Print current controller values.\n");
 	printf
@@ -56,7 +57,7 @@ int parse_cmdline(int argc, char *argv[])
 		switch (c) {
 		case 'h':
 			usage();
-			return(EXIT_USAGE);
+			return (EXIT_USAGE);
 			break;
 		case 'v':
 			verbose = 1;
@@ -68,7 +69,7 @@ int parse_cmdline(int argc, char *argv[])
 					"%d is not a valid GPIO number.\n",
 					pin[CLK]);
 				usage();
-				return(EXIT_ERR);
+				return (EXIT_ERR);
 			}
 			break;
 		case 'D':
@@ -78,7 +79,7 @@ int parse_cmdline(int argc, char *argv[])
 					"%d is not a valid GPIO number.\n",
 					pin[DT]);
 				usage();
-				return(EXIT_ERR);
+				return (EXIT_ERR);
 			}
 			break;
 		case 'S':
@@ -88,7 +89,7 @@ int parse_cmdline(int argc, char *argv[])
 					"%d is not a valid GPIO number.\n",
 					pin[SW]);
 				usage();
-				return(EXIT_ERR);
+				return (EXIT_ERR);
 			}
 			break;
 		case 'c':
@@ -98,7 +99,7 @@ int parse_cmdline(int argc, char *argv[])
 					"%d is not a valid MIDI channel.\n",
 					midi_chn);
 				usage();
-				return(EXIT_ERR);
+				return (EXIT_ERR);
 			}
 			break;
 		case 'r':
@@ -108,7 +109,7 @@ int parse_cmdline(int argc, char *argv[])
 					"%d is not a valid MIDI CC number.\n",
 					rotary_cc);
 				usage();
-				return(EXIT_ERR);
+				return (EXIT_ERR);
 			}
 			break;
 		case 'i':
@@ -118,7 +119,7 @@ int parse_cmdline(int argc, char *argv[])
 					"%d is not a valid MIDI CC value.\n",
 					rotary_val);
 				usage();
-				return(EXIT_ERR);
+				return (EXIT_ERR);
 			}
 			break;
 		case 's':
@@ -128,7 +129,7 @@ int parse_cmdline(int argc, char *argv[])
 					"%d is not a valid MIDI CC number.\n",
 					switch_cc);
 				usage();
-				return(EXIT_ERR);
+				return (EXIT_ERR);
 			}
 			break;
 		case 't':

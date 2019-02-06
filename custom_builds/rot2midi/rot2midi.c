@@ -51,7 +51,8 @@ void usage()
 	printf
 	    ("Creates JACK MIDI CC messages at %s:%s from a rotary encoder connected to Raspberry Pi GPIOs.\n",
 	     JACK_CLIENT_NAME, JACK_PORT_NAME);
-	printf("All pins are pulled up, so the return connectors be connected to ground.\n\n");
+	printf
+	    ("All pins are pulled up, so the return connectors be connected to ground.\n\n");
 	printf("-h|--help                  This help.\n");
 	printf("-v|--verbose               Print current controller values.\n");
 	printf
