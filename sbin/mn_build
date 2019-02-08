@@ -1,0 +1,34 @@
+#!/bin/bash
+
+BASEDIR=`dirname $0`
+FIND=/usr/bin/find
+
+. "$BASEDIR"/../lib/mn_includes
+
+OLDWD=`pwd`
+DESTDIR=`realpath "$BASEDIR"/../overlay`
+cd "$BASEDIR"/../custom_builds
+
+if [[ -n "$1" ]] ; then
+	TARGET="$1.build"
+else
+	TARGET="*.build"
+fi
+
+scream "Building \"$TARGET\"."
+
+$FIND -name "$TARGET" | while read line ; do
+  line=`realpath "$line"`
+  WORKDIR=`echo "$line" | sed 's/\.build$//'`
+  cd "$WORKDIR"
+  scream "********* Compiling $line...\n"
+  . "$line" \
+    && scream "********* ...$line successfully compiled and installed.\n" \
+    || { 
+      scream "********* ...$line " 
+      bail
+    }
+  cd ..
+done
+
+echo "Compiled programs have been installed to $DESTDIR. Deploy with 'sudo `realpath "$BASEDIR"`/mn_deploy_overlay' to activate them."
