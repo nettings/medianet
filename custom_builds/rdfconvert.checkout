@@ -1,1 +1,3 @@
 from_git https://github.com/WimPessemier/rdfconvert.git rdfconvert
+sudo apt-get -y install python3-rdflib python3-rdflib-jsonld
+
