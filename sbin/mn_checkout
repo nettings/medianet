@@ -1,18 +1,9 @@
 #!/bin/bash
 
-BASEDIR=`readlink -f $0`
-echo $BASEDIR
-BASEDIR=`dirname $BASEDIR`
-echo $BASEDIR
-. /medianet/lib/mn_includes
+BASEDIR=`dirname $0`
+FIND=/usr/bin/find
 
-OLDPWD=`pwd`
-if [[ -z "$1" ]] ; then
-  TARGET='mn_checkout.*'
-else
-  TARGET='mn_checkout.'$1
-fi
-
+. "$BASEDIR"/../lib/mn_includes
 
 # from_FOO <URL> <dirname>
 from_git() {
@@ -46,11 +37,20 @@ from_tar() {
   cd ..
 }
 
-scream "Iterating over \"$TARGET\"."
+OLDWD=`pwd`
+cd "$BASEDIR"/../custom_builds
 
-cd "$BASEDIR/../custom_builds"
-echo $BASEDIR
-find "$BASEDIR" -name "$TARGET" ! -name "*~" | while read line ; do
-  scream "Running "`basename $line`"..."
+if [[ -n "$1" ]] ; then
+	TARGET="$1.checkout"
+else
+	TARGET="*.checkout"
+fi
+
+scream "Checking out \"$TARGET\"."
+
+$FIND -name "$TARGET" | while read line ; do
+  echo -n "Running "`basename $line`"..."
   . $line && success || failure
 done
+
+cd "$OLDWD"
