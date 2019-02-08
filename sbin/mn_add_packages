@@ -13,9 +13,8 @@ read -n1 -r -p "Ok?"
 sudo apt-get -y install jackd2 jackmeter jack-capture jconvolver \
 	x42-plugins fomp zam-plugins invada-studio-plugins-lv2 \
 	calf-plugins mda-lv2 abgate guitarix-lv2 swh-lv2
-# build dependencies for mod-host and zita-njbridge
-sudo apt-get -y install git libjack-jackd2-dev liblilv-dev \
-	lilv-utils libreadline-dev libzita-resampler-dev libclthreads-dev
+# general build dependencies
+sudo apt-get -y install git lilv-utils 
 # telnet for mod-host debugging
 sudo apt-get -y install telnet
 # tools to generate web lv2rdf2html interface locally
@@ -33,4 +32,4 @@ sudo apt-get -y install python3-rdflib python3-rdflib-jsonld
 # some graphics tools in case we want to use the hdmi output
 sudo apt-get -y install fbi omxplayer
 # some support for GPIO access
-sudo apt-get -y install wiringpi
+sudo apt-get -y install gpiod

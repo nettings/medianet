@@ -1,1 +1,2 @@
 from_tar http://kokkinizita.linuxaudio.org/linuxaudio/downloads/zita-njbridge-0.4.2.tar.bz2 zita-njbridge
+sudo apt-get -y install libjack-jackd2-dev libreadline-dev libzita-resampler-dev libclthreads-dev

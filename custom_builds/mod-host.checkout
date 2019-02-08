@@ -1,1 +1,2 @@
 from_git https://github.com/moddevices/mod-host.git mod-host
+sudo apt-get install libjack-jackd2-dev liblilv-dev lilv-utils libreadline-dev
