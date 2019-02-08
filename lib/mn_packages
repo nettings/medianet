@@ -1,0 +1,24 @@
+# basic system packages
+ntpdate ntp cpufrequtils joe screen ufw lsof
+# basic audio packages
+jackd2 jackmeter jack-capture jconvolver 
+# plugins
+x42-plugins fomp zam-plugins invada-studio-plugins-lv2 calf-plugins mda-lv2 abgate guitarix-lv2 swh-lv2
+# general build dependencies
+git lilv-utils 
+# telnet for mod-host debugging
+telnet
+# tools to generate web lv2rdf2html interface locally
+xsltproc raptor-utils
+# local lightweight webserver to run  lv2rdf2html interface
+lighttpd php7.0 php7.0-cgi php7.0-fpm
+# local mplayer and mpv
+mplayer mpv
+# local monitoring
+icecast2 darkice
+# i2c tools for peripheral devices such as SenseHat or HifiBerries
+i2c-tools
+# some graphics tools in case we want to use the hdmi output
+fbi omxplayer
+# support for GPIO access
+gpiod 
