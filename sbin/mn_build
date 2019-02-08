@@ -31,4 +31,5 @@ $FIND -name "$TARGET" | while read line ; do
   cd ..
 done
 
+cd "$OLDWD"
 echo "Compiled programs have been installed to $DESTDIR. Deploy with 'sudo `realpath "$BASEDIR"`/mn_deploy_overlay' to activate them."

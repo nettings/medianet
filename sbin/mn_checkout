@@ -49,8 +49,16 @@ fi
 scream "Checking out \"$TARGET\"."
 
 $FIND -name "$TARGET" | while read line ; do
-  echo -n "Running "`basename $line`"..."
-  . $line && success || failure
+  scream "********* Checking out $line...\n"
+  . "$line" \
+    && scream "********* ...$line and dependencies successfully checked out.\n" \
+    || { 
+      scream "********* ...$line " 
+      bail
+    }
 done
 
 cd "$OLDWD"
+echo "Checked out sources have been installed to `realpath $DESTDIR/../`."
+
+
