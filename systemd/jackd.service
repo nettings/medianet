@@ -8,8 +8,7 @@ Before=jackd.target
 # make sure we have a well defined cpu core frequency:
 After=cpufreq.service
 
-# we do not use Requires="sound.target" in case a dsp node runs without
-# actual sound hardware (netjack or streaming only)
+# if we're running on actual hardware, make sure we're after:
 After=sound.target
 
 # make sure time is monotonic before we start (USB devices can explode when
