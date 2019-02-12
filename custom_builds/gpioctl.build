@@ -1,4 +1,4 @@
 ./waf configure --prefix=/usr/local/
 ./waf 
-./waf install --destdir=/medianet/overlay
+sudo ./waf install --destdir=/medianet/overlay
 
