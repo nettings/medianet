@@ -1,7 +1,7 @@
 # basic system packages
 ntpdate ntp cpufrequtils joe screen ufw lsof
 # basic audio packages
-jackd2 jackmeter jack-capture jconvolver 
+jackd2 jackmeter jack-capture jconvolver zita-ajbridge
 # plugins
 x42-plugins fomp zam-plugins invada-studio-plugins-lv2 calf-plugins mda-lv2 abgate guitarix-lv2 swh-lv2
 # general build dependencies
