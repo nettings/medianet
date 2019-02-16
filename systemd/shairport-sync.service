@@ -1,0 +1,23 @@
+[Unit]
+Description=Shairport Sync - AirPlay Audio Receiver
+After=sound.target
+After=jackd.target
+BindsTo=jackd.target
+Requires=avahi-daemon.service
+After=avahi-daemon.service
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+EnvironmentFile=-/medianet/config/this/medianet.conf
+ExecPre=/usr/local/bin/mn_jackwait $SHAIRPORT_WAITPORT
+ExecStart=/usr/local/bin/shairport-sync
+User=medianet
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
