@@ -1,0 +1,16 @@
+git checkout development
+autoreconf -i -f
+./configure \
+	--with-ssl=openssl \
+	--with-stdout \
+	--with-alsa \
+	--with-jack \
+	--with-pa \
+	--with-avahi \
+	--with-systemd \
+	--with-soxr \
+	--with-metadata \
+	--with-systemdsystemunitdir=../systemd \
+	--sysconfdir=/etc
+make -j4
+sudo DESTDIR="/medianet/overlay/" make install
