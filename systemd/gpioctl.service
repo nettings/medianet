@@ -1,9 +1,7 @@
 [Unit]
 Description=gpioctl controllers
 
-Wants=jackd.service
 After=sound.target
-After=jackd.target
 
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf
