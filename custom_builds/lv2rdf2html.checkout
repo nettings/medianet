@@ -1,2 +1,2 @@
 from_git https://github.com/nettings/lv2rdf2html.git lv2rdf2html
-ln -s ../../config/this/medianet.conf lv2rdf2html/mod-host.cmd
+ln -fs ../../config/this/medianet.conf lv2rdf2html/mod-host.cmd
