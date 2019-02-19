@@ -1,6 +1,7 @@
 autoreconf -i -f
 ./configure \
 	--with-ssl=openssl \
+	--with-libdaemon=no \
 	--with-stdout \
 	--with-alsa \
 	--with-jack \
