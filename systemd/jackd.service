@@ -18,7 +18,7 @@ After=ntp-synced.target
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf
 LimitRTPRIO=85
-LimitMEMLOCK=700000
+LimitMEMLOCK=700000000
 User=medianet
 Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket"
 ExecStart=/usr/bin/jackd $JACKD_OPTIONS

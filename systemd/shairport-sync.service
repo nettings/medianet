@@ -14,7 +14,7 @@ ExecPre=/usr/local/bin/mn_jackwait $SHAIRPORT_WAITPORT
 ExecStart=/usr/local/bin/shairport-sync
 User=medianet
 LimitRTPRIO=85
-LimitMEMLOCK=700000
+LimitMEMLOCK=700000000
 RestartSec=5
 Restart=always
 
