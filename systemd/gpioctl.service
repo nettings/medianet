@@ -6,7 +6,7 @@ After=sound.target
 [Service]
 EnvironmentFile=-/medianet/config/this/medianet.conf
 LimitRTPRIO=85
-LimitMEMLOCK=700000000
+LimitMEMLOCK=700000
 User=medianet
 ExecStart=/usr/local/bin/gpioctl $GPIOCTL_OPTIONS
 RestartSec=5
