@@ -1,2 +1,3 @@
 from_git https://github.com/nettings/lv2rdf2html.git lv2rdf2html
+sudo apt-get -y install xsltproc raptor-utils
 ln -fs ../../config/this/medianet.conf lv2rdf2html/mod-host.cmd

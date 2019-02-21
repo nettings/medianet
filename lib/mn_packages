@@ -8,9 +8,7 @@ x42-plugins fomp zam-plugins invada-studio-plugins-lv2 calf-plugins mda-lv2 abga
 git lilv-utils 
 # telnet for mod-host debugging
 telnet
-# tools to generate web lv2rdf2html interface locally
-xsltproc raptor-utils
-# local lightweight webserver to run  lv2rdf2html interface
+# local lightweight webserver to run lv2rdf2html interface
 lighttpd php7.0 php7.0-cgi php7.0-fpm
 # local mplayer and mpv
 mplayer mpv
@@ -22,3 +20,5 @@ i2c-tools
 fbi omxplayer
 # support for GPIO access
 gpiod 
+# exfat file system support
+exfat-fuse exfat-utils
