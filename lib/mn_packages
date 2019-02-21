@@ -22,3 +22,5 @@ i2c-tools
 fbi omxplayer
 # support for GPIO access
 gpiod 
+# exfat file system support
+exfat-fuse exfat-utils
