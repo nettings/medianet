@@ -1,0 +1,3 @@
+make submodules
+OPTIMIZATIONS="-march=armv8-a+crc -mfpu=neon-fp-armv8 -mtune=cortex-a53" make -j4
+sudo make install
