@@ -50,17 +50,17 @@ for SOURCE in `find -P * \! -name README \! -type d` ; do
 	if [[ ( -f "$TARGET" && ! -L "$TARGET" ) || ( -d "$TARGET" && ! -L "$TARGET" ) ]] ; then
 		# Do not overwrite existing backups.
 		if [[ ! -e "$BACKUP" ]] ; then
-			echo -ne "backing up...\t"
+			echo -ne "Backing up. "
 			sudo mv "$TARGET" "$BACKUP" || bail
 		fi
 	fi
 
 	# Replace original file with symbolic link to medianet overlay.
 	if [[ -e "$TARGET" || -L "$TARGET" ]] ; then
-		echo -ne "Removing old file/link...\t"
+		echo -ne "Removing old file/link. "
                 sudo rm -r "$TARGET" || failure
         fi
-	echo -ne "Linking...\t"
+	echo -ne "Linking... "
 	sudo ln -Tn -r -s "$LINK" "$TARGET" && success || bail
 done
 
