@@ -33,26 +33,35 @@ scream "Deploying overlay..."
 for SOURCE in `find -P * \! -name README \! -type d` ; do
 	TARGET=/"$SOURCE"
 	BACKUP=/"$SOURCE".mn_
+	LINK="$PWD"/"$SOURCE"
 
-	echo "$TARGET:" 
+	echo -ne "$TARGET:\t" 
+
+	# Does a correct already exist from a previous run? Then don't stress the flash unneccessarily.
+	LINKSTO=`readlink --canonicalize "$TARGET"`
+	REALLINK=`readlink --canonicalize "$LINK"`
+	if [[ "$REALLINK" = "$LINKSTO" ]] ; then
+		echo -e "Unchanged."
+		continue
+	fi
+
 	# Check if regular file or dir (not link, that would be us!)
 	# exists in distribution file system, if so: back it up.
 	if [[ ( -f "$TARGET" && ! -L "$TARGET" ) || ( -d "$TARGET" && ! -L "$TARGET" ) ]] ; then
 		# Do not overwrite existing backups.
 		if [[ ! -e "$BACKUP" ]] ; then
-			echo -ne "\tCreate backup..."
-			sudo mv "$TARGET" "$BACKUP" \
-				&& success || bail
+			echo -ne "backing up...\t"
+			sudo mv "$TARGET" "$BACKUP" || bail
 		fi
 	fi
+
 	# Replace original file with symbolic link to medianet overlay.
-        if [[ -e "$TARGET" || -L "$TARGET" ]] ; then
-                echo -ne "\tRemoving old file/link..."
+	if [[ -e "$TARGET" || -L "$TARGET" ]] ; then
+		echo -ne "Removing old file/link...\t"
                 sudo rm -r "$TARGET" || failure
         fi
-	echo -ne " Linking..."
-	sudo ln -Tn -r -s "$PWD"/"$SOURCE" "$TARGET" \
-		&& success || bail
+	echo -ne "Linking...\t"
+	sudo ln -Tn -r -s "$LINK" "$TARGET" && success || bail
 done
 
 cd "$OLDPWD"
