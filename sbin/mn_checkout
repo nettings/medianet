@@ -8,15 +8,18 @@ FIND=/usr/bin/find
 # from_FOO <URL> <dirname>
 from_git() {
   if [[ ! -d "$2" ]] ; then
-    git clone "$1" "$2"
+    echo -ne "Cloning $1 into $2..."
+    git clone -q "$1" "$2" || failure && success
   else
+    echo -ne "Git repository exists. Updating..."
     cd "$2"
-    git pull
+    git pull || failure && success
     cd ..
   fi
 }
 
 from_tar() {
+  echo -ne "Installing tarball $1 to $2..."
   if [[ ! -d "$2" ]] ; then
     mkdir "$2"
   fi
@@ -33,9 +36,19 @@ from_tar() {
       ALGO=J
       ;;
   esac
-  wget -O - "$1" | tar --strip-components=1 -x -v -$ALGO -f -
+  wget -q -O - "$1" | tar --strip-components=1 -x -$ALGO -f - || failure && success
   cd ..
 }
+
+from_package()
+{
+  while [[ -n "$1" ]] ; do
+	echo -ne "Installing package $1..."
+  	sudo apt-get -qqy install --no-install-recommends "$1" || failure && success
+  	shift
+  done
+}
+
 
 OLDWD=`pwd`
 cd "$BASEDIR"/../custom_builds
@@ -49,16 +62,16 @@ fi
 scream "Checking out \"$TARGET\"."
 
 $FIND -name "$TARGET" | while read line ; do
-  scream "********* Checking out $line...\n"
+  scream "********* Checking out $line..."
   . "$line" \
-    && scream "********* ...$line and dependencies successfully checked out.\n" \
+    && scream "********* ... $line and dependencies successfully checked out." \
     || { 
-      scream "********* ...$line " 
+      scream "********* ... $line " 
       bail
     }
 done
 
 cd "$OLDWD"
-echo "Checked out sources have been installed to `realpath $DESTDIR/../`."
+echo "Checked out sources have been installed to `realpath -e $DESTDIR/../`."
 
 
