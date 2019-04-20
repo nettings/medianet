@@ -1,9 +1,6 @@
 from_git https://github.com/mikebrady/shairport-sync.git shairport-sync
-sudo apt-get -y install \
-	autoconf automake libtool \
-	libssl-dev libasound2-dev libpulse-dev\
-	libpopt-dev libconfig-dev libsoxr-dev \
-	libsndfile1-dev libavahi-client-dev xmltoman
+from_package autoconf automake libtool libssl-dev libasound2-dev libpulse-dev\
+	libpopt-dev libconfig-dev libsoxr-dev libsndfile1-dev libavahi-client-dev xmltoman
 cd shairport-sync
 git checkout development
 cd ..

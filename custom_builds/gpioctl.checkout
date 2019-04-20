@@ -1,2 +1,2 @@
 from_git https://github.com/nettings/gpioctl.git gpioctl
-sudo apt-get -y install libgpiod-dev libjack-jackd2-dev libasound2-dev
+from_package libgpiod-dev libjack-jackd2-dev libasound2-dev

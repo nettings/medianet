@@ -1,2 +1,2 @@
 from_tar http://kokkinizita.linuxaudio.org/linuxaudio/downloads/zita-lrx-0.1.2.tar.bz2 zita-lrx
-sudo apt-get -y install libjack-jackd2-dev libreadline-dev libzita-resampler-dev libclthreads-dev
+from_package libjack-jackd2-dev libreadline-dev libzita-resampler-dev libclthreads-dev
