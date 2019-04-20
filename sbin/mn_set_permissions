@@ -15,7 +15,7 @@ cd "$BASEDIR"/../
 # HACK: fix sudoers first to avoid a warning on each subsequent action:
 for FILE in `sudo find overlay/etc/sudoers.d` `sudo find -P overlay/ boot/ ! -type l `; do
   
-  echo -ne "$FILE:\t"
+  echo -ne "$FILE:\n\t"
   
   RULE=`grep -E "^.$FILE." $PERMFILE`
   if [[ -n "$RULE" ]] ; then
@@ -31,17 +31,18 @@ for FILE in `sudo find overlay/etc/sudoers.d` `sudo find -P overlay/ boot/ ! -ty
     fi
     if [[ "$CURPERMS" != "$PERMS" ]] ; then
       echo -ne "Permissions to $PERMS..."
-      sudo chmod "$PERMS" "$FILE" && success || failure
+      sudo chmod "$PERMS" "$FILE" || failure
     else
-      echo -e "Permissions ok."
+      echo -ne "Permissions ok."
     fi
   else
     echo -ne "No rule. "
     echo -ne "Setting to default $DEFOWNER"
     sudo chown "$DEFOWNER" "$FILE" || failure
-    echo -ne " / $DEFPERMS..."
-    sudo chmod "$DEFPERMS" "$FILE" && success || failure 
+    echo -ne " $DEFPERMS..."
+    sudo chmod "$DEFPERMS" "$FILE" || failure 
   fi
+  echo
 done
 
 cd $OLDPWD
