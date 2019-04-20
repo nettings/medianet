@@ -6,13 +6,17 @@ BASEDIR=`dirname $0`
 
 OLDPWD=`pwd`
 PERMFILE="permissions.medianet"
+# settings to use if no rule is found in $PERMFILE:
 DEFOWNER="root:root"
 DEFPERMS="u=rwX,g=rX,o=rX"
 
 cd "$BASEDIR"/../
 
+# HACK: fix sudoers first to avoid a warning on each subsequent action:
 for FILE in `sudo find overlay/etc/sudoers.d` `sudo find -P overlay/ boot/ ! -type l `; do
-  echo -n "$FILE: "
+  
+  echo -ne "$FILE:\t"
+  
   RULE=`grep -E "^.$FILE." $PERMFILE`
   if [[ -n "$RULE" ]] ; then
     OWNER=`echo $RULE | cut -d ' ' -f 2`
@@ -20,24 +24,24 @@ for FILE in `sudo find overlay/etc/sudoers.d` `sudo find -P overlay/ boot/ ! -ty
     CUROWNER=`stat -c "%U:%G" "$FILE"`
     CURPERMS=`stat -c "%a" "$FILE"`
     if [[ "$CUROWNER" != "$OWNER" ]] ; then
-      echo -n "Changing ownership to $OWNER..."
-      sudo chown "$OWNER" "$FILE" && success || failure
+      echo -ne "Owner to $OWNER. "
+      sudo chown "$OWNER" "$FILE" || failure
     else 
-      echo "Ownership already set to $OWNER."
+      echo -ne "Owner ok. "
     fi
     if [[ "$CURPERMS" != "$PERMS" ]] ; then
-      echo -n "Changing permissions to $PERMS..."
+      echo -ne "Permissions to $PERMS..."
       sudo chmod "$PERMS" "$FILE" && success || failure
     else
-      echo "Permissions already at $PERMS."
+      echo -e "Permissions ok."
     fi
   else
-    echo -n "Resetting to default owner $DEFOWNER..."
-    sudo chown "$DEFOWNER" "$FILE" && success || failure
-    echo -n "Resetting to default permissions $DEFPERMS..."
+    echo -ne "No rule. "
+    echo -ne "Setting to default $DEFOWNER"
+    sudo chown "$DEFOWNER" "$FILE" || failure
+    echo -ne " / $DEFPERMS..."
     sudo chmod "$DEFPERMS" "$FILE" && success || failure 
   fi
 done
-exit
 
 cd $OLDPWD
