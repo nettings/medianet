@@ -1,5 +1,5 @@
 #!/bin/sh
 PWD=`pwd`
-cat /proc/mounts | grep `df -h --output=source "$PWD" | tail -1` | grep -Eq [[:space:],]ro[[:space:],] && exit 1
+CURRENT_MOUNT=`df -h --output=target "$PWD" | tail -1`
+cat /proc/mounts | grep -e '[[:space:]]'"$CURRENT_MOUNT"'[[:space:]]' | grep -q -e '[[:space:],]ro[[:space:],]' && exit 1
 exit 0
-
