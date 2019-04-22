@@ -1,5 +1,5 @@
 # basic system packages
-ntpdate ntp cpufrequtils joe screen ufw lsof
+cpufrequtils joe screen ufw lsof
 # basic audio packages
 jackd2 jackmeter jack-capture jconvolver zita-ajbridge
 # plugins
