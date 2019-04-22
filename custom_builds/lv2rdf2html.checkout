@@ -1,3 +1,25 @@
 from_git https://github.com/nettings/lv2rdf2html.git lv2rdf2html
 from_package xsltproc raptor-utils
-ln -fs ../../config/this/medianet.conf lv2rdf2html/mod-host.cmd
+cat << EOF > lv2rdf2html/lv2rdf.conf
+# medianet deployment settings
+BUILDDIR=./build
+MODHOSTCONF=../../config/this/medianet.conf
+MODHOSTHOST=localhost
+MODHOSTPORT=5555
+SAMPLERATE=48000
+WEBGUIROOT=/srv/www/
+WEBGUIURI=lv2rdf.html
+JQUERYURI=https://code.jquery.com/jquery-3.3.1.min.js
+JQUERYINTEGRITY=sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT
+JQUERYUIURI=https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
+JQUERYUIINTEGRITY=sha384-Dziy8F2VlJQLMShA6FHWNul/veM9bCkRUaLqr199K94ntO5QUrLJBEbYegdSkkqX
+JQUERYUICSSURI=http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css
+JQUERYUICSSINTEGRITY=sha384-xewr6kSkq3dBbEtB6Z/3oFZmknWn7nHqhLVLrYgzEFRbU/DHSxW7K3B44yWUN60D
+DOWNLOADJQUERY=true
+JSURI=lv2rdf.js
+CSSURI=lv2rdf.css
+AJAXROOT=/srv/www/
+AJAXURI=lv2rdf.php
+XSLDIR=./xslt
+DESTDIR=/medianet/overlay
+EOF
