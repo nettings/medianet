@@ -43,16 +43,42 @@ PREFIX=/medianet
 CONFIG_INCLUDE=/etc/mn_config
 CONF_FILE_MODHOST=/etc/mod-host.conf
 CONF_FILE_ZITALRX=/etc/zita-lrx.conf
-BOOT_LOCAL=/boot/medianet.txt
+CONF_FILE_BOOT=/boot/medianet.txt
 SYSTEM_CONFIG="$PREFIX"/config/this/medianet.json
 SYSTEMD_UNIT_DIR=/etc/systemd/system
 SYSTEMD_UNITS_LOCAL="$PREFIX"/systemd
 
 # binaries
+APTGET=/usr/bin/apt-get
+CHOWN=/bin/chown
+CHMOD=/bin/chmod
+CHSH=/usr/bin/chsh
+CMP=/usr/bin/cmp
+CP=/bin/cp
+DPHYSSWAPFILE=/sbin/dphys-swapfile
+DPKGRECONFIGURE=/usr/sbin/dpkg-reconfigure
+FIND=/usr/bin/find
+GIT=/usr/bin/git
+GREP=/bin/grep
+GROUPADD=/usr/sbin/groupadd
+HOSTNAMEBIN=/bin/hostname
 INOTIFYWAIT=/usr/bin/inotifywait
 MN_CONFIG_UPDATE="$PREFIX"/overlay/usr/local/bin/mn_config_update
+MKDIR=/bin/mkdir
+MV=/bin/mv
+PASSWD=/usr/bin/passwd
+READLINK=/usr/bin/readlink
+RM=/bin/rm
+SED=/bin/sed
 SLEEP=/bin/sleep
+SWAPOFF=/sbin/swapoff
 SYSTEMCTL=/bin/systemctl
+TAR=/bin/tar
+UPDATELOCALE=/usr/sbin/update-locale
+USERADD=/usr/sbin/useradd
+USERDEL=/usr/sbin/userdel
+WGET=/usr/bin/wget
+XARGS=/usr/bin/xargs
 
 # dynamic helper variables
 # don't barf if \$0 starts with dash (as for login shell)

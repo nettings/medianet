@@ -25,17 +25,17 @@ while read VALUE; do
 	read VALUE
 	CONFIG+="CONFIG_DESCRIPTION=\"$VALUE\"\n"
 	read VALUE
-	echo -n "Updating /etc/hostname and /etc/hosts to $VALUE..."
 	CONFIG+="CONFIG_HOSTNAME=\"$VALUE\"\n"
+	echo -n "Updating /etc/hostname to $VALUE..."
 	if [[ `cat /etc/hostname 2> /dev/null | tr -d '[:space:]'` != "$VALUE" ]] ; then 
-		{
-			echo "$VALUE" > /etc/hostname && \
-			"$SED" -i "s/$HOSTNAME/$VALUE/g" /etc/hosts 
-		} && success || failure
-
+		echo "$VALUE" > /etc/hostname && success || failure
 	else
 		echo " not changed".
 	fi
+	echo -n "Updating /etc/hosts to $VALUE..."
+	"$SED" -i "s/$HOSTNAME/$VALUE/g" /etc/hosts && success || failure
+	echo -n "Setting hostname to $VALUE..."
+	"$HOSTNAMEBIN" "$VALUE" && success || failure
 	read VALUE
 	CONFIG+="CONFIG_LOCATION=\"$VALUE\"\n"
 	read VALUE
