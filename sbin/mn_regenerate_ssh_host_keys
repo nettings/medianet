@@ -2,11 +2,12 @@
 
 . /medianet/lib/mn_includes
 
+needroot
+
 echo -n "Deleting old ssh host keys... "
-sudo rm /etc/ssh/ssh_host_* || failure && success
+"$RM" /etc/ssh/ssh_host_* || failure && success
 echo -n "Regenerating keys... "
-sudo dpkg-reconfigure openssh-server || failure && success
+"$DPKGRECONFIGURE" openssh-server || failure && success
 
 scream "On next login, your ssh client will warn you that the remote identification has changed."
 scream "Follow the instructions to clean your key cache."
-

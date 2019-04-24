@@ -2,12 +2,14 @@
 
 . /medianet/lib/mn_includes
 
+needroot
+
 echo "Disabling swap:"
-if [[ -n `which dphys-swapfile 2> /dev/null` ]] ; then
+if [[ -e "$DPHYSSWAPFILE" ]] ; then
 	echo -n "Trying dphys-swapfile... "
-	sudo dphys-swapfile swapoff && sudo dphys-swapfile uninstall && success || failure
+	"$DPHYSSWAPFILE" swapoff && "$DPHYSSWAPFILE" uninstall && success || failure
 else
 	echo -n "Trying manual method... "
-	sudo swapoff -a && sudo sed -i '/^[^#]/ s/\(^.*swap.*$\)/#\ \1/' /etc/fstab && success || failure
+	"$SWAPOFF" -a && "$SED" -i '/^[^#]/ s/\(^.*swap.*$\)/#\ \1/' /etc/fstab && success || failure
 fi
 

@@ -1,13 +1,12 @@
 #!/bin/bash
 
-BASEDIR=`dirname $0`
-FIND=/usr/bin/find
+. /medianet/lib/mn_includes
 
-. "$BASEDIR"/../lib/mn_includes
+needroot
 
 OLDWD=`pwd`
-DESTDIR=`realpath "$BASEDIR"/../overlay`
-cd "$BASEDIR"/../custom_builds
+DESTDIR=`"$READLINK" "$PREFIX"/overlay`
+cd "$PREFIX"/custom_builds
 
 if [[ -n "$1" ]] ; then
 	TARGET="$1.build"
@@ -17,9 +16,9 @@ fi
 
 scream "Building \"$TARGET\"."
 
-$FIND -name "$TARGET" | while read line ; do
-  line=`realpath "$line"`
-  WORKDIR=`echo "$line" | sed 's/\.build$//'`
+"$FIND" -name "$TARGET" | while read line ; do
+  line=`"$READLINK" --canonicalize "$line"`
+  WORKDIR=`echo "$line" | "$SED" 's/\.build$//'`
   cd "$WORKDIR"
   scream "********* Compiling $line...\n"
   . "$line" \

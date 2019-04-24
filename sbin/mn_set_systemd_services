@@ -4,18 +4,19 @@
 
 . "$MEDIANETCONF"
 
+needroot
 
 SRCPATH=/medianet/systemd
 
 scream "Services to disable:"
 
 for i in $SYSTEMD_DISABLE ; do
-  s=`sudo systemctl is-enabled "$i" 2>&1`
+  s=`"$SYSTEMCTL" is-enabled "$i" 2>&1`
   echo -n "$i "
   case "$s" in
     enabled)
       echo -n "disabling..."
-      sudo systemctl --quiet disable "$i"  && success || failure
+      "$SYSTEMCTL" --quiet disable "$i"  && success || failure
       ;;
     disabled)
       echo - "already disabled."
@@ -34,27 +35,27 @@ OLDWD=`pwd`
 cd "$SRCPATH"
 for i in *target ; do
   echo -n "Disabling existing `basename $i`... "
-  sudo systemctl disable "$i"  && success || failure
+  "$SYSTEMCTL" disable "$i"  && success || failure
   echo -n "Linking `basename $i`: "
-  sudo systemctl link "$SRCPATH/$i" && success || failure
+  "$SYSTEMCTL" link "$SRCPATH/$i" && success || failure
 done
 for i in *service ; do 
   echo "`basename $i`: "
   echo $SYSTEMD_ENABLE | grep $i > /dev/null && {
-    sudo systemctl --quiet is-enabled "$i" 2> /dev/null && {
+    "$SYSTEMCTL" --quiet is-enabled "$i" 2> /dev/null && {
       echo -e "\talready enabled."
     } || {
       echo -ne "\tenabling..."
-      sudo systemctl enable "$SRCPATH/$i" | tr "\n" " " && success || failure
+      "$SYSTEMCTL" enable "$SRCPATH/$i" | tr "\n" " " && success || failure
     }
   } || {
-    sudo systemctl --quiet is-active "$i" 2> /dev/null && {
+    "$SYSTEMCTL" --quiet is-active "$i" 2> /dev/null && {
       echo -ne "\tstopping..." 
-      sudo systemctl stop "$i" | tr "\n" " " && success || failure
+      "$SYSTEMCTL" stop "$i" | tr "\n" " " && success || failure
     } || echo -e "\talready stopped."
-    sudo systemctl --quiet is-enabled "$SRCPATH/$i" 2> /dev/null && {
+    "$SYSTEMCTL" --quiet is-enabled "$SRCPATH/$i" 2> /dev/null && {
       echo -ne "\tdisabling..."
-      sudo systemctl disable "$i" | tr "\n " " " && success || failure
+      "$SYSTEMCTL" disable "$i" | tr "\n " " " && success || failure
     } || echo -e "\talready disabled."
   }
 done

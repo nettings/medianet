@@ -2,6 +2,6 @@
 
 . /medianet/lib/mn_includes
 
-sudo systemctl enable ssh && success || failure
+needroot
 
-
+"$SYSTEMCTL" enable ssh && success || failure

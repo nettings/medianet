@@ -2,6 +2,8 @@
 
 . /medianet/lib/mn_includes
 
+needroot
+
 TIMEZONE="Europe/Berlin"
 DEFAULTLOCALE="en_US.UTF-8"
 OTHERLOCALES="en_GB.UTF-8 de_DE.UTF-8"
@@ -9,18 +11,16 @@ OTHERLOCALES="en_GB.UTF-8 de_DE.UTF-8"
 echo "Activating locales..."
 for i in $DEFAULTLOCALE $OTHERLOCALES ; do
 	echo -ne "\t$i"
-	sudo sed -i "s/\#.*$i/$i/" /etc/locale.gen && success || failure
+	"$SED" -i "s/\#.*$i/$i/" /etc/locale.gen && success || failure
 done
 
 echo "Setting default locale to $DEFAULTLOCALE... "
-sudo /bin/bash -c 'echo LANG="en_US.UTF-8" > /etc/default/locale' && \
-	sudo dpkg-reconfigure --frontend=noninteractive locales && \
-	sudo update-locale LANG=en_US.UTF-8 \
+echo "LANG=en_US.UTF-8" > /etc/default/locale && \
+	"$DPKGRECONFIGURE" --frontend=noninteractive locales && \
+	"$UPDATELOCALE" LANG=en_US.UTF-8 \
 	&& success || bail
 
 echo -n "Setting timezone to $TIMEZONE... "
-sudo /bin/bash -c 'echo "$TIMEZONE" > /etc/timezone' \
-	&& sudo dpkg-reconfigure -f noninteractive tzdata \
+echo "$TIMEZONE" > /etc/timezone \
+	&& "$DPKGRECONFIGURE"-f noninteractive tzdata \
 	&& success || bail
-
-

@@ -2,13 +2,13 @@
 
 . /medianet/lib/mn_includes
 
-BASEDIR=`dirname $0`
+needroot
 
 OLDPWD=`pwd`
 
-cd "$BASEDIR"/../
+cd "$PREFIX"
 
 echo -n  "Setting ownership of /medianet tree to medianet:medianet... "
-sudo chown -R medianet:medianet . || failure && success
+"$CHOWN" -R medianet:medianet . || failure && success
 
-cd $OLDPWD
+cd "$OLDPWD"

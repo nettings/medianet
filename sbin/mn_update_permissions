@@ -1,8 +1,9 @@
 #!/bin/bash
 
-FILE="permissions.medianet"
+. /medianet/lib/mn_includes
+
 OLDPWD=`pwd`
 cd /medianet
-mv "$FILE" "$FILE".old
-sudo find overlay boot ! -type l ! -name "*~" -exec stat -c "%N %U:%G %a" {} \; >>permissions.medianet
+mv "$CONF_FILE_PERMISSIONS" "$CONF_FILE_PERMISSIONS".old
+"$FIND" overlay boot ! -type l ! -name "*~" -exec "$STAT" -c "%N %U:%G %a" {} \; >> "$CONF_FILE_PERMISSIONS"
 cd "$OLDPWD"
