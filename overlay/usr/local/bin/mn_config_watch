@@ -1,0 +1,48 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+if [[ -n "$1" ]] ; then
+        CONFIG_FILE="$1"
+else
+        CONFIG_FILE="$SYSTEM_CONFIG"
+fi
+
+if [[ ! -e "$CONFIG_FILE" ]] ; then
+        bail "$CONFIG_FILE does not exist."
+fi
+
+PROGNAME=`basename $0`
+function watchConfig {
+	while : ; do
+		$INOTIFYWAIT -e modify "$CONFIG_FILE"
+		$MN_CONFIG_UPDATE "$CONFIG_FILE"
+		$SLEEP 5
+	done
+}
+
+echo "$PROGNAME now watching $CONFIG_FILE..."
+
+watchConfig &
+watchConfig_PID="$!"
+
+function handle_signal {
+	echo -n "$PROGNAME caught signal $1. Exiting..."
+	kill $watchConfig_PID && success || failure
+	exit "$?"
+}
+
+function trap_signals {
+	FUNC="$1" ; shift
+	for SIG in "$@" ; do
+		trap "$FUNC $SIG" "$SIG"
+	done
+}
+ 
+trap_signals handle_signal SIGINT SIGTERM SIGUSR1 SIGUSR2 SIGHUP
+
+while : ; do
+	$SLEEP infinity
+done
