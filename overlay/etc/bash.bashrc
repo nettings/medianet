@@ -62,8 +62,6 @@ alias ...="cd ../../"
 alias ....="cd ../../../"
 alias rm="rm -i"
 
-echo -e "\033[1;33mMedia node prototype version:"
-mn_get_version
-echo
-cat /proc/device-tree/model
-echo -e "\033[0m\n"
+. /medianet/lib/mn_includes
+
+/usr/local/bin/mn_info
