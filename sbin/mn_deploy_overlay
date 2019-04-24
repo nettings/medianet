@@ -30,7 +30,7 @@ done
 
 scream "Deploying overlay..."
 # Iterate over all files in overlay
-for SOURCE in `find -P * \! -name README \! -type d` ; do
+for SOURCE in `find -P * \! -name README \! -name *~ \! -type d` ; do
 	TARGET=/"$SOURCE"
 	BACKUP=/"$SOURCE".mn_
 	LINK="$PWD"/"$SOURCE"
