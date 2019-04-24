@@ -41,8 +41,9 @@ MEDIANETCONF="/medianet/config/this/medianet.conf"
 PREFIX=/medianet
 
 CONFIG_INCLUDE=/etc/mn_config
+CONF_FILE_MODHOST=/etc/mod-host.conf
+CONF_FILE_ZITALRX=/etc/zita-lrx.conf
 BOOT_LOCAL=/boot/medianet.txt
-MODHOST_CONFIG=/etc/mod-host.conf
 SYSTEM_CONFIG="$PREFIX"/config/this/medianet.json
 SYSTEMD_UNIT_DIR=/etc/systemd/system
 SYSTEMD_UNITS_LOCAL="$PREFIX"/systemd

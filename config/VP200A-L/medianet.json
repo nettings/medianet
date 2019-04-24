@@ -2,7 +2,7 @@
 	"product": "VP200A-L",
 	"description": "[mn] VoicePoint VP200A Active speaker (left channel)",
 	"hostname": "mn_VP200A-L",
-	"location": "medianet Showroom",
+	"location": "Showroom",
 	"version": "2019-04-24",
 	"bootConfig": {
 		"arm_freq" : 600,
@@ -164,19 +164,74 @@
 		{
 			"unit":"zita-j2n.service",
 			"enabled": 0,
-			"jackName": "zita-j2n"
+			"options": "--chan 2 239.0.0.1 3000 medianet0",
+			"jackName": "zita-j2n",
+			"inPorts": [
+				"in_1",
+				"in_2"
+			],
+			"inFrom": {}
 		},
 		{
 			"unit":"zita-a2j.service",
 			"enabled": 0,
-			"jackName": "zita-a2j"
-
+			"options": "-d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"jackName": "zita-a2j",
+			"outPorts": [
+				"capture_1",
+				"capture_2"
+			],
+			"outTo": {}
 		},
 		{
 			"unit": "zita-j2a.service",
 			"enabled": 0,
-			"jackName": "zita-j2a"
-
+			"options": "-d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"jackName": "zita-j2a",
+			"inPorts": [
+				"playback_1",
+				"playback_2"
+			],
+			"inFrom": {}
+		},
+		{
+			"unit": "zita-lrx.service",
+			"enabled": 0,
+			"options": "",
+			"jackName": "zita-lrx",
+			"inPorts": [
+				"inp-L",
+				"inp-R"
+			],
+			"inFrom": {},
+			"outPorts": [
+				"out-L.sub",
+				"out-L.mid",
+				"out-L.high",
+				"out-R.sub",
+				"out-R.mid",
+				"out-R.high"
+			],
+			"outTo": {},
+			"config": [
+				"# Two channels, three frequency bands.",
+				"/zita-lrx       2  3",
+				"# Channel names.",
+				"/chann/label    1  L",
+				"/chann/label    2  R",
+				"# Output port suffixes.",
+				"/fband/suffix   1  sub",
+				"/fband/suffix   2  mid",
+				"/fband/suffix   3  high",
+				"# Xover filters, first is Linkwitz-Riley, second is modified.",
+				"/xover/freq     1  80",
+				"/xover/freq     2  3000",
+				"/xover/shape    2  -4.0",
+				"# Subwoofer signals are summed on first output.",
+				"# MF amplifier on outputs 3 and 4, 2 dB gain, 0.4 ms delay.",
+				"/fband/gain     2  2.0",
+				"/fband/delay    2  0.4"
+			]
 		}
 	]
 }

@@ -14,6 +14,9 @@ if [[ ! -e "$CONFIG_FILE" ]] ; then
 	bail "$CONFIG_FILE does not exist."
 fi
 
+NOEDIT="# Values created by $PROGNAME from $CONFIG_FILE, do not edit!"
+
+
 scream "Update product/description/hostname/location/version"
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | jq -r 'to_entries[]|select(.key == ("product","description","hostname","location","version"))|.value'`
@@ -37,7 +40,7 @@ while read VALUE; do
 done <<< "$DATA"
 scream "Setting CONFIG_ variables:"
 echo -en "$CONFIG"
-CONFIG="# Values created by $PROGNAME from $CONFIG_FILE, do not edit!\n$CONFIG"
+CONFIG="$NOEDIT\n$CONFIG"
 echo -n "Updating $CONFIG_INCLUDE..."
 echo -e "$CONFIG" > "$CONFIG_INCLUDE" && success || failure
 
@@ -109,5 +112,17 @@ while read COMMAND ; do
 	CONFIG+="$COMMAND\n"
 done <<< "$DATA"
 echo -en "$CONFIG"
-echo -n "Writing to $MODHOST_CONFIG..."
-echo "$CONFIG" > "$MODHOST_CONFIG" && success || failure
+CONFIG="$NOEDIT\n$CONFIG"
+echo -n "Writing to $CONF_FILE_MODHOST..."
+echo -e "$CONFIG" > "$CONF_FILE_MODHOST" && success || failure
+
+scream "Update zita-lrx configuration:"
+CONFIG=
+DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[]|select(.unit == "zita-lrx.service")|.config[]'`
+while read COMMAND ; do
+	CONFIG+="$COMMAND\n"
+done <<< "$DATA"
+echo -en "$CONFIG"
+CONFIG="$NOEDIT\n$CONFIG"
+echo -n "Writing to $CONF_FILE_ZITALRX..."
+echo -e "$CONFIG" > "$CONF_FILE_ZITALRX" && success || failure
