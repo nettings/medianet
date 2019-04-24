@@ -40,7 +40,6 @@ echo -en "$CONFIG"
 CONFIG="# Values created by $PROGNAME from $CONFIG_FILE, do not edit!\n$CONFIG"
 echo -n "Updating $CONFIG_INCLUDE..."
 echo -e "$CONFIG" > "$CONFIG_INCLUDE" && success || failure
-exit
 
 scream "Update boot configuration in $BOOT_LOCAL:"
 CONFIG=
