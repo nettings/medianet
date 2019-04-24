@@ -25,10 +25,14 @@ while read VALUE; do
 	read VALUE
 	CONFIG+="CONFIG_DESCRIPTION=\"$VALUE\"\n"
 	read VALUE
-	echo -n "Updating /etc/hostname to $VALUE..."
+	echo -n "Updating /etc/hostname and /etc/hosts to $VALUE..."
 	CONFIG+="CONFIG_HOSTNAME=\"$VALUE\"\n"
-	if [[ `cat /etc/hostname | tr -d '[:space:]'` != "$VALUE" ]] ; then 
-		echo "$VALUE" > /etc/hostname && success || failure
+	if [[ `cat /etc/hostname 2> /dev/null | tr -d '[:space:]'` != "$VALUE" ]] ; then 
+		{
+			echo "$VALUE" > /etc/hostname && \
+			"$SED" -i "s/$HOSTNAME/$VALUE/g" /etc/hosts 
+		} && success || failure
+
 	else
 		echo " not changed".
 	fi
@@ -44,7 +48,7 @@ CONFIG="$NOEDIT\n$CONFIG"
 echo -n "Updating $CONFIG_INCLUDE..."
 echo -e "$CONFIG" > "$CONFIG_INCLUDE" && success || failure
 
-scream "Update boot configuration in $BOOT_LOCAL:"
+scream "Update boot configuration in $CONF_FILE_BOOT:"
 CONFIG=
 # we assume anything that is not a dtparam or a dtoverlay can occur only once
 # this becomes important if we later combine default settings with overrides
@@ -69,8 +73,8 @@ while read KEY ; do
 	CONFIG+="dtparam=$KEY=$VALUE\n"
 done <<< "$DATA"
 echo -en "$CONFIG"
-echo -n "writing out to $BOOT_LOCAL..."
-echo -en "$CONFIG" > "$BOOT_LOCAL" && success || failure
+echo -n "writing out to $CONF_FILE_BOOT..."
+echo -en "$CONFIG" > "$CONF_FILE_BOOT" && success || failure
 
 
 scream "Update systemd unit status:"
