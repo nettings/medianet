@@ -1,21 +1,13 @@
-
 function scream {
-
   echo
   echo -e "\033[1;1m$1\033[0m"
-
 }
-
 
 function success {
-
   echo  -e " \033[1;32msucceeded.\033[0m"
-
 }
 
-
 function failure {
-
 	ERR=$?
 	ERRSTR=""
 	if [[ $ERR != 0 ]] ; then
@@ -24,16 +16,13 @@ function failure {
 	echo  -e " \033[1;31mfailed$ERRSTR. $@\033[0m"
 }
 
-
 function bail {
-
 	ERR=$?
 	ERRSTR=""
 	if [[ $ERR != 0 ]] ; then
 		ERRSTR=" (return code $ERR)"
 	fi
 	echo -e "\033[1;31mFatal error \"$@\"$ERRSTR ... Exiting.\033[0m"
-
   exit 1
 }
 
@@ -48,17 +37,23 @@ function needroot {
 
 MEDIANETCONF="/medianet/config/this/medianet.conf"
 
-
 # globals
 PREFIX=/medianet
 
+CONFIG_INCLUDE="$PREFIX"/mn_config
 BOOT_LOCAL=/boot/medianet.txt
-SYSTEM_CONFIG=$PREFIX/config/this/medianet.json
+SYSTEM_CONFIG="$PREFIX"/config/this/medianet.json
 SYSTEMD_UNIT_DIR=/etc/systemd/system
-SYSTEMD_UNITS_LOCAL=$PREFIX/systemd
+SYSTEMD_UNITS_LOCAL="$PREFIX"/systemd
 
 # binaries
 INOTIFYWAIT=/usr/bin/inotifywait
-MN_CONFIG_UPDATE=$PREFIX/overlay/usr/local/bin/mn_config_update
+MN_CONFIG_UPDATE="$PREFIX"/overlay/usr/local/bin/mn_config_update
 SLEEP=/bin/sleep
 SYSTEMCTL=/bin/systemctl
+
+# dynamic helper variables
+PROGNAME=`basename $0`
+
+# make config variables available
+. CONFIG_INCLUDE

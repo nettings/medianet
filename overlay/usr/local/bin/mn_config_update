@@ -14,10 +14,39 @@ if [[ ! -e "$CONFIG_FILE" ]] ; then
 	bail "$CONFIG_FILE does not exist."
 fi
 
+scream "Update product/description/hostname/location/version"
+CONFIG=
+DATA=`cat "$CONFIG_FILE" | jq -r 'to_entries[]|select(.key == ("product","description","hostname","location","version"))|.value'`
+while read VALUE; do
+	CONFIG+="CONFIG_PRODUCT=\"$VALUE\"\n"
+	read VALUE
+	CONFIG+="CONFIG_DESCRIPTION=\"$VALUE\"\n"
+	read VALUE
+	echo -n "Updating /etc/hostname to $VALUE..."
+	CONFIG+="CONFIG_HOSTNAME=\"$VALUE\"\n"
+	if [[ `cat /etc/hostname | tr -d '[:space:]'` != "$VALUE" ]] ; then 
+		echo "$VALUE" > /etc/hostname && success || failure
+	else
+		echo " not changed".
+	fi
+	read VALUE
+	CONFIG+="CONFIG_LOCATION=\"$VALUE\"\n"
+	read VALUE
+	CONFIG+="CONFIG_VERSION=\"$VALUE\"\n"
+	break
+done <<< "$DATA"
+scream "Setting CONFIG_ variables:"
+echo -en "$CONFIG"
+CONFIG="# Values created by $PROGNAME from $CONFIG_FILE, do not edit!\n$CONFIG"
+echo -n "Updating $CONFIG_INCLUDE..."
+echo -e "$CONFIG" > "$CONFIG_INCLUDE" && success || failure
+exit
+
 scream "Update boot configuration in $BOOT_LOCAL:"
+CONFIG=
 # we assume anything that is not a dtparam or a dtoverlay can occur only once
 # this becomes important if we later combine default settings with overrides
-CONFIG+="# singleton parameters\n"
+CONFIG="# singleton parameters\n"
 DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig | del(.dtoverlay) | del(.dtparam) | keys_unsorted[] as $k | "\($k)\n\(.[$k])"'`
 while read KEY ; do
 	read VALUE
