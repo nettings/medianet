@@ -40,7 +40,7 @@ MEDIANETCONF="/medianet/config/this/medianet.conf"
 # globals
 PREFIX=/medianet
 
-CONFIG_INCLUDE="$PREFIX"/mn_config
+CONFIG_INCLUDE=/etc/mn_config
 BOOT_LOCAL=/boot/medianet.txt
 SYSTEM_CONFIG="$PREFIX"/config/this/medianet.json
 SYSTEMD_UNIT_DIR=/etc/systemd/system
@@ -53,7 +53,8 @@ SLEEP=/bin/sleep
 SYSTEMCTL=/bin/systemctl
 
 # dynamic helper variables
-PROGNAME=`basename $0`
+# don't barf if \$0 starts with dash (as for login shell)
+PROGNAME=`basename -- "$0"`
 
 # make config variables available
-. CONFIG_INCLUDE
+. $CONFIG_INCLUDE
