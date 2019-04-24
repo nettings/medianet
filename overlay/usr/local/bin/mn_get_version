@@ -2,6 +2,6 @@
 
 OLDPWD=`pwd`
 cd /medianet
-git log | head -n 5 | grep commit
-git log | head -n 5 | grep Date
-cd $OLDPWD 
+git log -n 1 | grep Date | cut -c 9- | tr '\n' ' '
+git log -n 1 --pretty=oneline | cut -d ' ' -f 1
+cd $OLDPWD
