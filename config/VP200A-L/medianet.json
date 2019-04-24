@@ -1,7 +1,7 @@
 {
 	"product": "VP200A-L",
 	"description": "[mn] VoicePoint VP200A Active speaker (left channel)",
-	"hostname": "mn_VP200A-L_%m",
+	"hostname": "mn_VP200A-L",
 	"location": "medianet Showroom",
 	"version": "2019-04-24",
 	"bootConfig": {
