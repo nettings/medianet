@@ -1,0 +1,183 @@
+{
+	"product": "VP200A-L",
+	"description": "[mn] VoicePoint VP200A Active speaker (left channel)",
+	"hostname": "mn_VP200A-L_%m",
+	"location": "medianet Showroom",
+	"version": "2019-04-24",
+	"bootConfig": {
+		"arm_freq" : 600,
+		"arm_freq_min" : 600,
+		"test" : "",
+		"dtparam" : {
+			"audio" : "off"
+		},
+		"dtoverlay" : [
+			"pi3-disable-wifi",
+			"pi3-disable-bt",
+			"hifiberry-dacplus"
+		]
+	},
+	"alsaOptions": {
+		"master": "Digital",
+		"masterDefault": 98
+	},
+	"systemdUnits": [
+		{
+			"unit"    : "apt-daily-upgrade.timer",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "apt-daily.service",
+			"enabled" : 0
+		},
+		{
+			"unit": "apt-daily-upgrade.service",
+			"enabled": 0
+		},
+		{
+			"unit":"apt-daily.timer",
+			"enabled": 0
+		},
+		{
+			"unit" : "hciuart.service",
+			"enabled": 0
+		},
+		{
+			"unit" : "jackd.service",
+			"enabled": 1,
+			"options": "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P -r48000 -p256 -n2 -zs",
+			"jackName": "system",
+			"inPorts": [
+				"playback_1",
+				"playback_2"
+			],
+			"inFrom": {
+				"mod-host" : 0,
+				"mod-host" : 1 },
+			"outPorts": [],
+			"outTo": {}
+		},
+		{
+			"unit": "mod-host.service",
+			"enabled": 1,
+			"options": "",
+			"jackName": "mod-host",
+			"inPorts": [
+				"effect_1:in" ],
+			"inFrom": {
+				"zita-n2j" : 0 },
+			"outPorts": [
+				"effect_12:lv2_audio_out_1",
+				"effect_12:lv2_audio_out_2" ],
+			"outTo": {
+				"system" : 0,
+				"system" : 1 },
+			"config": [
+				"add http://gareus.org/oss/lv2/fil4#mono 1",
+				"add http://stackingdwarves.net/lv2/sm 10",
+				"add http://plugin.org.uk/swh-plugins/lowpass_iir 11",
+				"add urn:zamaudio:ZaMaximX2 12", 
+				"connect effect_1:out effect_10:inL",
+				"connect effect_1:out effect_10:inR",
+				"connect effect_10:outL effect_12:lv2_audio_in_1",
+				"connect effect_10:outR effect_11:input",
+				"connect effect_11:output effect_12:lv2_audio_in_2",
+				"connect effect_12:lv2_audio_out_1 system:playback_1",
+				"connect effect_12:lv2_audio_out_2 system:playback_2",
+				"connect zita-n2j:out_1 effect_1:in",
+				"param_set 1 enable 1.0000",
+				"param_set 1 gain -12.0000",
+				"param_set 1 peakreset 1.0000",
+				"param_set 1 HighPass 1.0000",
+				"param_set 1 HPfreq 75.0000",
+				"param_set 1 HPQ 1.2432",
+				"param_set 1 LowPass 0.0000",
+				"param_set 1 LPfreq 500.0000",
+				"param_set 1 LPQ 0.0000",
+				"param_set 1 LSsec 1.0000",
+				"param_set 1 LSfreq 150.0000",
+				"param_set 1 LSq 1.2000",
+				"param_set 1 LSgain 12.0000",
+				"param_set 1 sec1 1.0000",
+				"param_set 1 freq1 207.5057",
+				"param_set 1 q1 0.0625",
+				"param_set 1 gain1 -15.6240",
+				"param_set 1 sec2 0.0000",
+				"param_set 1 freq2 250.0000",
+				"param_set 1 q2 0.6000",
+				"param_set 1 gain2 -0.5000",
+				"param_set 1 sec3 0.0000",
+				"param_set 1 freq3 542.0009",
+				"param_set 1 q3 1.0000",
+				"param_set 1 gain3 -1.0440",
+				"param_set 1 sec4 1.0000",
+				"param_set 1 freq4 6471.8730",
+				"param_set 1 q4 0.4248",
+				"param_set 1 gain4 9.0000",
+				"param_set 1 HSsec 1.0000",
+				"param_set 1 HSfreq 11500.0000",
+				"param_set 1 HSq 3.0000",
+				"param_set 1 HSgain 9.0000",
+				"param_set 10 gain 0.0000",
+				"param_set 10 attL 0.0000",
+				"param_set 10 attOnL 1.0000",
+				"param_set 10 delayL 0.0000",
+				"param_set 10 delayLOn 0.0000",
+				"param_set 10 activeL 1.0000",
+				"param_set 10 attR 0.0000",
+				"param_set 10 attOnR 1.0000",
+				"param_set 10 delayR 0.0000",
+				"param_set 10 delayROn 0.0000",
+				"param_set 10 activeR 1.0000",
+				"param_set 11 cutoff 400.0000",
+				"param_set 11 stages 1.0000",
+				"param_set 12 rel 25.0000",
+				"param_set 12 ceil 0.0000",
+				"param_set 12 thresh 0.0000" ]
+		},
+		{
+			"unit": "phpsessionclean.timer",
+			"enabled": 0
+		},
+		{
+			"unit": "ufw.service",
+			"enabled": 1
+		},
+		{
+			"unit":"wifi-country.service",
+			"enabled": 0
+		},
+		{
+			"unit":"zita-n2j.service",
+			"enabled": 1,
+			"options": "--chan 1 --buff 20 239.0.0.1 3000 medianet0",
+			"jackName": "zita-n2j",
+			"inPorts": [],
+			"inFrom": {},
+			"outPorts": [
+				"out_1"
+			],
+			"outTo": {
+				"mod-host": 0
+			}
+		},
+		{
+			"unit":"zita-j2n.service",
+			"enabled": 0,
+			"jackName": "zita-j2n"
+		},
+		{
+			"unit":"zita-a2j.service",
+			"enabled": 0,
+			"jackName": "zita-a2j"
+
+		},
+		{
+			"unit": "zita-j2a.service",
+			"enabled": 0,
+			"jackName": "zita-j2a"
+
+		}
+	]
+}
+		

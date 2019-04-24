@@ -1,0 +1,73 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+SYSTEMD_UNIT_DIR=/etc/systemd/system
+BOOT_LOCAL=/boot/medianet.txt
+SYSTEMCTL=/bin/systemctl
+SYSTEMD_UNITS_LOCAL=/medianet/systemd
+
+if [ "$EUID" -ne 0 ] ; then
+	scream "You really should be root to run this."
+fi
+
+scream "Update boot configuration in $BOOT_LOCAL:"
+# we assume anything that is not a dtparam or a dtoverlay can occur only once
+# this becomes important if we later combine default settings with overrides
+CONFIG+="# singleton parameters\n"
+DATA=`cat medianet.json  | jq -r '.bootConfig | del(.dtoverlay) | del(.dtparam) | keys_unsorted[] as $k | "\($k)\n\(.[$k])"'`
+while read KEY ; do
+	read VALUE
+	CONFIG+="$KEY=$VALUE\n"
+done <<< "$DATA"
+# dtoverlay can occur multiple times. we preserve the original order and rely
+# on the config.txt parser to do the right thing (latest takes precedence)
+CONFIG+="# dtoverlay parameters\n"
+DATA=`cat medianet.json  | jq -r '.bootConfig.dtoverlay[]'`
+while read VALUE ; do
+	CONFIG+="dtoverlay=$VALUE\n"
+done <<< "$DATA"
+# same for dtparam
+CONFIG+="# dtparam parameters\n"
+DATA=`cat medianet.json  | jq -r '.bootConfig.dtparam|keys_unsorted[] as $k | "\($k)\n\(.[$k])"'`
+while read KEY ; do
+	read VALUE
+	CONFIG+="dtparam=$KEY=$VALUE\n"
+done <<< "$DATA"
+echo -en "$CONFIG"
+echo -n "writing out to $BOOT_LOCAL..."
+echo -en "$CONFIG" > "$BOOT_LOCAL" && success || failure
+
+
+scream "Update systemd unit status:"
+DATA=`cat medianet.json  | jq -r '.systemdUnits[]|select(.enabled == 0)|.unit'`
+while read SERVICE ; do
+	"$SYSTEMCTL" --quiet is-enabled "$SERVICE" 2> /dev/null && {
+		echo -n "Disabling $SERVICE..."
+		"$SYSTEMCTL" disable "$SERVICE" && success || failure
+	} || echo "$SERVICE already disabled."
+done <<< "$DATA"
+DATA=`cat medianet.json  | jq -r '.systemdUnits[]|select(.enabled == 1)|.unit'`
+while read SERVICE ; do
+	"$SYSTEMCTL" --quiet is-enabled  "$SERVICE" && {
+		echo "$SERVICE is already enabled."
+	} || {
+		echo -e "Enabling $SERVICE..."
+		"$SYSTEMCTL" --quiet enable "$SYSTEMD_UNITS_LOCAL"/"$SERVICE" && success || failure
+	}
+done <<< "$DATA"
+
+
+scream "Update systemd unit parameters:"
+DATA=`cat medianet.json | jq -r '.systemdUnits[]|select(.options)|"\(.unit)\n\(.options)"'`
+while read UNIT ; do
+	if [[ ! -e "$SYSTEMD_UNIT_DIR"/"$UNIT".d ]] ; then
+		echo -n "Creating $SYSTEMD_UNIT_DIR/$UNIT.d..."
+		mkdir "$SYSTEMD_UNIT_DIR"/"$UNIT".d && success || failure
+	fi
+	read OPTIONS
+	OPTIONS="OPTIONS=\"$OPTIONS\""
+	echo -n "Writing $OPTIONS to $SYSTEMD_UNIT_DIR/$UNIT.d/$UNIT.env..."
+	echo "$OPTIONS" > "$SYSTEMD_UNIT_DIR"/"$UNIT".d/"$UNIT".env && success || failure
+done <<< "$DATA"
+  
