@@ -101,4 +101,13 @@ while read UNIT ; do
 	echo -n "Writing $OPTIONS to $SYSTEMD_UNIT_DIR/$UNIT.d/$UNIT.env..."
 	echo "$OPTIONS" > "$SYSTEMD_UNIT_DIR"/"$UNIT".d/"$UNIT".env && success || failure
 done <<< "$DATA"
-  
+
+scream "Update mod-host configuration:"
+CONFIG=
+DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[]|select(.unit == "mod-host.service")|.config[]'`
+while read COMMAND ; do
+	CONFIG+="$COMMAND\n"
+done <<< "$DATA"
+echo -en "$CONFIG"
+echo -n "Writing to $MODHOST_CONFIG..."
+echo "$CONFIG" > "$MODHOST_CONFIG" && success || failure
