@@ -1,4 +1,3 @@
-MEDIANETCONF="/medianet/config/this/medianet.conf"
 
 function scream {
 
@@ -17,15 +16,49 @@ function success {
 
 function failure {
 
-  echo  -e " \033[1;31mfailed with return code $?. $@\033[0m"
-
+	ERR=$?
+	ERRSTR=""
+	if [[ $ERR != 0 ]] ; then
+		ERRSTR=" (return code $ERR)"
+	fi
+	echo  -e " \033[1;31mfailed$ERRSTR. $@\033[0m"
 }
 
 
 function bail {
 
-  failure $@
-  echo -e "\033[1;31mExiting.\033[0m"
+	ERR=$?
+	ERRSTR=""
+	if [[ $ERR != 0 ]] ; then
+		ERRSTR=" (return code $ERR)"
+	fi
+	echo -e "\033[1;31mFatal error \"$@\"$ERRSTR ... Exiting.\033[0m"
 
   exit 1
 }
+
+function needroot {
+	if [ "$EUID" -ne 0 ] ; then
+		echo -e "\033[1;31mYou must be root to run $0.\033[0m"
+	exit 2
+	fi
+}
+
+# legacy globals
+
+MEDIANETCONF="/medianet/config/this/medianet.conf"
+
+
+# globals
+PREFIX=/medianet
+
+BOOT_LOCAL=/boot/medianet.txt
+SYSTEM_CONFIG=$PREFIX/config/this/medianet.json
+SYSTEMD_UNIT_DIR=/etc/systemd/system
+SYSTEMD_UNITS_LOCAL=$PREFIX/systemd
+
+# binaries
+INOTIFYWAIT=/usr/bin/inotifywait
+MN_CONFIG_UPDATE=$PREFIX/overlay/usr/local/bin/mn_config_update
+SLEEP=/bin/sleep
+SYSTEMCTL=/bin/systemctl
