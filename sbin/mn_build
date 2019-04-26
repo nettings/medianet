@@ -5,7 +5,7 @@
 needroot
 
 OLDWD=`pwd`
-DESTDIR=`"$READLINK" "$PREFIX"/overlay`
+DESTDIR="$PREFIX"/overlay
 cd "$PREFIX"/custom_builds
 
 if [[ -n "$1" ]] ; then
@@ -31,4 +31,4 @@ scream "Building \"$TARGET\"."
 done
 
 cd "$OLDWD"
-echo "Compiled programs have been installed to $DESTDIR. Deploy with 'sudo `realpath "$BASEDIR"`/mn_deploy_overlay' to activate them."
+echo "Compiled programs have been installed to $DESTDIR. Deploy with 'sudo $PREFIX/sbin/mn_deploy_overlay' to activate them."
