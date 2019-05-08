@@ -23,55 +23,68 @@
 	},
 	"systemdUnits": [
 		{
-			"unit"    : "apt-daily-upgrade.timer",
+			"unit"    : "apt-daily-upgrade", 
+			"type"    : "timer",
 			"enabled" : 0
 		},
 		{
-			"unit"    : "apt-daily.service",
+			"unit"    : "apt-daily",
+			"type"    : "service",
 			"enabled" : 0
 		},
 		{
-			"unit": "apt-daily-upgrade.service",
-			"enabled": 0
+			"unit"    : "apt-daily-upgrade",
+			"type"    : "service",
+			"enabled" : 0
 		},
 		{
-			"unit":"apt-daily.timer",
-			"enabled": 0
+			"unit"    : "apt-daily",
+			"type"    : "timer",
+			"enabled" : 0
 		},
 		{
-			"unit" : "hciuart.service",
-			"enabled": 0
+			"unit"    : "hciuart",
+			"type"    : "service",
+			"enabled" : 0
 		},
 		{
-			"unit" : "jackd.service",
-			"enabled": 1,
-			"options": "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P -r48000 -p256 -n2 -zs",
+			"unit"    : "jackd", 
+			"type"    : "service",
+			"enabled" : 1,
 			"jackName": "system",
+			"options" : "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P $jackName -r48000 -p256 -n2 -zs",
 			"inPorts": [
-				"playback_1",
-				"playback_2"
+				{
+					"portName"   : "playback_1"
+				},
+				{
+					"portName"   : "playback_2"
+				}
 			],
-			"inFrom": {
-				"mod-host" : 0,
-				"mod-host" : 1 },
-			"outPorts": [],
-			"outTo": {}
+			"outPorts": []
 		},
 		{
-			"unit": "mod-host.service",
-			"enabled": 1,
-			"options": "",
+			"unit"    : "mod-host",
+			"type"    : "service",
+			"enabled" : 1,
 			"jackName": "mod-host",
-			"inPorts": [
-				"effect_1:in" ],
-			"inFrom": {
-				"zita-n2j" : 0 },
+			"options" : "",
+			"inPorts" : [
+				{
+					"portName"   : "effect_1:in"
+				}
+			],
 			"outPorts": [
-				"effect_12:lv2_audio_out_1",
-				"effect_12:lv2_audio_out_2" ],
-			"outTo": {
-				"system" : 0,
-				"system" : 1 },
+				{
+					"portName"   : "effect_12:lv2_audio_out_1",
+					"targetUnit"     : "jackd",
+					"targetPort" : 0
+				},{
+					"portName"   : "effect_12:lv2_audio_out_2",
+					"targetUnit"     : "jackd",
+					"targetPort" : 1
+				}
+			],
 			"config": [
 				"add http://gareus.org/oss/lv2/fil4#mono 1",
 				"add http://stackingdwarves.net/lv2/sm 10",
@@ -136,83 +149,114 @@
 				"param_set 12 thresh 0.0000" ]
 		},
 		{
-			"unit": "phpsessionclean.timer",
-			"enabled": 0
+			"unit"    : "phpsessionclean",
+			"type"    : "timer",
+			"enabled" : 0
 		},
 		{
-			"unit": "ufw.service",
-			"enabled": 1
+			"unit"    : "ufw",
+			"type"    : "service",
+			"enabled" : 1
 		},
 		{
-			"unit":"wifi-country.service",
-			"enabled": 0
+			"unit"    : "wifi-country",
+			"type"    : "service",
+			"enabled" : 0
 		},
 		{
-			"unit":"zita-n2j.service",
-			"enabled": 1,
-			"options": "--chan 1 --buff 20 239.0.0.1 3000 medianet0",
+			"unit"    : "zita-n2j",
+			"type"    : "service",
+			"enabled" : 1,
 			"jackName": "zita-n2j",
-			"inPorts": [],
-			"inFrom": {},
+			"options" : "--jname $jackName --chan 1 --buff 20 239.0.0.1 3000 medianet0",
+			"inPorts" : [],
 			"outPorts": [
-				"out_1"
-			],
-			"outTo": {
-				"mod-host": 0
-			}
+				{
+					"portName"   : "out_1",
+					"targetUnit" : "mod-host",
+					"targetPort" : 0
+				}
+			]
 		},
 		{
-			"unit":"zita-j2n.service",
-			"enabled": 0,
-			"options": "--chan 2 239.0.0.1 3000 medianet0",
+			"unit"    : "zita-j2n",
+			"type"    : "service",
+			"enabled" : 0,
 			"jackName": "zita-j2n",
+			"options" : "--jname $jackName --chan 2 239.0.0.1 3000 medianet0",
 			"inPorts": [
-				"in_1",
-				"in_2"
-			],
-			"inFrom": {}
+				{
+					"portName" : "in_1"
+				},
+				{
+					"portName" : "in_2"
+				}
+			]
 		},
 		{
-			"unit":"zita-a2j.service",
-			"enabled": 0,
-			"options": "-d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"unit"    : "zita-a2j",
+			"type"    : "service",
+			"enabled" : 0,
 			"jackName": "zita-a2j",
+			"options" : "-j $jackName -d hw:0 -c 2 -r 44100 -p 256 -n 3",
 			"outPorts": [
-				"capture_1",
-				"capture_2"
-			],
-			"outTo": {}
+				{
+					"portName" : "capture_1"
+				},
+				{
+					"portName" : "capture_2"
+				}
+			]
 		},
 		{
-			"unit": "zita-j2a.service",
-			"enabled": 0,
-			"options": "-d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"unit"    : "zita-j2a",
+			"type"    : "service",
+			"enabled" : 0,
 			"jackName": "zita-j2a",
-			"inPorts": [
-				"playback_1",
-				"playback_2"
-			],
-			"inFrom": {}
+			"options" : "-j $jackName -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"inPorts" : [
+				{
+					"portName" : "playback_1"
+				},
+				{
+					"portName" : "playback_2"
+				}
+			]
 		},
 		{
-			"unit": "zita-lrx.service",
-			"enabled": 0,
-			"options": "",
+			"unit"    : "zita-lrx",
+			"type"    : "service",
+			"enabled" : 0,
+			"options" : "",
 			"jackName": "zita-lrx",
-			"inPorts": [
-				"inp-L",
-				"inp-R"
+			"inPorts" : [
+				{
+					"portName" : "inp-L"
+				},
+				{
+					"portName" : "inp-R"
+				}
 			],
-			"inFrom": {},
 			"outPorts": [
-				"out-L.sub",
-				"out-L.mid",
-				"out-L.high",
-				"out-R.sub",
-				"out-R.mid",
-				"out-R.high"
+				{
+					"portName" : "out-L.sub"
+				},
+				{
+					"portName" : "out-L.mid"
+				},
+				{
+					"portName" : "out-L.high."
+				},
+				{
+					"portName" : "out-R.sub"
+				},
+				{
+					"portName" : "out-R.mid"
+				},
+				{
+					"portName" : "out-R.high"
+				}
 			],
-			"outTo": {},
 			"config": [
 				"# Two channels, three frequency bands.",
 				"/zita-lrx       2  3",
