@@ -3,7 +3,7 @@ from_package xsltproc raptor-utils
 cat << EOF > lv2rdf2html/lv2rdf.conf
 # medianet deployment settings
 BUILDDIR=./build
-MODHOSTCONF=../../config/this/medianet.conf
+MODHOSTCONF=/etc/mod-host.conf
 MODHOSTHOST=localhost
 MODHOSTPORT=5555
 SAMPLERATE=48000
