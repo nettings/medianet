@@ -23,16 +23,17 @@
 # iterate over all units individually
 	| .systemdUnits[]
 # only look at those which are jack clients and enabled
- 	| select(.enabled == 1 and .jackName != null) as $u
-# iterate over their output ports 
-	| .outPorts[]? as $o 
+# 	| select(.enabled == 1 and .jackName != null) as $u
+	| select(.enabled == 1 and .jackName != null and .unit == $unit) as $u
+# iterate over their output ports (make sure they have target ports defined)
+	| (.outPorts[]? | select(.targetPort)) as $o
 # construct connection command
-	| "jack_connect ", 
+	| 
 # mod-host hack: check for fully-qualified port names (containing a ":")
 		if ($o.portName | contains(":"))  
-			then "\($o.portName) " 
+			then "\($o.portName)" 
 # if not fully qualified, prepend client name
-			else "\($u.jackName):\($o.portName) "
+			else "\($u.jackName):\($o.portName)"
 	  	end, ( 
 # de-reference target ports via array of all units
 			$units[] 
@@ -43,5 +44,6 @@
 			| if ($n | contains(":"))
 				then "\($n)"
 				else "\($t.jackName):\($n)"
-			end, "\n"
+			end 
 		)
+	
