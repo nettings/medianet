@@ -250,7 +250,7 @@
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "zita-n2j",
-			"options" : "--jname %jackName% --chan 2 --buff 20 239.0.0.1 3000 medianet0",
+			"options" : "--jname %jackName% --chan 1,2 --buff 20 239.0.0.1 3000 medianet0",
 			"inPorts" : [],
 			"outPorts": [
 				{
