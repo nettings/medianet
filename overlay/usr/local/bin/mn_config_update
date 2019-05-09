@@ -115,6 +115,10 @@ while read UNIT ; do
 	echo -e "$CONFIG" > "$SYSTEMD_UNIT_DIR"/"$UNIT".d/"$UNIT".conf && success || failure
 done <<< "$DATA"
 
+scream "Update systemd daemon settings:"
+echo -n "Performing 'systemctl daemon-reload'..."
+$SYSTEMCTL daemon-reload && success || failure
+
 scream "Update mod-host configuration:"
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.unit == "mod-host") | .config[]'`
