@@ -1,14 +1,16 @@
 [Unit]
 Description=Set CPU speed range
 After=sound.target
-Requires=cpufrequtils.service
+Requires=loadcpufreq.service
 
 [Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/cpufreq.service.d/cpufreq.service.conf
+# created by mn_config_update
 Type=oneshot
 RemainAfterExit=yes
-EnvironmentFile=-/medianet/config/this/medianet.conf
-ExecStart=/usr/bin/cpufreq-set $CPUFREQ_SET_OPTIONS
-ExecStop=/usr/bin/cpufreq-set --min 600MHz --max 1200MHz
+ExecStart=/usr/bin/cpufreq-set $OPTIONS
+ExecStop=/usr/bin/cpufreq-set --min 0 --max 0
 
 [Install]
 WantedBy=multi-user.target
