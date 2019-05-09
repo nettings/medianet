@@ -16,7 +16,7 @@ fi
 
 function watchConfig {
 	while : ; do
-		$INOTIFYWAIT -e modify "$CONFIG_FILE"
+		$INOTIFYWAIT -qqe modify "$CONFIG_FILE"
 		$MN_CONFIG_UPDATE "$CONFIG_FILE"
 		$SLEEP 5
 	done
