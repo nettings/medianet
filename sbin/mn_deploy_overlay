@@ -61,6 +61,6 @@ for SOURCE in `find -P * \! -name README \! -name *~ \! -type d` ; do
                 "$RM" -r "$TARGET" || failure
         fi
 	echo -ne "Linking... "
-	sudo ln -Tn -r -s "$LINK" "$TARGET" && success || bail
+	ln -Tn -r -s "$LINK" "$TARGET" && success || bail
 done
 cd "$OLDPWD"
