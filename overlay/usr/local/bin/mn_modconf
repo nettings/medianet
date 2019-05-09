@@ -2,8 +2,6 @@
 
 . /medianet/lib/mn_includes
 
-. $MEDIANETCONF
-
 case $1 in
   --base-setup)
     # get base configuration from system-wide config file:
