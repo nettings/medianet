@@ -6,12 +6,14 @@ BindsTo=network-online.target
 After=network-online.target
 
 [Service]
-EnvironmentFile=-/medianet/config/this/medianet.conf
+# we read Environment= from a drop-in file
+# /etc/systemd/system/zita-n2j.service.d/zita-n2j.service.conf
+# created by mn_config_update
 User=medianet
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
-ExecStartPre=/usr/local/bin/mn_jackwait $ZITA_N2J_WAITPORT
-ExecStart=/usr/local/bin/zita-n2j $ZITA_N2J_OPTIONS
+ExecStartPre=/usr/local/bin/mn_jackwait
+ExecStart=/usr/local/bin/zita-n2j $OPTIONS
 RestartSec=5
 Restart=always
 
