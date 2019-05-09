@@ -13,10 +13,10 @@ User=medianet
 ExecStartPre=/usr/local/bin/mn_jackwait
 ExecStart=/usr/local/bin/mod-host $OPTIONS
 ExecStartPost=/usr/local/bin/mn_modconf --all
+ExecStartPost=-/usr/local/bin/mn_connect %n
 RestartSec=5
 Restart=on-failure
 ExecStop=/usr/local/bin/mn_modsave
 
 [Install]
 WantedBy=multi-user.target
-
