@@ -1,6 +1,6 @@
 {
 	"product": "VPiDSP-6x8",
-	"description": "[mn] VoicePoint VP iDSP 6in 8 out integrated Signal Processor",
+	"description": "[mn] VoicePoint VP iDSP 6in 8out integrated Signal Processor",
 	"hostname": "mn-VPiDSP-6x8",
 	"location": "Showroom",
 	"version": "2019-05-09",
@@ -45,6 +45,12 @@
 			"unit"    : "cpufrequtils",
 			"type"    : "service",
 			"enabled" : 0
+		},
+		{
+			"unit"    : "cpufreq",
+			"type"    : "service",
+			"enabled" : 1,
+			"options" : "-g performance --min 1400MHz --max 1400MHz"
 		},
 		{
 			"unit"    : "hciuart",
@@ -114,60 +120,78 @@
 			"options" : "",
 			"inPorts" : [
 				{
-					"portName"   : "effect_1:in_L"
+					"portName"   : "effect_1:inL"
 				},
 				{
-					"portName"   : "effect_1:in_R"
+					"portName"   : "effect_1:inR"
 				},
 				{
-					"portName"   : "effect_11:in_L"
+					"portName"   : "effect_11:inL"
 				},
 				{
-					"portName"   : "effect_11:in_R"
+					"portName"   : "effect_11:inR"
 				},
 				{
-					"portName"   : "effect_21:in_L"
+					"portName"   : "effect_21:inL"
 				},
 				{
-					"portName"   : "effect_21:in_R"
+					"portName"   : "effect_21:inR"
 				}
 			],
 			"outPorts": [
 				{
-					"portName"   : "effect_9:out_L",
+					"portName"   : "effect_9:outL",
 					"targetUnit" : "jackd",
 					"targetPort" : 0
 				},{
-					"portName"   : "effect_9:out_R",
+					"portName"   : "effect_9:outR",
 					"targetUnit" : "jackd",
 					"targetPort" : 1
 				},
 				{
-					"portName"   : "effect_19:out_L",
+					"portName"   : "effect_19:outL",
 					"targetUnit" : "jackd",
 					"targetPort" : 2
 				},{
-					"portName"   : "effect_19:out_R",
+					"portName"   : "effect_19:outR",
 					"targetUnit" : "jackd",
 					"targetPort" : 3
 				},
 				{
-					"portName"   : "effect_29:out_L",
+					"portName"   : "effect_29:outL",
 					"targetUnit" : "jackd",
 					"targetPort" : 4
 				},{
-					"portName"   : "effect_29:out_R",
+					"portName"   : "effect_29:outR",
 					"targetUnit" : "jackd",
 					"targetPort" : 5
 				}
 			],
 			"config": [
 				"add http://gareus.org/oss/lv2/fil4#stereo 1",
-				"add http://stackingdwarves.net/lv2/sm 9",
+				"add http://stackingdwarves.net/lv2/sm 8",
+				"add http://gareus.org/oss/lv2/dpl#stereo 9",
 				"add http://gareus.org/oss/lv2/fil4#stereo 11",
-				"add http://stackingdwarves.net/lv2/sm 19",
+				"add http://stackingdwarves.net/lv2/sm 18",
+				"add http://gareus.org/oss/lv2/dpl#stereo 19",
 				"add http://gareus.org/oss/lv2/fil4#stereo 21",
-				"add http://stackingdwarves.net/lv2/sm 29"
+				"add http://stackingdwarves.net/lv2/sm 28",
+				"add http://gareus.org/oss/lv2/dpl#stereo 29",
+				"param_set 9 threshold -2",
+				"param_set 19 threshold -2",
+				"param_set 29 threshold -2",
+				"connect effect_1:outL effect_8:inL",
+				"connect effect_1:outR effect_8:inR",
+				"connect effect_8:outL effect_9:inL",
+				"connect effect_8:outR effect_9:inR",
+				"connect effect_11:outL effect_18:inL",
+				"connect effect_11:outR effect_18:inR",
+				"connect effect_18:outL effect_19:inL",
+				"connect effect_18:outR effect_19:inR",
+				"connect effect_21:outL effect_28:inL",
+				"connect effect_21:outR effect_28:inR",
+				"connect effect_28:outL effect_29:inL",
+				"connect effect_28:outR effect_29:inR"
 			]
 		},
 		{
