@@ -1,4 +1,4 @@
-# generates JACK connection commands from JSON system configuration
+# generates JACK output port connection list from JSON system configuration
 
 # To avoid duplication of information, we only store upstream connections,
 # i.e. those of the output ports of a jack client.
@@ -34,7 +34,7 @@
 			then "\($o.portName)" 
 # if not fully qualified, prepend client name
 			else "\($u.jackName):\($o.portName)"
-	  	end, ( 
+		end, "\\n", (
 # de-reference target ports via array of all units
 			$units[] 
 # find the unit of the target port
@@ -44,6 +44,6 @@
 			| if ($n | contains(":"))
 				then "\($n)"
 				else "\($t.jackName):\($n)"
-			end 
+			end, "\\n"
 		)
 	

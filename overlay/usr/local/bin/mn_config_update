@@ -106,21 +106,39 @@ done <<< "$DATA"
 scream "Update systemd unit options:"
 
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.options) | "\(.unit).\(.type)\n\(.jackName)\n\(.options)"'`
+DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.options) | "\(.unit)\n\(.type)\n\(.jackName)\n\(.options)"'`
 while read UNIT ; do
-	if [[ ! -e "$SYSTEMD_UNIT_DIR"/"$UNIT".d ]] ; then
-		echo -n "Creating $SYSTEMD_UNIT_DIR/$UNIT.d..."
-		mkdir "$SYSTEMD_UNIT_DIR"/"$UNIT".d && success || failure
+	read TYPE
+	DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
+	DROPIN_FILE="$UNIT"."$TYPE".conf
+	if [[ ! -e "$DROPIN_DIR" ]] ; then
+		echo -n "Creating $DROPIN_DIR..."
+		mkdir "$DROPIN_DIR" && success || failure
 	fi
 	read JACKNAME
 	read OPTIONS
 	CONFIG="Environment=\"OPTIONS="
 	CONFIG+=`echo $OPTIONS | sed "s/%jackName%/\'$JACKNAME\'/g"`
 	CONFIG+="\""
-	echo "Writing to $SYSTEMD_UNIT_DIR/$UNIT.d/$UNIT.conf ..."
-	echo -en "$CONFIG\n\t..."
+	COUT=`cat "$CONFIG_FILE" | jq --arg unit $UNIT -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
+	if [[ "$COUT" ]] ; then
+		COUT="Environment=\"CONNECTIONS_OUT=$COUT\""
+	fi
+	CIN=`cat "$CONFIG_FILE" | jq --arg unit $UNIT -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/input_connections.jq`
+	if [[ "$CIN" ]] ; then
+		CIN="Environment=\"CONNECTIONS_IN=$CIN\""
+	fi
+	echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
+	echo -e "$CONFIG"
+	echo "$COUT"
+	echo "$CIN"
+	echo -en "\t..."
 	CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
-	echo -e "$CONFIG" > "$SYSTEMD_UNIT_DIR"/"$UNIT".d/"$UNIT".conf && success || failure
+	{
+		echo -e "$CONFIG"
+		echo "$COUT"
+		echo "$CIN"
+	}  > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
 done <<< "$DATA"
 
 

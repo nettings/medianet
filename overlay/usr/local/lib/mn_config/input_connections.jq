@@ -1,4 +1,4 @@
-# generates JACK connection commands from JSON system configuration
+# generates JACK input port connection list from JSON system configuration
 
 # To avoid duplication of information, we only store upstream connections,
 # i.e. those of the output ports of a jack client.
@@ -27,20 +27,20 @@
 # iterate over their output ports and take those which point to this unit
 	| (.outPorts[]? | select(.targetUnit == $unit)) as $o
 # mod-host hack: check for fully-qualified port names (containing a ":")
-		if ($o.portName | contains(":"))  
-			then "\($o.portName)" 
+	| if ($o.portName | contains(":"))
+		then "\($o.portName)"
 # if not fully qualified, prepend client name
-			else "\($u.jackName):\($o.portName)"
-	  	end, ( 
+		else "\($u.jackName):\($o.portName)"
+	end, "\\n",  (
 # de-reference target ports via array of all units
-			$units[] 
+		$units[]
 # find the unit of the target port
-			| select(.unit == $o.targetUnit) as $t
+		| select(.unit == $o.targetUnit) as $t
 # find the target port using the array index
-			| $t.inPorts[$o.targetPort].portName as $n
-			| if ($n | contains(":"))
-				then "\($n)"
-				else "\($t.jackName):\($n)"
-			end 
-		)
+		| $t.inPorts[$o.targetPort].portName as $n
+		| if ($n | contains(":"))
+			then "\($n)"
+			else "\($t.jackName):\($n)"
+		end, "\\n"
+	)
 	
