@@ -5,8 +5,8 @@
 	"location": "Showroom",
 	"version": "2019-05-09",
 	"bootConfig": {
-		"arm_freq" : 1400,
-		"arm_freq_min" : 1400,
+		"arm_freq" : 1000,
+		"arm_freq_min" : 1000,
 		"dtparam" : {
 			"audio" : "off"
 		},
@@ -50,7 +50,7 @@
 			"unit"    : "cpufreq",
 			"type"    : "service",
 			"enabled" : 1,
-			"options" : "-g performance --min 1400MHz --max 1400MHz"
+			"options" : "-g performance --min 1000MHz --max 1000MHz"
 		},
 		{
 			"unit"    : "hciuart",
@@ -92,22 +92,39 @@
 			],
 			"outPorts": [
 				{
-					"portName"   : "capture_1"
+					"portName"   : "capture_1",
+					"targetUnit" : "mod-host",
+					"targetPort" : 0
 				},
 				{
-					"portName"   : "capture_2"
+					"portName"   : "capture_2",
+					"targetUnit" : "mod-host",
+					"targetPort" : 1
+
 				},
 				{
-					"portName"   : "capture_3"
+					"portName"   : "capture_3",
+					"targetUnit" : "mod-host",
+					"targetPort" : 2
+
 				},
 				{
-					"portName"   : "capture_4"
+					"portName"   : "capture_4",
+					"targetUnit" : "mod-host",
+					"targetPort" : 3
+
 				},
 				{
-					"portName"   : "capture_5"
+					"portName"   : "capture_5",
+					"targetUnit" : "mod-host",
+					"targetPort" : 4
+
 				},
 				{
-					"portName"   : "capture_6"
+					"portName"   : "capture_6",
+					"targetUnit" : "mod-host",
+					"targetPort" : 5
+
 				}
 
 			]
