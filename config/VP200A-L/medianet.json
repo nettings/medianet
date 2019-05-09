@@ -43,6 +43,11 @@
 			"enabled" : 0
 		},
 		{
+			"unit"    : "cpufrequtils",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
 			"unit"    : "hciuart",
 			"type"    : "service",
 			"enabled" : 0
@@ -52,7 +57,7 @@
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "system",
-			"options" : "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P $jackName -r48000 -p256 -n2 -zs",
+			"options" : "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P %jackName% -r48000 -p256 -n2 -zs",
 			"inPorts": [
 				{
 					"portName"   : "playback_1"
@@ -154,6 +159,25 @@
 			"enabled" : 0
 		},
 		{
+			"unit"    : "shairport-sync",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "shairport-sync",
+			"inPorts" : [],
+			"outPorts": [
+				{
+					"portName"   : "out_L",
+					"targetUnit" : "mod-host",
+					"targetPort" : 0
+				},
+				{
+					"portName"   : "out_R",
+					"targetUnit" : "mod-host",
+					"targetPort" : 1
+				}					
+			]
+		},
+		{
 			"unit"    : "ufw",
 			"type"    : "service",
 			"enabled" : 1
@@ -168,7 +192,7 @@
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "zita-n2j",
-			"options" : "--jname $jackName --chan 1 --buff 20 239.0.0.1 3000 medianet0",
+			"options" : "--jname %jackName% --chan 1 --buff 20 239.0.0.1 3000 medianet0",
 			"inPorts" : [],
 			"outPorts": [
 				{
@@ -183,7 +207,7 @@
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-j2n",
-			"options" : "--jname $jackName --chan 2 239.0.0.1 3000 medianet0",
+			"options" : "--jname %jackName% --chan 2 239.0.0.1 3000 medianet0",
 			"inPorts": [
 				{
 					"portName" : "in_1"
@@ -198,7 +222,7 @@
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-a2j",
-			"options" : "-j $jackName -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"options" : "-j %jackName% -d hw:0 -c 2 -r 44100 -p 256 -n 3",
 			"outPorts": [
 				{
 					"portName" : "capture_1"
@@ -213,7 +237,7 @@
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-j2a",
-			"options" : "-j $jackName -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"options" : "-j %jackName% -d hw:0 -c 2 -r 44100 -p 256 -n 3",
 			"inPorts" : [
 				{
 					"portName" : "playback_1"
