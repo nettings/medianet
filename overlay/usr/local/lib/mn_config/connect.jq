@@ -8,11 +8,11 @@
 # zero). The actual port name is then looked up by the following jq script.
 
 # The default usage is to list only the local parts of the port names in the
-# unit configuration, with the understanding that the jackName will be
-# prepended to create a fully-qualified port name.
+# unit configuration, with the understanding that the jackName and a colon
+# (":") will be prepended to create a fully-qualified port name.
 # Since mod-host creates individual jack clients named "effect_N" for each
 # configured plugin, it must use fully-qualified port names in its unit
-# configuration (indicated by the presence of a colon, ":", in the name).
+# configuration (indicated by the presence of a colon in the name).
 # mod-host handles its own internal connections, so it exposes only its
 # incoming and outgoing ports in the configuration.
 
@@ -41,8 +41,7 @@
 # find the target port using the array index
 			| $t.inPorts[$o.targetPort].portName as $n
 			| if ($n | contains(":"))
-				then "\($n) "
+				then "\($n)"
 				else "\($t.jackName):\($n)"
 			end, "\n"
 		)
-
