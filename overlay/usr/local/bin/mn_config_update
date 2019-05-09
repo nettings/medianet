@@ -18,6 +18,7 @@ NOEDIT="# automatically created by $PROGNAME from $CONFIG_FILE, do not edit!"
 
 
 scream "Update product/description/hostname/location/version"
+
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | jq -r '.product, .description, .hostname, .location, .version'`
 while read VALUE; do
@@ -42,13 +43,18 @@ while read VALUE; do
 	CONFIG+="CONFIG_VERSION=\"$VALUE\"\n"
 	break
 done <<< "$DATA"
+
+
 scream "Setting CONFIG_ variables:"
+
 echo -en "$CONFIG"
 CONFIG="$NOEDIT\n$CONFIG"
 echo -n "Updating $CONFIG_INCLUDE..."
 echo -e "$CONFIG" > "$CONFIG_INCLUDE" && success || failure
 
+
 scream "Update boot configuration in $CONF_FILE_BOOT:"
+
 CONFIG=
 # we assume anything that is not a dtparam or a dtoverlay can occur only once
 # this becomes important if we later combine default settings with overrides
@@ -78,6 +84,7 @@ echo -en "$CONFIG" > "$CONF_FILE_BOOT" && success || failure
 
 
 scream "Update systemd unit status:"
+
 DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.enabled == 0) | "\(.unit).\(.type)"'`
 while read SERVICE ; do
 	"$SYSTEMCTL" --quiet is-enabled "$SERVICE" 2> /dev/null && {
@@ -97,6 +104,7 @@ done <<< "$DATA"
 
 
 scream "Update systemd unit options:"
+
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.options) | "\(.unit).\(.type)\n\(.jackName)\n\(.options)"'`
 while read UNIT ; do
@@ -115,11 +123,15 @@ while read UNIT ; do
 	echo -e "$CONFIG" > "$SYSTEMD_UNIT_DIR"/"$UNIT".d/"$UNIT".conf && success || failure
 done <<< "$DATA"
 
+
 scream "Update systemd daemon settings:"
+
 echo -n "Performing 'systemctl daemon-reload'..."
 $SYSTEMCTL daemon-reload && success || failure
 
+
 scream "Update mod-host configuration:"
+
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.unit == "mod-host") | .config[]'`
 while read COMMAND ; do
@@ -130,7 +142,9 @@ CONFIG="$NOEDIT\n\n$CONFIG"
 echo -n "Writing to $CONF_FILE_MODHOST..."
 echo -e "$CONFIG" > "$CONF_FILE_MODHOST" && success || failure
 
+
 scream "Update zita-lrx configuration:"
+
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.unit == "zita-lrx") | .config[]'`
 while read COMMAND ; do
