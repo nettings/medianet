@@ -7,7 +7,7 @@ needroot
 "$APTGET" update
 "$APTGET" -y upgrade
 
-cat "$BASEDIR"/../lib/mn_packages | while read line ; do
+cat "$PREFIX"/lib/mn_packages | while read line ; do
 	for package in $line; do
 		if [[ $package == \#* ]] ; then
 			# we've found a comment, ignore all that follows on the line:
