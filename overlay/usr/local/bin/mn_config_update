@@ -14,7 +14,7 @@ if [[ ! -e "$CONFIG_FILE" ]] ; then
 	bail "$CONFIG_FILE does not exist."
 fi
 
-NOEDIT="# Values created by $PROGNAME from $CONFIG_FILE, do not edit!"
+NOEDIT="# automatically created by $PROGNAME from $CONFIG_FILE, do not edit!"
 
 
 scream "Update product/description/hostname/location/version"
@@ -96,33 +96,39 @@ while read SERVICE ; do
 done <<< "$DATA"
 
 
-scream "Update systemd unit parameters:"
-DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.options) | "\(.unit)\n\(.options)"'`
+scream "Update systemd unit options:"
+CONFIG=
+DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.options) | "\(.unit).\(.type)\n\(.jackName)\n\(.options)"'`
 while read UNIT ; do
 	if [[ ! -e "$SYSTEMD_UNIT_DIR"/"$UNIT".d ]] ; then
 		echo -n "Creating $SYSTEMD_UNIT_DIR/$UNIT.d..."
 		mkdir "$SYSTEMD_UNIT_DIR"/"$UNIT".d && success || failure
 	fi
+	read JACKNAME
 	read OPTIONS
-	OPTIONS="OPTIONS=\"$OPTIONS\""
-	echo -n "Writing $OPTIONS to $SYSTEMD_UNIT_DIR/$UNIT.d/$UNIT.env..."
-	echo "$OPTIONS" > "$SYSTEMD_UNIT_DIR"/"$UNIT".d/"$UNIT".env && success || failure
+	CONFIG="Environment=\"OPTIONS="
+	CONFIG+=`echo $OPTIONS | sed "s/%jackName%/\'$JACKNAME\'/g"`
+	CONFIG+="\""
+	echo "Writing to $SYSTEMD_UNIT_DIR/$UNIT.d/$UNIT.conf ..."
+	echo -en "$CONFIG\n\t..."
+	CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
+	echo -e "$CONFIG" > "$SYSTEMD_UNIT_DIR"/"$UNIT".d/"$UNIT".conf && success || failure
 done <<< "$DATA"
 
 scream "Update mod-host configuration:"
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.unit == "mod-host.service") | .config[]'`
+DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.unit == "mod-host") | .config[]'`
 while read COMMAND ; do
 	CONFIG+="$COMMAND\n"
 done <<< "$DATA"
 echo -en "$CONFIG"
-CONFIG="$NOEDIT\n$CONFIG"
+CONFIG="$NOEDIT\n\n$CONFIG"
 echo -n "Writing to $CONF_FILE_MODHOST..."
 echo -e "$CONFIG" > "$CONF_FILE_MODHOST" && success || failure
 
 scream "Update zita-lrx configuration:"
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.unit == "zita-lrx.service") | .config[]'`
+DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.unit == "zita-lrx") | .config[]'`
 while read COMMAND ; do
 	CONFIG+="$COMMAND\n"
 done <<< "$DATA"
