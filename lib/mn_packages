@@ -1,5 +1,7 @@
 # basic system packages
 cpufrequtils joe screen ufw lsof inotify-tools
+# JSON configuration
+jq
 # basic audio packages
 jackd2 jackmeter jack-capture jconvolver zita-ajbridge
 # plugins
