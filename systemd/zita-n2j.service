@@ -12,7 +12,6 @@ After=network-online.target
 User=medianet
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
-ExecStartPre=/usr/local/bin/mn_jackwait
 ExecStart=/usr/local/bin/zita-n2j $OPTIONS
 ExecStartPost=-/usr/local/bin/mn_connect %n
 RestartSec=5
@@ -20,4 +19,3 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-

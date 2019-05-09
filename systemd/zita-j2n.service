@@ -6,15 +6,16 @@ BindsTo=network-online.target
 After=network-online.target
 
 [Service]
-EnvironmentFile=-/medianet/config/this/medianet.conf
-User=medianet
+# we read Environment= from a drop-in file
+# /etc/systemd/system/zita-j2n.service.d/zita-j2n.service.conf
+# created by mn_config_update
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
-ExecStartPre=/usr/local/bin/mn_jackwait $ZITA_J2N_WAITPORT
-ExecStart=/usr/local/bin/zita-j2n $ZITA_J2N_OPTIONS
+User=medianet
+ExecStart=/usr/local/bin/zita-j2n $OPTIONS
+ExecStartPost=-/usr/local/bin/mn_connect %n
 RestartSec=5
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
-

@@ -6,15 +6,16 @@ BindsTo=sound.target
 After=sound.target
 
 [Service]
-EnvironmentFile=-/medianet/config/this/medianet.conf
-User=medianet
+# we read Environment= from a drop-in file
+# /etc/systemd/system/zita-a2j.service.d/zita-a2j.service.conf
+# created by mn_config_update
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
-ExecStartPre=/usr/local/bin/mn_jackwait $ZITA_A2J_WAITPORT
-ExecStart=/usr/bin/zita-a2j $ZITA_A2J_OPTIONS
+User=medianet
+ExecStart=/usr/bin/zita-a2j $OPTIONS
+ExecStartPost=-/usr/local/bin/mn_connect %n
 RestartSec=5
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
-

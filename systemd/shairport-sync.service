@@ -9,15 +9,16 @@ Wants=network-online.target
 After=network.target network-online.target
 
 [Service]
-EnvironmentFile=-/medianet/config/this/medianet.conf
-ExecPre=/usr/local/bin/mn_jackwait $SHAIRPORT_WAITPORT
-ExecStart=/usr/local/bin/shairport-sync
-User=medianet
+# we read Environment= from a drop-in file
+# /etc/systemd/system/shairport-sync.service.d/shairport-sync.service.conf
+# created by mn_config_update
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
-RestartSec=5
+User=medianet
+ExecStart=/usr/local/bin/shairport-sync
+ExecStartPost=-/usr/local/bin/mn_connect %n
+RestartSec=15
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
-

@@ -10,7 +10,6 @@ Type=forking
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-ExecStartPre=/usr/local/bin/mn_jackwait
 ExecStart=/usr/local/bin/mod-host $OPTIONS
 ExecStartPost=/usr/local/bin/mn_modconf --all
 ExecStartPost=-/usr/local/bin/mn_connect %n

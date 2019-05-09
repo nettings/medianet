@@ -4,12 +4,14 @@ BindsTo=jackd.target
 After=jackd.target
 
 [Service]
-EnvironmentFile=-/medianet/config/this/medianet.conf
-User=medianet
+# we read Environment= from a drop-in file
+# /etc/systemd/system/zita-lrx.service.d/zita-lrx.service.conf
+# created by mn_config_update
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
-ExecStartPre=/usr/local/bin/mn_jackwait
-ExecStart=/usr/local/bin/zita-lrx $ZITA_LRX_OPTIONS
+User=medianet
+ExecStart=/usr/local/bin/zita-lrx $OPTIONS
+ExecStartPost=-/usr/local/bin/mn_connect %n
 RestartSec=5
 Restart=always
 
