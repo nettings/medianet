@@ -78,6 +78,7 @@ SWAPOFF=/sbin/swapoff
 SYSTEMCTL=/bin/systemctl
 STAT=/usr/bin/stat
 TAR=/bin/tar
+TR=/usr/bin/tr
 UPDATELOCALE=/usr/sbin/update-locale
 USERADD=/usr/sbin/useradd
 USERDEL=/usr/sbin/userdel
