@@ -1,0 +1,26 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+. /etc/systemd/system/$1.d/$1.connections
+
+N=0
+while read OUTPORT ; do
+	if [[ ! "$OUTPORT" ]] ; then break ; fi
+	read INPORT
+	MSG[$N]="[$N] Connecting $OUTPORT -> $INPORT: checking ports..."
+	{
+		mn_jackwait $OUTPORT $INPORT && \
+		MSG[$N]+=" found. Connecting..."
+		RES=`jack_connect $OUTPORT $INPORT 2>&1`
+		if [[ -z "$RES" ]] ; then 
+			MSG[$N]+=`success`
+		elif $GREP -q "already connected" <<< "$RES" ; then
+			MSG[$N]+="already connected."
+		else
+			MSG[$N]+=`failure "$RES"`
+		fi
+		echo "[$N] ${MSG[$N]}" 
+	} 
+	((N++))	
+done <<< "$CONNECTIONS_IN $CONNECTIONS_OUT"
