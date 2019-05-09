@@ -16,12 +16,14 @@ After=sound.target
 After=time-sync.target
 
 [Service]
-EnvironmentFile=-/medianet/config/this/medianet.conf
+# we read Environment= from a drop-in file
+# /etc/systemd/system/jackd.service.d/jackd.service.conf
+# created by mn_config_update
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
 Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket"
-ExecStart=/usr/bin/jackd $JACKD_OPTIONS
+ExecStart=/usr/bin/jackd $OPTIONS
 RestartSec=5
 Restart=on-failure
 

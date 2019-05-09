@@ -6,13 +6,12 @@ Wants=lighttpd.service
 After=lighttpd.service
 
 [Service]
-EnvironmentFile=-/medianet/config/this/medianet.conf
 Type=forking
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-ExecStartPre=/usr/local/bin/mn_jackwait $MOD_HOST_WAITPORT
-ExecStart=/usr/local/bin/mod-host $MOD_HOST_OPTIONS
+ExecStartPre=/usr/local/bin/mn_jackwait
+ExecStart=/usr/local/bin/mod-host $OPTIONS
 ExecStartPost=/usr/local/bin/mn_modconf --all
 RestartSec=5
 Restart=on-failure
