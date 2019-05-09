@@ -2,21 +2,19 @@
 
 . /medianet/lib/mn_includes
 
-. $MEDIANETCONF
-
-CONF=/boot/medianet.txt
+needroot
 
 echo "Boot options from $MEDIANETCONF:"
 echo "$CONFIG_TXT_OPTIONS"
 echo -n "Writing to $CONF..."
-sudo bash -c "echo \"$CONFIG_TXT_OPTIONS\" > $CONF" || failure && success
+echo "$CONFIG_TXT_OPTIONS" > "$CONF_FILE_BOOT" || failure && success
 
-echo -n "Checking if `basename $CONF` is included from config.txt..."
-LINE="include `basename $CONF`"
+echo -n "Checking if `basename $CONF_FILE_BOOT` is included from config.txt..."
+LINE="include `basename $CONF_FILE_BOOT`"
 
-if ! /bin/grep "$LINE" /boot/config.txt > /dev/null ; then
+if ! "$GREP" "$LINE" /boot/config.txt > /dev/null ; then
   echo -n " no. Including..."
-  sudo bash -c "echo $LINE >> /boot/config.txt" || failure && success
+  echo "$LINE" >> /boot/config.txt || failure && success
 else
   echo " yes."
 fi
@@ -24,16 +22,14 @@ fi
 scream "Iterating over boot/:"
 
 OLDPWD=`pwd`
-cd /medianet/boot
-for i in `/usr/bin/find -type f` ; do 
+cd "$PREFIX"/boot
+for i in `"$FIND" -type f` ; do 
   echo -n "Checking if $i is already installed..."
-  if ! cmp "$i" /boot/"$i" > /dev/null; then
+  if ! "$CMP" "$i" /boot/"$i" > /dev/null; then
     echo -n " no. Installing..."
-    sudo cp "$i" /boot || failure && success
+    "$CP" "$i" /boot || failure && success
   else
     echo " yes."
   fi
 done
-cd $OLDPWD
-
-  
+cd "$OLDPWD"

@@ -1,13 +1,16 @@
 #!/bin/bash
+
 . /medianet/lib/mn_includes
 
+needroot
+
 echo -n "Deleting user pi..."
-sudo userdel pi && success || bail "Is the user still logged in?"
+"$USERDEL" pi && success || bail "Is the user still logged in?"
 echo -n "Deleting sudo entry for pi..."
-sudo rm /etc/sudoers.d/010_pi-nopasswd && success || failure
+"$RM" /etc/sudoers.d/010_pi-nopasswd && success || failure
 echo -n "Deleting home directory"
-sudo rm -rf /home/pi/ && success || failure
+"$RM" rm -rf /home/pi/ && success || failure
 
 echo "Locking password of root user. MAKE SURE YOU HAVE CREATED A SUDO-ENABLED USER ALREADY!"
-read -n1 -r -p "Ok?" && sudo passwd -l root && success || failure
+read -n1 -r -p "Ok?" && "$PASSWD" -l root && success || failure
 

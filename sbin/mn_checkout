@@ -1,19 +1,19 @@
 #!/bin/bash
 
-BASEDIR=`dirname $0`
-FIND=/usr/bin/find
 
-. "$BASEDIR"/../lib/mn_includes
+. /medianet/lib/mn_includes
+
+needroot
 
 # from_FOO <URL> <dirname>
 from_git() {
   if [[ ! -d "$2" ]] ; then
     echo -ne "Cloning $1 into $2..."
-    git clone -q "$1" "$2" || failure && success
+    "$GIT" clone -q "$1" "$2" || failure && success
   else
     echo -ne "Git repository exists. Updating..."
     cd "$2"
-    git pull || failure && success
+    "$GIT" pull || failure && success
     cd ..
   fi
 }
@@ -36,7 +36,7 @@ from_tar() {
       ALGO=J
       ;;
   esac
-  wget -q -O - "$1" | tar --strip-components=1 -x -$ALGO -f - || failure && success
+  "$WGET" -q -O - "$1" | "$TAR" --strip-components=1 -x -$ALGO -f - || failure && success
   cd ..
 }
 
@@ -44,14 +44,14 @@ from_package()
 {
   while [[ -n "$1" ]] ; do
 	echo -ne "Installing package $1..."
-  	sudo apt-get -qqy install --no-install-recommends "$1" || failure && success
+  	"$APTGET" -qqy install --no-install-recommends "$1" || failure && success
   	shift
   done
 }
 
 
 OLDWD=`pwd`
-cd "$BASEDIR"/../custom_builds
+cd "$PREFIX"/custom_builds
 
 if [[ -n "$1" ]] ; then
 	TARGET="$1.checkout"

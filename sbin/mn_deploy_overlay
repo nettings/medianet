@@ -2,14 +2,14 @@
 
 . /medianet/lib/mn_includes
 
-BASEDIR=`dirname $0`/..
+needroot
 
 # This script deploys all files in the /medianet/overlay directory as symbolic links
 # throughout the distribution file system.
 
 OLDPWD=$PWD
 # we're deploying the main overlay
-cd "$BASEDIR"/overlay
+cd "$PREFIX"/overlay
 
 scream "Checking directory tree..."
 # Iterate over all directories in overlay
@@ -18,10 +18,10 @@ for DIR in `find -P * -type d` ; do
 	echo -n "$TARGET:"
 	if [[ ! -d "$TARGET" && ! -L "$TARGET" ]] ; then
 		echo -n " creating..."
-		sudo mkdir "$TARGET" && success || bail
+		"$MKDIR" "$TARGET" && success || bail
 		echo -en "\tsetting file permissions..."
-		sudo chown --reference "$DIR" "$TARGET"\
-		&& sudo chmod --reference "$DIR" "$TARGET"\
+		"$CHOWN" --reference "$DIR" "$TARGET"\
+		&& "$CHMOD" --reference "$DIR" "$TARGET"\
 		&& success || fail		
 	else
 		echo " exists."
@@ -38,8 +38,8 @@ for SOURCE in `find -P * \! -name README \! -name *~ \! -type d` ; do
 	echo -ne "$TARGET:\t" 
 
 	# Does a correct already exist from a previous run? Then don't stress the flash unneccessarily.
-	LINKSTO=`readlink --canonicalize "$TARGET"`
-	REALLINK=`readlink --canonicalize "$LINK"`
+	LINKSTO=`"$READLINK" --canonicalize "$TARGET"`
+	REALLINK=`"$READLINK" --canonicalize "$LINK"`
 	if [[ "$REALLINK" = "$LINKSTO" ]] ; then
 		echo -e "Unchanged."
 		continue
@@ -51,17 +51,16 @@ for SOURCE in `find -P * \! -name README \! -name *~ \! -type d` ; do
 		# Do not overwrite existing backups.
 		if [[ ! -e "$BACKUP" ]] ; then
 			echo -ne "Backing up. "
-			sudo mv "$TARGET" "$BACKUP" || bail
+			"$MV" "$TARGET" "$BACKUP" || bail
 		fi
 	fi
 
 	# Replace original file with symbolic link to medianet overlay.
 	if [[ -e "$TARGET" || -L "$TARGET" ]] ; then
 		echo -ne "Removing old file/link. "
-                sudo rm -r "$TARGET" || failure
+                "$RM" -r "$TARGET" || failure
         fi
 	echo -ne "Linking... "
-	sudo ln -Tn -r -s "$LINK" "$TARGET" && success || bail
+	ln -Tn -r -s "$LINK" "$TARGET" && success || bail
 done
-
 cd "$OLDPWD"

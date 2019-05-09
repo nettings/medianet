@@ -2,22 +2,24 @@
 
 . /medianet/lib/mn_includes
 
+needroot
+
 echo -n "Creating group medianet..."
-sudo /usr/sbin/groupadd medianet && success || failure
+"$GROUPADD" medianet && success || failure
 echo -n "Creating home directory..."
-sudo mkdir /home/medianet && success || failure
+"$MKDIR" /home/medianet && success || failure
 echo -n "Creating user medianet..."
-sudo /usr/sbin/useradd -c "medianet Maintenance account" -g medianet -G users,audio,gpio -d /home/medianet medianet && success || failure
+"$USERADD" -c "medianet Maintenance account" -g medianet -G users,audio,gpio -d /home/medianet medianet && success || failure
 echo -n "Changing login shell to /bin/bash..."
-sudo chsh -s /bin/bash medianet && success || failure
+"$CHSH" -s /bin/bash medianet && success || failure
 echo -n "Creating .ssh dir..."
-sudo mkdir /home/medianet/.ssh && success || failure
+"$MKDIR" /home/medianet/.ssh && success || failure
 echo -n "Installing public key for SSH authorization..."
-sudo cp /medianet/medianet.pub /home/medianet/.ssh/authorized_keys && success || failure
+"$CP" /medianet/medianet.pub /home/medianet/.ssh/authorized_keys && success || failure
 echo -n "Changing ownership of home directory..."
-sudo chown -R medianet:medianet /home/medianet && success || failure
+"$CHOWN" -R medianet:medianet /home/medianet && success || failure
 echo -n "Adding medianet user to sudoers..."
 # prevent user lockout from permission breakage in the overlay tree by making a hard copy
-sudo cp /medianet/overlay/etc/sudoers.d/10_medianet-nopasswd /etc/sudoers.d/00_medianet-nopasswd_dontbreakme && success || failure
+"$CP" /medianet/overlay/etc/sudoers.d/10_medianet-nopasswd /etc/sudoers.d/00_medianet-nopasswd_dontbreakme && success || failure
 
 

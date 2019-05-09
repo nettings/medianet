@@ -1,11 +1,11 @@
 #!/bin/bash
 
-BASEDIR=`dirname $0`
+. /medianet/lib/mn_includes
 
-. "$BASEDIR"/../lib/mn_includes
+needroot
 
-sudo apt-get update
-sudo apt-get -y upgrade
+"$APTGET" update
+"$APTGET" -y upgrade
 
 cat "$BASEDIR"/../lib/mn_packages | while read line ; do
 	for package in $line; do
@@ -16,4 +16,4 @@ cat "$BASEDIR"/../lib/mn_packages | while read line ; do
 			echo -n "$package "
 		fi
 	done
-done | xargs -n 32 sudo apt-get -y install 
+done | "$XARGS" -n 32 "$APTGET" -y install
