@@ -1,5 +1,5 @@
 *~
 *.old
-custom_builds/*
+custom_builds/*/*
 !custom_builds/README
 config/this
