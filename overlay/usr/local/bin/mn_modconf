@@ -7,15 +7,11 @@
 case $1 in
   --base-setup)
     # get base configuration from system-wide config file:
-    CONF="$MOD_HOST_CONFIG"
+    CONF="`cat $CONF_FILE_MODHOST`"
     ;;
   --parameters)
     # get user parameter settings from persistent storage,
-    # look for latest (=most current) file in dir:
-    for file in "$MOD_SETTINGSDIR"/*; do
-      test "$file" -nt "$CFILE" && CFILE=$file
-    done
-    CONF="`cat $CFILE`"
+    CONF="`cat $CONF_FILE_MODHOST_STATE`"
     ;;
   --all)
     $0 --base-setup

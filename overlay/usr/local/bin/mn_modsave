@@ -2,6 +2,27 @@
 
 . /medianet/lib/mn_includes
 
-. $MEDIANETCONF
+if [[ ! -e "$CONF_FILE_MODHOST_STATE" ]] ; then
+	STATEDIR=`$DIRNAME "$CONF_FILE_MODHOST_STATE"`
+	if [[ ! -d "$STATEDIR" ]] ; then
+		echo -n "Creating mod-host state directory $STATEDIR..."
+		$MKDIR -p "$STATEDIR" && success || failure
+	fi
+fi
+STATE=`$WGET -q -O - http://localhost:80/lv2rdf.php?dumpPersistenceCommands`
+OLDSTATE=`cat "$CONF_FILE_MODHOST_STATE"`
 
-wget -q -O - http://localhost:80/lv2rdf.php?dumpPersistenceCommands > "$MOD_SETTINGSDIR"/state.`date -Is`
+if [[ "$STATE" != "$OLDSTATE" ]] ; then
+	echo -n "Mod-host state changed. Rotating state files... " 
+	for i in 3 2 1 0 ; do
+		if [[ -e "$CONF_FILE_MODHOST_STATE"."$i" ]] ; then
+			echo -n "[$i] "
+			$MV "$CONF_FILE_MODHOST_STATE"."$i" "$CONF_FILE_MODHOST_STATE"."$((i+1))" || failure
+		fi
+	done && success || failure		
+	if [[ -e "$CONF_FILE_MODHOST_STATE" ]] ; then
+		$MV "$CONF_FILE_MODHOST_STATE" "$CONF_FILE_MODHOST_STATE".0 || failure
+	fi
+	echo -n " Writing new mod-host state..."
+	echo "$STATE" > "$CONF_FILE_MODHOST_STATE" && success || failure
+fi

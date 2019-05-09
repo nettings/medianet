@@ -42,6 +42,7 @@ PREFIX=/medianet
 
 CONFIG_INCLUDE=/etc/mn_config
 CONF_FILE_MODHOST=/etc/mod-host.conf
+CONF_FILE_MODHOST_STATE=/local/mod-host.state
 CONF_FILE_ZITALRX=/etc/zita-lrx.conf
 CONF_FILE_BOOT=/boot/medianet.txt
 CONF_FILE_PERMISSIONS="$PREFIX"/permissions.medianet
@@ -56,6 +57,7 @@ CHMOD=/bin/chmod
 CHSH=/usr/bin/chsh
 CMP=/usr/bin/cmp
 CP=/bin/cp
+DIRNAME=/usr/bin/dirname
 DPHYSSWAPFILE=/sbin/dphys-swapfile
 DPKGRECONFIGURE=/usr/sbin/dpkg-reconfigure
 FIND=/usr/bin/find
