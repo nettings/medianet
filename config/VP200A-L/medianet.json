@@ -71,6 +71,11 @@
 			"outPorts": []
 		},
 		{
+			"unit"    : "mn_config_watch",
+			"type"    : "service",
+			"enabled" : 1
+		},
+		{
 			"unit"    : "mod-host",
 			"type"    : "service",
 			"enabled" : 1,

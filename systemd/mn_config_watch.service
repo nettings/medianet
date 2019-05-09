@@ -1,0 +1,10 @@
+[Unit]
+Description=medianet configuration updater
+
+[Service]
+ExecStart=/usr/local/bin/mn_config_watch
+RestartSec=30
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

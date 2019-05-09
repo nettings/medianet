@@ -3,7 +3,7 @@
 	"description": "[mn] VoicePoint VP iDSP 6in 8out integrated Signal Processor",
 	"hostname": "mn-VPiDSP-6x8",
 	"location": "Showroom",
-	"version": "2019-05-09",
+	"version": "2019-05-10",
 	"bootConfig": {
 		"arm_freq" : 1000,
 		"arm_freq_min" : 1000,
@@ -17,8 +17,13 @@
 		]
 	},
 	"alsaOptions": {
-		"master": "Digital",
-		"masterDefault": 98
+		"master": [
+			"DAC1",
+			"DAC2",
+			"DAC3",
+			"DAC4"
+		],
+		"masterDefault": "-3dB"
 	},
 	"systemdUnits": [
 		{
@@ -128,6 +133,11 @@
 				}
 
 			]
+		},
+		{
+			"unit"    : "mn_config_watch",
+			"type"    : "service",
+			"enabled" : 1
 		},
 		{
 			"unit"    : "mod-host",
