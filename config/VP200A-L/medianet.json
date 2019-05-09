@@ -3,7 +3,7 @@
 	"description": "[mn] VoicePoint VP200A Active speaker (left channel)",
 	"hostname": "mn-VP200A-L",
 	"location": "Showroom",
-	"version": "2019-04-24",
+	"version": "2019-05-10",
 	"bootConfig": {
 		"arm_freq" : 600,
 		"arm_freq_min" : 600,
@@ -18,8 +18,10 @@
 		]
 	},
 	"alsaOptions": {
-		"master": "Digital",
-		"masterDefault": 98
+		"master": [
+			"Digital"
+		],
+		"masterDefault": "-3dB"
 	},
 	"systemdUnits": [
 		{
@@ -92,17 +94,14 @@
 			],
 			"config": [
 				"add http://gareus.org/oss/lv2/fil4#mono 1",
-				"add http://stackingdwarves.net/lv2/sm 10",
-				"add http://plugin.org.uk/swh-plugins/lowpass_iir 11",
-				"add urn:zamaudio:ZaMaximX2 12", 
-				"connect effect_1:out effect_10:inL",
-				"connect effect_1:out effect_10:inR",
-				"connect effect_10:outL effect_12:lv2_audio_in_1",
-				"connect effect_10:outR effect_11:input",
-				"connect effect_11:output effect_12:lv2_audio_in_2",
-				"connect effect_12:lv2_audio_out_1 system:playback_1",
-				"connect effect_12:lv2_audio_out_2 system:playback_2",
-				"connect zita-n2j:out_1 effect_1:in",
+				"add http://stackingdwarves.net/lv2/sm 4",
+				"add http://plugin.org.uk/swh-plugins/lowpass_iir 9",
+				"add http://gareus.org/oss/lv2/dpl#stereo 9",
+ 				"connect effect_1:out effect_4:inL",
+				"connect effect_1:out effect_4:inR",
+				"connect effect_4:outL effect_9:inL",
+				"connect effect_4:outR effect_8:input",
+				"connect effect_8:output effect_9:inR",
 				"param_set 1 enable 1.0000",
 				"param_set 1 gain -12.0000",
 				"param_set 1 peakreset 1.0000",
@@ -136,22 +135,21 @@
 				"param_set 1 HSfreq 11500.0000",
 				"param_set 1 HSq 3.0000",
 				"param_set 1 HSgain 9.0000",
-				"param_set 10 gain 0.0000",
-				"param_set 10 attL 0.0000",
-				"param_set 10 attOnL 1.0000",
-				"param_set 10 delayL 0.0000",
-				"param_set 10 delayLOn 0.0000",
-				"param_set 10 activeL 1.0000",
-				"param_set 10 attR 0.0000",
-				"param_set 10 attOnR 1.0000",
-				"param_set 10 delayR 0.0000",
-				"param_set 10 delayROn 0.0000",
-				"param_set 10 activeR 1.0000",
-				"param_set 11 cutoff 400.0000",
-				"param_set 11 stages 1.0000",
-				"param_set 12 rel 25.0000",
-				"param_set 12 ceil 0.0000",
-				"param_set 12 thresh 0.0000" ]
+				"param_set 4 gain 0.0000",
+				"param_set 4 attL 0.0000",
+				"param_set 4 attOnL 1.0000",
+				"param_set 4 delayL 0.0000",
+				"param_set 4 delayLOn 0.0000",
+				"param_set 4 activeL 1.0000",
+				"param_set 4 attR 0.0000",
+				"param_set 4 attOnR 1.0000",
+				"param_set 4 delayR 0.0000",
+				"param_set 4 delayROn 0.0000",
+				"param_set 4 activeR 1.0000",
+				"param_set 8 cutoff 400.0000",
+				"param_set 8 stages 1.0000",
+				"param_set 9 threshold -2"
+			]
 		},
 		{
 			"unit"    : "phpsessionclean",
