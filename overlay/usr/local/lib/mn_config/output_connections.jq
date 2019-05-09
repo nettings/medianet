@@ -34,7 +34,7 @@
 			then "\($o.portName)" 
 # if not fully qualified, prepend client name
 			else "\($u.jackName):\($o.portName)"
-		end, "\\t", (
+		end, "\n", (
 # de-reference target ports via array of all units
 			$units[] 
 # find the unit of the target port
@@ -44,6 +44,6 @@
 			| if ($n | contains(":"))
 				then "\($n)"
 				else "\($t.jackName):\($n)"
-			end, "\\t"
+			end, "\n"
 		)
 	
