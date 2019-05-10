@@ -1,0 +1,247 @@
+{
+	"product": "Minimal",
+	"description": "Minimal configuration",
+	"hostname": "mn-minimal",
+	"location": "überall und nirgends",
+	"version": "2019-05-11",
+	"bootConfig": {
+		"arm_freq" : 600,
+		"arm_freq_min" : 600,
+		"gpio" : [
+		],
+		"dtparam" : [
+			"audio=off"
+		],
+		"dtoverlay" : [
+			"pi3-disable-wifi",
+			"pi3-disable-bt"
+		]
+	},
+	"alsaOptions": {
+		"master": [
+			"Digital"
+		],
+			"masterDefault": "-3dB"
+	},
+	"systemdUnits": [
+		{
+			"unit"    : "apt-daily-upgrade", 
+			"type"    : "timer",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "apt-daily",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "apt-daily-upgrade",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "apt-daily",
+			"type"    : "timer",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "cpufrequtils",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "gpioctl",
+			"type"    : "service",
+			"enabled" : 0,
+			"options" : "gpioctl -r  5,6,master,osc.udp://239.0.0.254:3042,4  -s 13,master,osc.udp://239.0.0.254:3042 -U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
+		},
+		{
+			"unit"    : "hciuart",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "jackd", 
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "system",
+			"options" : "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P -r48000 -p256 -n2 -zs",
+			"inPorts": [
+				{
+					"portName"   : "playback_1"
+				},
+				{
+					"portName"   : "playback_2"
+				}
+			],
+			"outPorts": []
+		},
+		{
+			"unit"    : "mn_config_watch",
+			"type"    : "service",
+			"enabled" : 1
+		},
+		{
+			"unit"    : "mod-host",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "mod-host",
+			"options" : "",
+			"inPorts" : [
+			],
+			"outPorts": [
+			],
+			"config": [
+			]
+		},
+		{
+			"unit"    : "phpsessionclean",
+			"type"    : "timer",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "shairport-sync",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "shairport-sync",
+			"inPorts" : [],
+			"outPorts": [
+				{
+					"portName"   : "out_L",
+					"targetUnit" : "mod-host",
+					"targetPort" : 0
+				},
+				{
+					"portName"   : "out_R",
+					"targetUnit" : "mod-host",
+					"targetPort" : 1
+				}					
+			]
+		},
+		{
+			"unit"    : "ufw",
+			"type"    : "service",
+			"enabled" : 1
+		},
+		{
+			"unit"    : "wifi-country",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "zita-n2j",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-n2j",
+			"options" : "--jname %jackName% --chan 1 --buff 20 239.0.0.1 3000 medianet0",
+			"inPorts" : [],
+			"outPorts": [
+				{
+					"portName"   : "out_1",
+					"targetUnit" : "mod-host",
+					"targetPort" : 0
+				}
+			]
+		},
+		{
+			"unit"    : "zita-j2n",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-j2n",
+			"options" : "--jname %jackName% --chan 2 239.0.0.1 3000 medianet0",
+			"inPorts": [
+				{
+					"portName" : "in_1"
+				},
+				{
+					"portName" : "in_2"
+				}
+			]
+		},
+		{
+			"unit"    : "zita-a2j",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-a2j",
+			"options" : "-j %jackName% -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"outPorts": [
+				{
+					"portName" : "capture_1"
+				},
+				{
+					"portName" : "capture_2"
+				}
+			]
+		},
+		{
+			"unit"    : "zita-j2a",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-j2a",
+			"options" : "-j %jackName% -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"inPorts" : [
+				{
+					"portName" : "playback_1"
+				},
+				{
+					"portName" : "playback_2"
+				}
+			]
+		},
+		{
+			"unit"    : "zita-lrx",
+			"type"    : "service",
+			"enabled" : 0,
+			"options" : "",
+			"jackName": "zita-lrx",
+			"inPorts" : [
+				{
+					"portName" : "inp-L"
+				},
+				{
+					"portName" : "inp-R"
+				}
+			],
+			"outPorts": [
+				{
+					"portName" : "out-L.sub"
+				},
+				{
+					"portName" : "out-L.mid"
+				},
+				{
+					"portName" : "out-L.high."
+				},
+				{
+					"portName" : "out-R.sub"
+				},
+				{
+					"portName" : "out-R.mid"
+				},
+				{
+					"portName" : "out-R.high"
+				}
+			],
+			"config": [
+				"# Two channels, three frequency bands.",
+				"/zita-lrx       2  3",
+				"# Channel names.",
+				"/chann/label    1  L",
+				"/chann/label    2  R",
+				"# Output port suffixes.",
+				"/fband/suffix   1  sub",
+				"/fband/suffix   2  mid",
+				"/fband/suffix   3  high",
+				"# Xover filters, first is Linkwitz-Riley, second is modified.",
+				"/xover/freq     1  80",
+				"/xover/freq     2  3000",
+				"/xover/shape    2  -4.0",
+				"# Subwoofer signals are summed on first output.",
+				"# MF amplifier on outputs 3 and 4, 2 dB gain, 0.4 ms delay.",
+				"/fband/gain     2  2.0",
+				"/fband/delay    2  0.4"
+			]
+		}
+	]
+}
+		
