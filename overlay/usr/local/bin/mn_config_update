@@ -67,22 +67,22 @@ done <<< "$DATA"
 
 # the following boot parameters can occur multiple times. we preserve the original order and rely
 # on the config.txt parser to do the right thing (latest takes precedence)
-CONFIG+="# dtparam parameters\n"
-DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig.gpio[]'`
+CONFIG+="# gpio parameters\n"
+DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig.gpio[]?'`
 while read VALUE ; do
-	CONFIG+="gpio=$VALUE\n"
+	[[ $VALUE ]] && CONFIG+="gpio=$VALUE\n"
 done <<< "$DATA"
 
 CONFIG+="# dtparam parameters\n"
-DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig.dtparam[]'`
+DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig.dtparam[]?'`
 while read VALUE ; do
-	CONFIG+="dtparam=$VALUE\n"
+	[[ $VALUE ]] && CONFIG+="dtparam=$VALUE\n"
 done <<< "$DATA"
 
 CONFIG+="# dtoverlay parameters\n"
-DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig.dtoverlay[]'`
+DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig.dtoverlay[]?'`
 while read VALUE ; do
-	CONFIG+="dtoverlay=$VALUE\n"
+	[[ $VALUE ]] && CONFIG+="dtoverlay=$VALUE\n"
 done <<< "$DATA"
 
 echo -en "$CONFIG"

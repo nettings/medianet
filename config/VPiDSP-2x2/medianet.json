@@ -7,7 +7,6 @@
 	"bootConfig": {
 		"arm_freq" : 600,
 		"arm_freq_min" : 600,
-		"test" : "",
 		"dtparam" : [
 			"audio=off"
 		],
