@@ -125,7 +125,7 @@ while read UNIT ; do
 	CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
 	echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
 
-
+	CONFIG=
 	COUT=`cat "$CONFIG_FILE" | jq --arg unit $UNIT -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
 	if [[ "$COUT" ]] ; then
 		CONFIG="CONNECTIONS_OUT=\"$COUT\n\"\n"
