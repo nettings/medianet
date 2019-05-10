@@ -1,6 +1,6 @@
 [Unit]
 Description=gpioctl controllers
-
+After=network-online.target
 After=sound.target
 
 [Service]
