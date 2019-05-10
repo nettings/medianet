@@ -1,0 +1,320 @@
+{
+	"product": "VPiDSP-2x2",
+	"description": "[mn] VoicePoint VP iDSP 2in 2out integrated Signal Processor",
+	"hostname": "mn-VPiDSP-2x2",
+	"location": "Showroom",
+	"version": "2019-05-11",
+	"bootConfig": {
+		"arm_freq" : 600,
+		"arm_freq_min" : 600,
+		"test" : "",
+		"dtparam" : {
+			"audio" : "off"
+		},
+		"dtoverlay" : [
+			"pi3-disable-wifi",
+			"pi3-disable-bt",
+			"hifiberry-dacplus"
+		]
+	},
+	"alsaOptions": {
+		"master": [
+			"Digital"
+		],
+		"masterDefault": "-3dB"
+	},
+	"systemdUnits": [
+		{
+			"unit"    : "apt-daily-upgrade", 
+			"type"    : "timer",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "apt-daily",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "apt-daily-upgrade",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "apt-daily",
+			"type"    : "timer",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "cpufrequtils",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "hciuart",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "jackd", 
+			"type"    : "service",
+			"enabled" : 1,
+			"jackName": "system",
+			"options" : "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P -r48000 -p256 -n2 -zs",
+			"inPorts": [
+				{
+					"portName"   : "playback_1"
+				},
+				{
+					"portName"   : "playback_2"
+				}
+			],
+			"outPorts": [
+				{	
+					"portName"   : "capture_1"
+				},
+				{
+					"portName"   : "capture_2"
+				}
+			]
+		},
+		{
+			"unit"    : "mn_config_watch",
+			"type"    : "service",
+			"enabled" : 1
+		},
+		{
+			"unit"    : "mod-host",
+			"type"    : "service",
+			"enabled" : 1,
+			"jackName": "mod-host",
+			"options" : "",
+			"inPorts" : [
+				{
+					"portName"   : "effect_1:inL"
+				},
+				{
+					"portName"   : "effect_1:inR"
+				}
+			],
+			"outPorts": [
+				{
+					"portName"   : "effect_9:outL",
+					"targetUnit"     : "jackd",
+					"targetPort" : 0
+				},{
+					"portName"   : "effect_9:outR",
+					"targetUnit"     : "jackd",
+					"targetPort" : 1
+				}
+			],
+			"config": [
+				"add http://gareus.org/oss/lv2/fil4#stereo",
+				"add http://stackingdwarves.net/lv2/sm 4",
+				"add http://gareus.org/oss/lv2/dpl#stereo 9",
+ 				"connect effect_1:out effect_4:inL",
+				"connect effect_1:out effect_4:inR",
+				"connect effect_4:outL effect_9:inL",
+				"connect effect_4:outR effect_9:inR",
+				"param_set 1 enable 1.0000",
+				"param_set 1 gain -12.0000",
+				"param_set 1 peakreset 1.0000",
+				"param_set 1 HighPass 1.0000",
+				"param_set 1 HPfreq 75.0000",
+				"param_set 1 HPQ 1.2432",
+				"param_set 1 LowPass 0.0000",
+				"param_set 1 LPfreq 500.0000",
+				"param_set 1 LPQ 0.0000",
+				"param_set 1 LSsec 1.0000",
+				"param_set 1 LSfreq 150.0000",
+				"param_set 1 LSq 1.2000",
+				"param_set 1 LSgain 12.0000",
+				"param_set 1 sec1 1.0000",
+				"param_set 1 freq1 207.5057",
+				"param_set 1 q1 0.0625",
+				"param_set 1 gain1 -15.6240",
+				"param_set 1 sec2 0.0000",
+				"param_set 1 freq2 250.0000",
+				"param_set 1 q2 0.6000",
+				"param_set 1 gain2 -0.5000",
+				"param_set 1 sec3 0.0000",
+				"param_set 1 freq3 542.0009",
+				"param_set 1 q3 1.0000",
+				"param_set 1 gain3 -1.0440",
+				"param_set 1 sec4 1.0000",
+				"param_set 1 freq4 6471.8730",
+				"param_set 1 q4 0.4248",
+				"param_set 1 gain4 9.0000",
+				"param_set 1 HSsec 1.0000",
+				"param_set 1 HSfreq 11500.0000",
+				"param_set 1 HSq 3.0000",
+				"param_set 1 HSgain 9.0000",
+				"param_set 4 gain 0.0000",
+				"param_set 4 attL 0.0000",
+				"param_set 4 attOnL 1.0000",
+				"param_set 4 delayL 0.0000",
+				"param_set 4 delayLOn 0.0000",
+				"param_set 4 activeL 1.0000",
+				"param_set 4 attR 0.0000",
+				"param_set 4 attOnR 1.0000",
+				"param_set 4 delayR 0.0000",
+				"param_set 4 delayROn 0.0000",
+				"param_set 4 activeR 1.0000",
+				"param_set 9 threshold -2"
+			]
+		},
+		{
+			"unit"    : "phpsessionclean",
+			"type"    : "timer",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "shairport-sync",
+			"type"    : "service",
+			"enabled" : 1,
+			"jackName": "shairport-sync",
+			"inPorts" : [],
+			"outPorts": [
+				{
+					"portName"   : "out_L",
+					"targetUnit" : "mod-host",
+					"targetPort" : 0
+				},
+				{
+					"portName"   : "out_R",
+					"targetUnit" : "mod-host",
+					"targetPort" : 1
+				}					
+			]
+		},
+		{
+			"unit"    : "ufw",
+			"type"    : "service",
+			"enabled" : 1
+		},
+		{
+			"unit"    : "wifi-country",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "zita-n2j",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-n2j",
+			"options" : "--jname %jackName% --chan 2 --buff 20 239.0.0.1 3000 medianet0",
+			"inPorts" : [],
+			"outPorts": [
+				{
+					"portName"   : "out_1",
+					"targetUnit" : "mod-host",
+					"targetPort" : 0
+				},
+				{
+					"portName"   : "out_2",
+					"targetUnit" : "mod-host",
+					"targetPort" : 1
+				}
+			]
+		},
+		{
+			"unit"    : "zita-j2n",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-j2n",
+			"options" : "--jname %jackName% --chan 2 239.0.0.1 3000 medianet0",
+			"inPorts": [
+				{
+					"portName" : "in_1"
+				},
+				{
+					"portName" : "in_2"
+				}
+			]
+		},
+		{
+			"unit"    : "zita-a2j",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-a2j",
+			"options" : "-j %jackName% -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"outPorts": [
+				{
+					"portName" : "capture_1"
+				},
+				{
+					"portName" : "capture_2"
+				}
+			]
+		},
+		{
+			"unit"    : "zita-j2a",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-j2a",
+			"options" : "-j %jackName% -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"inPorts" : [
+				{
+					"portName" : "playback_1"
+				},
+				{
+					"portName" : "playback_2"
+				}
+			]
+		},
+		{
+			"unit"    : "zita-lrx",
+			"type"    : "service",
+			"enabled" : 0,
+			"options" : "",
+			"jackName": "zita-lrx",
+			"inPorts" : [
+				{
+					"portName" : "inp-L"
+				},
+				{
+					"portName" : "inp-R"
+				}
+			],
+			"outPorts": [
+				{
+					"portName" : "out-L.sub"
+				},
+				{
+					"portName" : "out-L.mid"
+				},
+				{
+					"portName" : "out-L.high."
+				},
+				{
+					"portName" : "out-R.sub"
+				},
+				{
+					"portName" : "out-R.mid"
+				},
+				{
+					"portName" : "out-R.high"
+				}
+			],
+			"config": [
+				"# Two channels, three frequency bands.",
+				"/zita-lrx       2  3",
+				"# Channel names.",
+				"/chann/label    1  L",
+				"/chann/label    2  R",
+				"# Output port suffixes.",
+				"/fband/suffix   1  sub",
+				"/fband/suffix   2  mid",
+				"/fband/suffix   3  high",
+				"# Xover filters, first is Linkwitz-Riley, second is modified.",
+				"/xover/freq     1  80",
+				"/xover/freq     2  3000",
+				"/xover/shape    2  -4.0",
+				"# Subwoofer signals are summed on first output.",
+				"# MF amplifier on outputs 3 and 4, 2 dB gain, 0.4 ms delay.",
+				"/fband/gain     2  2.0",
+				"/fband/delay    2  0.4"
+			]
+		}
+	]
+}
+		
