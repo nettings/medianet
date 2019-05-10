@@ -42,11 +42,8 @@ from_tar() {
 
 from_package()
 {
-  while [[ -n "$1" ]] ; do
-	echo -ne "Installing package $1..."
-  	"$APTGET" -qqy install --no-install-recommends "$1" || failure && success
-  	shift
-  done
+	echo -ne "Installing packages ..."
+  	"$APTGET" -qqy install --no-install-recommends "$@" || failure && success
 }
 
 
