@@ -8,9 +8,9 @@
 		"arm_freq" : 600,
 		"arm_freq_min" : 600,
 		"test" : "",
-		"dtparam" : {
-			"audio" : "off"
-		},
+		"dtparam" : [
+			"audio=off"
+		],
 		"dtoverlay" : [
 			"pi3-disable-wifi",
 			"pi3-disable-bt",

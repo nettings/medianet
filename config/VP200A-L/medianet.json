@@ -7,10 +7,12 @@
 	"bootConfig": {
 		"arm_freq" : 600,
 		"arm_freq_min" : 600,
-		"test" : "",
-		"dtparam" : {
-			"audio" : "off"
-		},
+		"gpio" : [
+			"5,6,13=ip,pu"
+		],
+		"dtparam" : [
+			"audio=off"
+		],
 		"dtoverlay" : [
 			"pi3-disable-wifi",
 			"pi3-disable-bt",
@@ -48,6 +50,12 @@
 			"unit"    : "cpufrequtils",
 			"type"    : "service",
 			"enabled" : 0
+		},
+		{
+			"unit"    : "gpioctl",
+			"type"    : "service",
+			"enabled" : 0,
+			"options" : "-r 5,6,master,osc.udp://239.0.0.254:3000,4  -s 13,master,osc.udp://239.0.0.254:3000 -U osc.udp://239.0.0.254:3000 -R Digital -S Digital"
 		},
 		{
 			"unit"    : "hciuart",

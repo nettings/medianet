@@ -59,25 +59,32 @@ CONFIG=
 # we assume anything that is not a dtparam or a dtoverlay can occur only once
 # this becomes important if we later combine default settings with overrides
 CONFIG="# singleton parameters\n"
-DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig | del(.dtoverlay) | del(.dtparam) | keys_unsorted[] as $k | "\($k)\n\(.[$k])"'`
+DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig | del(.dtoverlay) | del(.dtparam) | del(.gpio) | keys_unsorted[] as $k | "\($k)\n\(.[$k])"'`
 while read KEY ; do
 	read VALUE
 	CONFIG+="$KEY=$VALUE\n"
 done <<< "$DATA"
-# dtoverlay can occur multiple times. we preserve the original order and rely
+
+# the following boot parameters can occur multiple times. we preserve the original order and rely
 # on the config.txt parser to do the right thing (latest takes precedence)
+CONFIG+="# dtparam parameters\n"
+DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig.gpio[]'`
+while read VALUE ; do
+	CONFIG+="gpio=$VALUE\n"
+done <<< "$DATA"
+
+CONFIG+="# dtparam parameters\n"
+DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig.dtparam[]'`
+while read VALUE ; do
+	CONFIG+="dtparam=$VALUE\n"
+done <<< "$DATA"
+
 CONFIG+="# dtoverlay parameters\n"
 DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig.dtoverlay[]'`
 while read VALUE ; do
 	CONFIG+="dtoverlay=$VALUE\n"
 done <<< "$DATA"
-# same for dtparam
-CONFIG+="# dtparam parameters\n"
-DATA=`cat "$CONFIG_FILE"  | jq -r '.bootConfig.dtparam|keys_unsorted[] as $k | "\($k)\n\(.[$k])"'`
-while read KEY ; do
-	read VALUE
-	CONFIG+="dtparam=$KEY=$VALUE\n"
-done <<< "$DATA"
+
 echo -en "$CONFIG"
 echo -n "writing out to $CONF_FILE_BOOT..."
 echo -en "$CONFIG" > "$CONF_FILE_BOOT" && success || failure

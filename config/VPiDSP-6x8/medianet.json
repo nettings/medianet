@@ -7,9 +7,9 @@
 	"bootConfig": {
 		"arm_freq" : 1000,
 		"arm_freq_min" : 1000,
-		"dtparam" : {
-			"audio" : "off"
-		},
+		"dtparam" : [
+			"audio=off"
+		],
 		"dtoverlay" : [
 			"pi3-disable-wifi",
 			"pi3-disable-bt",

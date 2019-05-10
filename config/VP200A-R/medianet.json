@@ -1,15 +1,18 @@
 {
-	"product": "VP200A-L",
-	"description": "[mn] VoicePoint VP200A Active speaker (left channel)",
-	"hostname": "mn-VP200A-R",
+	"product": "VP200A-R",
+	"description": "[mn] VoicePoint VP200A Active speaker (right channel)",
+	"hostname": "mn-VP200A-L",
 	"location": "Showroom",
 	"version": "2019-05-10",
 	"bootConfig": {
 		"arm_freq" : 600,
 		"arm_freq_min" : 600,
-		"dtparam" : {
-			"audio" : "off"
-		},
+		"gpio" : [
+			"5,6,13=ip,pu"
+		],
+		"dtparam" : [
+			"audio=off"
+		],
 		"dtoverlay" : [
 			"pi3-disable-wifi",
 			"pi3-disable-bt",
@@ -49,6 +52,12 @@
 			"enabled" : 0
 		},
 		{
+			"unit"    : "gpioctl",
+			"type"    : "service",
+			"enabled" : 0,
+			"options" : "-r 5,6,master,osc.udp://239.0.0.254:3000,4  -s 13,master,osc.udp://239.0.0.254:3000 -U osc.udp://239.0.0.254:3000 -R Digital -S Digital"
+		},
+		{
 			"unit"    : "hciuart",
 			"type"    : "service",
 			"enabled" : 0
@@ -69,11 +78,11 @@
 			],
 			"outPorts": []
 		},
-                {
-                        "unit"    : "mn_config_watch",
-                        "type"    : "service",
-                        "enabled" : 1
-                },
+		{
+			"unit"    : "mn_config_watch",
+			"type"    : "service",
+			"enabled" : 1
+		},
 		{
 			"unit"    : "mod-host",
 			"type"    : "service",
