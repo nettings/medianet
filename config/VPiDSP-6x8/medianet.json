@@ -58,6 +58,12 @@
 			"options" : "-g performance --min 1000MHz --max 1000MHz"
 		},
 		{
+			"unit"    : "gpioctl",
+			"type"    : "service",
+			"enabled" : 1,
+			"options" : "gpioctl -U osc.udp://239.0.0.254:3042 -R DAC1 -R DAC2 -R DAC3 -R DAC4"
+		},
+		{
 			"unit"    : "hciuart",
 			"type"    : "service",
 			"enabled" : 0
