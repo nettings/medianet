@@ -1,7 +1,7 @@
 {
 	"product": "VP200A-R",
 	"description": "[mn] VoicePoint VP200A Active speaker (right channel)",
-	"hostname": "mn-VP200A-L",
+	"hostname": "mn-VP200A-R",
 	"location": "Showroom",
 	"version": "2019-05-10",
 	"bootConfig": {
@@ -54,8 +54,8 @@
 		{
 			"unit"    : "gpioctl",
 			"type"    : "service",
-			"enabled" : 0,
-                        "options" : "gpioctl -v -r  5,6,master,osc.udp://239.0.0.254:3042,4  -s 13,master,osc.udp://239.0.0.254:3042 -U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
+			"enabled" : 1,
+                        "options" : "gpioctl -r  5,6,master,osc.udp://239.0.0.254:3042,4  -s 13,master,osc.udp://239.0.0.254:3042 -U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
 		},
 		{
 			"unit"    : "hciuart",
