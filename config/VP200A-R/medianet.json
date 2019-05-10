@@ -58,7 +58,7 @@
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "system",
-			"options" : "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P %jackName% -r48000 -p256 -n2 -zs",
+			"options" : "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P -r48000 -p256 -n2 -zs",
 			"inPorts": [
 				{
 					"portName"   : "playback_1"
@@ -87,11 +87,11 @@
 			],
 			"outPorts": [
 				{
-					"portName"   : "effect_12:lv2_audio_out_1",
+					"portName"   : "effect_9:outL",
 					"targetUnit"     : "jackd",
 					"targetPort" : 0
 				},{
-					"portName"   : "effect_12:lv2_audio_out_2",
+					"portName"   : "effect_9:outR",
 					"targetUnit"     : "jackd",
 					"targetPort" : 1
 				}
@@ -198,7 +198,7 @@
 			"inPorts" : [],
 			"outPorts": [
 				{
-					"portName"   : "out_1",
+					"portName"   : "out_2",
 					"targetUnit" : "mod-host",
 					"targetPort" : 0
 				}
