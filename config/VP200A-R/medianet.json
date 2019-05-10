@@ -99,7 +99,7 @@
 			"config": [
 				"add http://gareus.org/oss/lv2/fil4#mono 1",
 				"add http://stackingdwarves.net/lv2/sm 4",
-				"add http://plugin.org.uk/swh-plugins/lowpass_iir 9",
+				"add http://plugin.org.uk/swh-plugins/lowpass_iir 8",
 				"add http://gareus.org/oss/lv2/dpl#stereo 9",
  				"connect effect_1:out effect_4:inL",
 				"connect effect_1:out effect_4:inR",
