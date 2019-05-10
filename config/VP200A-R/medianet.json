@@ -55,7 +55,7 @@
 			"unit"    : "gpioctl",
 			"type"    : "service",
 			"enabled" : 0,
-			"options" : "-r 5,6,master,osc.udp://239.0.0.254:3000,4  -s 13,master,osc.udp://239.0.0.254:3000 -U osc.udp://239.0.0.254:3000 -R Digital -S Digital"
+                        "options" : "gpioctl -v -r  5,6,master,osc.udp://239.0.0.254:3042,4  -s 13,master,osc.udp://239.0.0.254:3042 -U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
 		},
 		{
 			"unit"    : "hciuart",
