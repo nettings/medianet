@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+if [[ $1 == "-h" ]] ; then
+  echo "$0 [network device]"
+  echo "sleeps until the configured network device shows with \"state UP\" in ip link."
+fi
+
+while : ; do
+	"$IPBIN" link show "$1" 2>&1 | "$GREP" -q "state UP" && break
+	sleep 2
+done
