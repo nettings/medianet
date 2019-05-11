@@ -4,23 +4,40 @@
 
 . /etc/systemd/system/$1.d/$1.connections
 
+echo -n "$1 waiting for own ports "
+OWNPORTS=
+while read PORT; do
+	if [[ ! "$PORT" ]] ; then break ; fi
+	echo -n "$PORT"
+	/usr/local/bin/mn_jackwait "$PORT"
+	echo -n " (x)  "
+	read FOREIGNPORT
+done <<< "$CONNECTIONS_OUT"
+while read FOREIGNPORT; do
+	read PORT
+	if [[ ! "$PORT" ]] ; then break ; fi
+	echo -n "$PORT"
+	/usr/local/bin/mn_jackwait "$PORT"
+	echo -n " (x)  "
+done <<< "$CONNECTIONS_IN"
+echo " - all found."
+#echo -n $OWNPORTS"..."
+#/usr/local/bin/mn_jackwait "$OWNPORTS" 
+#echo "found."
+
 N=0
 while read OUTPORT ; do
 	if [[ ! "$OUTPORT" ]] ; then break ; fi
 	read INPORT
-	MSG[$N]="[$N] Connecting $OUTPORT -> $INPORT: checking ports..."
+	echo -n "$1 [$((N++))] connecting $OUTPORT -> $INPORT... "
 	{
-		mn_jackwait $OUTPORT $INPORT && \
-		MSG[$N]+=" found. Connecting..."
 		RES=`jack_connect $OUTPORT $INPORT 2>&1`
 		if [[ -z "$RES" ]] ; then 
-			MSG[$N]+=`success`
+			success
 		elif $GREP -q "already connected" <<< "$RES" ; then
-			MSG[$N]+="already connected."
+			echo "already connected."
 		else
-			MSG[$N]+=`failure "$RES"`
+			echo "failed ($RES). Continuing."
 		fi
-		echo "[$N] ${MSG[$N]}" 
 	} 
-	((N++))	
 done <<< "$CONNECTIONS_IN $CONNECTIONS_OUT"

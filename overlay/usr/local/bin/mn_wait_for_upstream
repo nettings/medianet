@@ -1,0 +1,18 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+. /etc/systemd/system/$1.d/$1.connections
+
+PORTS=
+while read OUTPORT ; do
+	if [[ ! "$OUTPORT" ]] ; then break ; fi
+	read INPORT
+	PORTS+="$OUTPORT\n"
+done <<< "$CONNECTIONS_IN"
+
+echo -n "$1 waiting for upstream ports "
+echo -en "$PORTS" | $TR '\n' ' ';
+echo "..."
+echo -e "$PORTS" | xargs -d '\n' mn_jackwait && \
+	echo "*** All incoming ports for $1 are present."
