@@ -10,6 +10,7 @@ After=sound.target
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
+ExecStartPre=/usr/local/bin/mn_netwait medianet0
 ExecStart=/usr/local/bin/gpioctl $OPTIONS
 RestartSec=5
 Restart=on-failure
