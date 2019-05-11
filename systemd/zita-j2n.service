@@ -12,6 +12,7 @@ After=network-online.target
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
+ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
 ExecStart=/usr/local/bin/zita-j2n $OPTIONS
 ExecStartPost=-/usr/local/bin/mn_connect %n
 RestartSec=5
