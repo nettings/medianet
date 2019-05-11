@@ -4,10 +4,10 @@
 
 if [[ $1 == "-h" ]] ; then
   echo "$0 [network device]"
-  echo "sleeps until the configured network device shows with \"state UP\" in ip link."
+  echo "sleeps until the configured network device has a valid IP4 address."
 fi
 
 while : ; do
-	"$IPBIN" link show "$1" 2>&1 | "$GREP" -q "state UP" && break
+	"$IPBIN" addr show "$1" 2>&1 | "$GREP" -q "inet " && break
 	sleep 2
 done
