@@ -49,6 +49,12 @@
 			"enabled" : 0
 		},
 		{
+			"unit"    : "gpioctl",
+			"type"    : "service",
+			"enabled" : 1,
+			"options" : "-U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
+		},
+ 		{
 			"unit"    : "hciuart",
 			"type"    : "service",
 			"enabled" : 0
