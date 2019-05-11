@@ -6,10 +6,10 @@ if [[ $1 == "-h" ]] ; then
   echo "If the port list is left blank, it effectively checks for the existence of any port (i.e. the existence of the JACK server itself)."
 fi
 
-while [[ ! $DONE ]] ; do
+while [[ ! "$DONE" ]] ; do
   while [[ -z "`/usr/bin/jack_lsp 2> /dev/null | /bin/grep "$1"`" ]] ; do 
     sleep 1
   done
   shift
-  if [[ ! $1 ]] ; then DONE=yes ; fi
+  if [[ ! "$1" ]] ; then DONE=yes ; fi
 done
