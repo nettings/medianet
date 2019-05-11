@@ -66,6 +66,7 @@ GREP=/bin/grep
 GROUPADD=/usr/sbin/groupadd
 HOSTNAMEBIN=/bin/hostname
 INOTIFYWAIT=/usr/bin/inotifywait
+IPBIN=/sbin/ip
 MN_CONFIG_UPDATE="$PREFIX"/overlay/usr/local/bin/mn_config_update
 MKDIR=/bin/mkdir
 MV=/bin/mv
