@@ -2,6 +2,8 @@
 
 . /medianet/lib/mn_includes
 
+echo -n "Running systemd-tmpfiles --clean in preparation of mounting read-only..."
+/bin/systemd-tmpfiles --clean && success || failure
 for i in "/" "/boot"; do
   echo -n "Remounting $i read-only..."
   sudo mount -oremount,ro "$i" && success || failure
