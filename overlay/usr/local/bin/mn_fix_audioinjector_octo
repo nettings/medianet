@@ -6,10 +6,13 @@
 #
 # With current kernels, it is now obsolete.
 
+./medianet/lib/mn_includes
 
-sudo modprobe -r snd_soc_audioinjector_octo_soundcard
-sudo modprobe -r snd_soc_cs42xx8_i2c
-sudo modprobe -r snd_soc_cs42xx8
-sudo modprobe snd_soc_cs42xx8
-sudo modprobe snd_soc_cs42xx8_i2c
-sudo modprobe snd_soc_audioinjector_octo_soundcard
+needroot
+
+modprobe -r snd_soc_audioinjector_octo_soundcard
+modprobe -r snd_soc_cs42xx8_i2c
+modprobe -r snd_soc_cs42xx8
+modprobe snd_soc_cs42xx8
+modprobe snd_soc_cs42xx8_i2c
+modprobe snd_soc_audioinjector_octo_soundcard

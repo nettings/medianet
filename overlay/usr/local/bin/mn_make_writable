@@ -2,8 +2,10 @@
 
 . /medianet/lib/mn_includes
 
+needroot
+
 for i in "/" "/boot"; do
   echo -n "Remounting $i read-write..."
-  sudo mount -oremount,rw "$i" && success || failure
+  mount -oremount,rw "$i" && success || failure
 done
 

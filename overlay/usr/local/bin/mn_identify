@@ -1,26 +1,28 @@
 #!/bin/bash
 
+. /medianet/lib/mn_includes
+
+needroot
+
 LED0DIR=/sys/class/leds/led0
 LED1DIR=/sys/class/leds/led1
 
-OLD_LED0TRIG=`cat $LED0DIR/trigger | grep -Eo "\[[a-z0-9-]+\]" | grep -Eo "[a-z0-9-]+"`
-OLD_LED1TRIG=`cat $LED1DIR/trigger | grep -Eo "\[[a-z0-9-]+\]" | grep -Eo "[a-z0-9-]+"`
+OLD_LED0TRIG=`cat $LED0DIR/trigger | $GREP -Eo "\[[a-z0-9-]+\]" | $GREP -Eo "[a-z0-9-]+"`
+OLD_LED1TRIG=`cat $LED1DIR/trigger | $GREP -Eo "\[[a-z0-9-]+\]" | $GREP -Eo "[a-z0-9-]+"`
 
-sudo -b /bin/bash << EOF
+$(
+	for (( i=0 ; i<20 ; i++)) ; do
+		echo 0 > $LED0DIR/brightness
+		echo 1 > $LED1DIR/brightness
+		$SLEEP 0.8
+		echo 1 > $LED0DIR/brightness
+		echo 0 > $LED1DIR/brightness
+		$SLEEP 0.8
+	done
 
-for (( i=0 ; i<20 ; i++)) ; do
-  echo 0 > $LED0DIR/brightness
-  echo 1 > $LED1DIR/brightness
-  sleep 0.8
-  echo 1 > $LED0DIR/brightness
-  echo 0 > $LED1DIR/brightness
-  sleep 0.8
-done
-
-echo 0 > $LED0DIR/brightness
-echo 0 > $LED1DIR/brightness
-echo $OLD_LED0TRIG > $LED0DIR/trigger
-echo $OLD_LED1TRIG > $LED1DIR/trigger
-
-EOF
+	echo 0 > $LED0DIR/brightness
+	echo 0 > $LED1DIR/brightness
+	echo $OLD_LED0TRIG > $LED0DIR/trigger
+	echo $OLD_LED1TRIG > $LED1DIR/trigger
+) &
 
