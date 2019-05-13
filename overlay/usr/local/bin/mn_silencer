@@ -1,0 +1,6 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+
+/usr/bin/unbuffer "$2" "${@:3}" | /bin/grep --line-buffered -v "$1"
