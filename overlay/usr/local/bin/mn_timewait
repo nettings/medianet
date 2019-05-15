@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+if [[ $1 == "-h" ]] ; then
+  echo "$0"
+  echo "sleeps until the timedatectl reports that NTP time is synchronized."
+fi
+
+while : ; do
+	/usr/bin/timedatectl status | "$GREP" -q "NTP synchronized: yes" && break
+	sleep 2
+done
