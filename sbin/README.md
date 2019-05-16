@@ -9,7 +9,7 @@ FIXME: This should eventually be turned into a script for true continuous
 integration, but the process is somewhat non-trivial to automate.
 
 1. Download the latest **Raspbian lite** image from
-[https://downloads.raspberrypi.org/raspbian_lite_latest] (tested with Stretch, requalify for newer Debian versions).
+https://downloads.raspberrypi.org/raspbian_lite_latest (tested with Stretch, requalify for newer Debian versions).
 1. Unzip image.
 1. Insert empty SD card into reader, determine device name with: ```sudo fdisk -l```
 1. Copy image to SD memory card: sudo ```dd if=/your/path/to/raspbian.img of=/dev/<whatyoudeterminedbefore> bs=4M status=progress```
@@ -39,14 +39,14 @@ followed by a reboot.
 
 1. Basic setup
    1. Log into the system as user *pi* with default password *raspberry* (this opens a window of vulnerability and should only be done on a trusted private network).
-   1. Change into [10-basics-as_user_pi/] and execute the symlinks in numerical order, carefully noting any error messages in the output. The final one will reboot the system
+   1. Change into ```./10-basics-as_user_pi/``` and execute the symlinks in numerical order, carefully noting any error messages in the output. The final one will reboot the system
    1. Drop your own public key into ```/home/medianet/.ssh/authorized_keys```, since the one installed by default is ours and the private key is not part of this repository
 1. Customization
    1. Log into the system as the user *medianet* with the appropriate public key.
-   1. Change into [50-customize-as_user_medianet/] and again execute the symlinks in numerical order.
+   1. Change into ```./50-customize-as_user_medianet/``` and again execute the symlinks in numerical order.
 1. Finish (optional)
    1. Log in a last time as user medianet. By now the system is in its default read-only state and can be used.
-   1. Change into [90-finish-as_user_medianet/] and repeat. The only remaining step is to upgrade the kernel to the latest version, which will necessitate another reboot.
+   1. Change into ```./90-finish-as_user_medianet/``` and repeat. The only remaining step is to upgrade the kernel to the latest version, which will necessitate another reboot.
 
 
 
