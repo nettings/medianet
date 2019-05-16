@@ -9,7 +9,7 @@ OWNPORTS=
 while read PORT; do
 	if [[ ! "$PORT" ]] ; then break ; fi
 	echo -n "$PORT"
-	/usr/local/bin/mn_jackwait "$PORT"
+	/usr/local/bin/mn_wait_jack "$PORT"
 	echo -n " (x)  "
 	read FOREIGNPORT
 done <<< "$CONNECTIONS_OUT"
@@ -17,12 +17,12 @@ while read FOREIGNPORT; do
 	read PORT
 	if [[ ! "$PORT" ]] ; then break ; fi
 	echo -n "$PORT"
-	/usr/local/bin/mn_jackwait "$PORT"
+	/usr/local/bin/mn_wait_jack "$PORT"
 	echo -n " (x)  "
 done <<< "$CONNECTIONS_IN"
 echo " - all found."
 #echo -n $OWNPORTS"..."
-#/usr/local/bin/mn_jackwait "$OWNPORTS" 
+#/usr/local/bin/mn_wait_jack "$OWNPORTS" 
 #echo "found."
 
 N=0

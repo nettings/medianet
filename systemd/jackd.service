@@ -23,7 +23,7 @@ LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
 Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket"
-ExecStartPre=/usr/local/bin/mn_timewait
+ExecStartPre=/usr/local/bin/mn_wait_time
 ExecStart=/usr/bin/jackd $OPTIONS
 RestartSec=5
 Restart=on-failure
