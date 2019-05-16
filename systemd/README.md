@@ -3,21 +3,23 @@
 ## JACK server and clients
 
 The general strategy of the medianet system is to have jackd and all clients
-running as systemd services. These will always restart on any failure.
+running as **systemd** services. These will always restart on any failure.
 Before starting, they will wait for their upstream ports to become
 available. After starting, they will attempt to connect their downstream
 and upstream ports (the latter is redundant when the system is booted, but becomes
-necessary if a service dies during normal operation).
+necessary if a service must be restarted during normal operation).
 
 The ports to connect are listed in
-```/etc/systemd/system/$foo.service.d/$foo.service.connections```. These files are
-automatically generated from ```/medianet/config/this/medianet.conf``` by
-[```mn_config_update```](../overlay/mn_config_update). 
+```/etc/systemd/system/$foo.service.d/$foo.service.connections```.
+
+These files are automatically generated from 
+```/medianet/config/this/medianet.conf``` by
+[```mn_config_update```](../overlay/usr/local/bin/mn_config_update). 
 
 
 ## systemd ordering issues
 
-Unfortunately, some *systemd* ordering functions do not work as advertised in the
+Unfortunately, some systemd ordering functions do not work as advertised in the
 version that is available in Debian Stretch and have had to be replaced by
 ad-hoc hacks. These are:
 
@@ -50,7 +52,7 @@ and telling people to fix their daemons.
 
 Similarly, we emulate this function with
 [```mn_wait_net```](../overlay/usr/local/bin/mn_wait_net), which, since it
-parses ip addr which is hopefully more stable, should be less fragile than
+parses ```ip addr``` which is hopefully more stable, should be less fragile than
 the solution for time mentioned above.
 
 ## Waiting for JACK ports to be available
