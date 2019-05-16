@@ -1,3 +1,0 @@
-This directory contains medianet-specific helper applications
-intended to be used once during system rollout, or when preparing
-a customized Raspbian image.
