@@ -10,9 +10,9 @@ and upstream ports (the latter is redundant when the system is booted, but becom
 necessary if a service dies during normal operation).
 
 The ports to connect are listed in
-/etc/systemd/system/$foo.service.d/$foo.service.connections. These files are
-automatically generated from /medianet/config/this/medianet.conf by
-/medianet/overlay/mn_config_update. 
+```/etc/systemd/system/$foo.service.d/$foo.service.connections```. These files are
+automatically generated from ```/medianet/config/this/medianet.conf``` by
+[```mn_config_update```](../overlay/mn_config_update). 
 
 
 ## systemd ordering issues
@@ -36,9 +36,9 @@ only when the time has been synced. Unfortunately, this has only been
 implemented correctly in systemd v239 and later.
 
 Meanwhile, we use
-```[mn_wait_time](../overlay/usr/local/bin/mn_wait_time)``` to
+[```mn_wait_time```](../overlay/usr/local/bin/mn_wait_time) to
 emulate this function, which is somewhat fragile, since it parses
-user-readable output of ```timedatectl that``` is not guaranteed to be stable.
+user-readable output of ```timedatectl``` that is not guaranteed to be stable.
 
 ### Waiting for the network to be available
 
@@ -49,7 +49,7 @@ philosophy of always choosing smart-ass generality over actual usefulness
 and telling people to fix their daemons.
 
 Similarly, we emulate this function with
-```[mn_wait_net](../overlay/usr/local/bin/mn_wait_net)```, which, since it
+[```mn_wait_net```](../overlay/usr/local/bin/mn_wait_net), which, since it
 parses ip addr which is hopefully more stable, should be less fragile than
 the solution for time mentioned above.
 
@@ -63,7 +63,7 @@ attempting to make any connections (because systemd cannot know about this
 when executing the *ExecStartPost* commands).
 
 This is implemented by
-```[mn_wait_jack](../overlay/usr/local/bin/mn_wait_jack)```.
+[```mn_wait_jack```](../overlay/usr/local/bin/mn_wait_jack).
 
 The corollary is that our service startup works only in the case of acyclic
 JACK graphs. Since any branches and cycles would likely only ever happen
