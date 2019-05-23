@@ -1,0 +1,19 @@
+[Unit]
+Description=[mn] JACK mixer
+BindsTo=jackd.target
+After=jackd.target 
+After=network-online.target
+
+[Service]
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+ExecStartPre=/usr/local/bin/mn_wait_net medianet0
+ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
+ExecStart=/usr/local/bin/jackminimix $OPTIONS
+ExecStartPost=-/usr/local/bin/mn_connect %n
+RestartSec=5
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
