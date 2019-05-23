@@ -1,5 +1,5 @@
 [Unit]
-Description=mod-host LV2 plugin host for JACK
+Description=[mn] LV2 plugin host for JACK
 BindsTo=jackd.target
 After=jackd.target 
 Wants=lighttpd.service

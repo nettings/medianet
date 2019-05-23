@@ -1,5 +1,5 @@
 [Unit]
-Description=medianet configuration updater
+Description=[mn] automatic medianet configuration deployment
 
 [Service]
 ExecStart=/usr/local/bin/mn_config_watch

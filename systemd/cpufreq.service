@@ -1,7 +1,8 @@
 [Unit]
-Description=Set CPU speed range
+Description=[mn] set CPU frequency range
 After=sound.target
 Requires=loadcpufreq.service
+After=loadcpufreq.service
 
 [Service]
 # we read Environment= from a drop-in file

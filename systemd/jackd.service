@@ -1,5 +1,5 @@
 [Unit]
-Description=JACK Audio Connection Kit
+Description=[mn] JACK Audio Connection Kit
 
 # "pull in" jackd.target since we're the provider of that target:
 Requires=jackd.target

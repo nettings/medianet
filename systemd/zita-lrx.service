@@ -1,5 +1,5 @@
 [Unit]
-Description=zita LRX fourth-order crossover
+Description=[mn] fourth-order loudspeaker crossover
 BindsTo=jackd.target
 After=jackd.target
 

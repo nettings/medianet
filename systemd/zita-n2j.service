@@ -1,5 +1,5 @@
 [Unit]
-Description=zita Network-to-JACK bridge
+Description=[mn] resampling Network-to-JACK bridge
 BindsTo=jackd.target
 After=jackd.target
 Requires=network-online.target

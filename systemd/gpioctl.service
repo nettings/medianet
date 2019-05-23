@@ -1,5 +1,5 @@
 [Unit]
-Description=gpioctl controllers
+Description=[mn] handle gpio pin controllers
 After=network-online.target
 After=sound.target
 

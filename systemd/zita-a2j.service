@@ -1,5 +1,5 @@
 [Unit]
-Description=zita ALSA-to-JACK bridge
+Description=[mn] resampling ALSA-to-JACK bridge
 BindsTo=jackd.target
 After=jackd.target
 BindsTo=sound.target
