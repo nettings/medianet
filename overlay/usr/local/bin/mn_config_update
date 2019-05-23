@@ -125,7 +125,7 @@ while read UNIT ; do
 	read JACKNAME
 	read OPTIONS
 	CONFIG="Environment=\"OPTIONS="
-	CONFIG+=`echo $OPTIONS | sed "s/%jackName%/\'$JACKNAME\'/g"`
+	CONFIG+=`echo "$OPTIONS" | sed "s/%jackName%/\'$JACKNAME\'/g"`
 	CONFIG+="\""
 	echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
 	echo -e "$CONFIG"
