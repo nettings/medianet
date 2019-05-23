@@ -5,7 +5,8 @@
 	"location": "Showroom",
 	"version": "2019-05-23",
 	"bootConfig": {
-		"arm_freq" : 1000,
+		"arm_freq" : 1400,
+		"arm_freq_min" : 800,
 		"hdmi_blanking" : 2,
 		"gpio" : [
 			"5,6,13=ip,pu"
@@ -50,7 +51,7 @@
 			"unit"    : "cpufreq",
 			"type"    : "service",
 			"enabled" : 1,
-			"options" : "-g performance -d 1000MHz -u 1000MHz"
+			"options" : "-g performance -d 800MHz -u 1400MHz"
 		},
 		{
 			"unit"    : "gpioctl",
@@ -68,7 +69,7 @@
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "system",
-			"options" : "-R -t 4500 -P 70 -dalsa -dhw:U192k -D -r44100 -p128 -n3 -zs",
+			"options" : "-R -t 4500 -P 70 -dalsa -dhw:U192k -D -r48000 -p128 -n3 -zs",
 			"inPorts": [
 				{
 					"portName"   : "playback_1"
@@ -86,22 +87,22 @@
 			"outPorts": [
 				{
 					"portName"   : "capture_1",
-					"targetUnit" : "jackminimix",
+					"targetUnit" : "mod-host",
 					"targetPort" : 0
 				},
 				{
 					"portName"   : "capture_2",
-					"targetUnit" : "jackminimix",
+					"targetUnit" : "mod-host",
 					"targetPort" : 1
 				},
 				{
 					"portName"   : "capture_3",
-					"targetUnit" : "jackminimix",
+					"targetUnit" : "mod-host",
 					"targetPort" : 2
 				},
 				{
 					"portName"   : "capture_4",
-					"targetUnit" : "jackminimix",
+					"targetUnit" : "mod-host",
 					"targetPort" : 3
 				}
 			
@@ -189,11 +190,16 @@
 				"add http://gareus.org/oss/lv2/fil4#stereo 1",
 				"add http://gareus.org/oss/lv2/dpl#stereo 9",
 				"add http://gareus.org/oss/lv2/fil4#stereo 11",
+				"add urn:zamaudio:ZamCompX2 12",
 				"add http://gareus.org/oss/lv2/dpl#stereo 19",
  				"connect effect_1:outL effect_9:inL",
 				"connect effect_1:outR effect_9:inR",
- 				"connect effect_11:outL effect_19:inL",
-				"connect effect_11:outR effect_19:inR",
+ 				"connect effect_11:outL effect_12:lv2_audio_in_1",
+				"connect effect_11:outR effect_12:lv2_audio_in_2",
+				"connect effect_12:lv2_audio_out_1 effect_19:inL",
+				"connect effect_12:lv2_audio_out_2 effect_19:inR",
+				"connect effect_9:outL effect_12:lv2_sidechain_in",
+				"connect effect_9:outR effect_12:lv2_sidechain_in",
 				"param_set 9 threshold -2",
 				"param_set 19 threshold -2"
 			]
@@ -242,13 +248,13 @@
 			"outPorts": [
 				{
 					"portName"   : "out_1",
-					"targetUnit" : "jackminimix",
-					"targetPort" : 0
+					"targetUnit" : "mod-host",
+					"targetPort" : 2
 				},
 				{
 					"portName"   : "out_2",
-					"targetUnit" : "jackminimix",
-					"targetPort" : 1
+					"targetUnit" : "mod-host",
+					"targetPort" : 3
 				}
 			]
 		},
@@ -272,7 +278,7 @@
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-a2j",
-			"options" : "-j %jackName% -d hw:sndrpihifiberry -c 2 -r 44100 -p 256 -n 2 -zs",
+			"options" : "-j %jackName% -d hw:sndrpihifiberry -c 2 -r 44100 -p 128 -n 2 -zs",
 			"outPorts": [
 				{
 					"portName" : "capture_1"
@@ -287,7 +293,7 @@
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "zita-j2a",
-			"options" : "-j %jackName% -d hw:sndrpihifiberry -c 2 -r 44100 -p 256 -n 3",
+			"options" : "-j %jackName% -d hw:sndrpihifiberry -c 2 -r 48000 -p 64 -n 2",
 			"inPorts" : [
 				{
 					"portName" : "playback_1"
