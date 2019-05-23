@@ -1,4 +1,4 @@
 make clean
 DESTDIR="$DESTDIR" PREFIX="/usr/local" CFLAGS="-march=armv8-a+crc -mfpu=neon-fp-armv8 -mtune=cortex-a53" make -j4
-sudo DESTDIR="$DESTDIR" PREFIX="/usr/local" CFLAGS="-march=armv8-a+crc -mfpu=neon-fp-armv8 -mtune=cortex-a53" make install
+DESTDIR="$DESTDIR" PREFIX="/usr/local" CFLAGS="-march=armv8-a+crc -mfpu=neon-fp-armv8 -mtune=cortex-a53" make install
 

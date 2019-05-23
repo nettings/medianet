@@ -1,12 +1,11 @@
 
-sudo cp rdfconvert.py /medianet/overlay/usr/local/lib/
+cp rdfconvert.py /medianet/overlay/usr/local/lib/
 
-sudo /bin/bash -c 'cat << EOF > /medianet/overlay/usr/local/bin/rdfconvert
+/bin/bash -c 'cat << EOF > /medianet/overlay/usr/local/bin/rdfconvert
 #!/bin/bash
 python3 /medianet/overlay/usr/local/lib/rdfconvert.py $@
 
 
 EOF
 '
-sudo chmod +x /medianet/overlay/usr/local/bin/rdfconvert
-
+chmod +x /medianet/overlay/usr/local/bin/rdfconvert
