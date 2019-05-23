@@ -48,7 +48,8 @@ from_package()
 
 
 OLDWD=`pwd`
-cd "$PREFIX"/custom_builds
+CUSTOMBUILDS="$PREFIX"/custom_builds
+cd "$CUSTOMBUILDS"
 
 if [[ -n "$1" ]] ; then
 	TARGET="$1.checkout"
@@ -68,7 +69,6 @@ $FIND -name "$TARGET" | while read line ; do
     }
 done
 
+echo "Checked out sources have been installed to $CUSTOMBUILDS."
 cd "$OLDWD"
-echo "Checked out sources have been installed to `realpath -e $DESTDIR/../`."
-
 
