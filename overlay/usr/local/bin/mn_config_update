@@ -131,7 +131,12 @@ while read UNIT ; do
 	echo -e "$CONFIG"
 	CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
 	echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
+done <<< "$DATA"
 
+scream "Update systemd jack unit connections:"
+
+DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.outPorts or .inPorts) | "\(.unit)"'`
+while read UNIT ; do
 	CONFIG=
 	COUT=`cat "$CONFIG_FILE" | jq --arg unit $UNIT -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
 	if [[ "$COUT" ]] ; then
@@ -146,7 +151,6 @@ while read UNIT ; do
 	echo -e "$CONFIG"
 	CONFIG="$NOEDIT\n\n$CONFIG"
 	echo -e "$CONFIG" > "$DROPIN_DIR"/"$UNIT"."$TYPE".connections && success || failure
-
 done <<< "$DATA"
 
 
