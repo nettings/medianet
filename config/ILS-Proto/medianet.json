@@ -5,11 +5,10 @@
 	"location": "Showroom",
 	"version": "2019-05-23",
 	"bootConfig": {
-		"arm_freq" : 1400,
-		"arm_freq_min" : 800,
+		"arm_freq" : 1200,
 		"hdmi_blanking" : 2,
 		"gpio" : [
-			"5,6,13=ip,pu"
+			"12,16,26,7,8,25,24,23,22,17,27,13=ip,pu"
 		],
 		"dtparam" : [
 			"audio=off"
@@ -51,13 +50,13 @@
 			"unit"    : "cpufreq",
 			"type"    : "service",
 			"enabled" : 1,
-			"options" : "-g performance -d 800MHz -u 1400MHz"
+			"options" : "-g performance -d 1200MHz -u 1200MHz"
 		},
 		{
 			"unit"    : "gpioctl",
 			"type"    : "service",
 			"enabled" : 1,
-			"options" : "-r  6,5,master,osc.udp://239.0.0.254:3042,4  -s 13,master,osc.udp://239.0.0.254:3042 -U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
+			"options" : "-r 12,16,alsa,Digital -s 26,alsa,Digital -r 8,7,jack,43,1 -s 25,jack,44,1,1 -r 23,24,jack,45,1 -s 22,jack,46,1,1 -r 27,17,jack,47,1 -s 13,jack,48,1,1"
 		},
 		{
 			"unit"    : "hciuart",
@@ -69,7 +68,7 @@
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "system",
-			"options" : "-R -t 4500 -P 70 -dalsa -dhw:U192k -D -r48000 -p128 -n3 -zs",
+			"options" : "-R -t 4500 -P 70 -dalsa -dhw:U192k -D -r48000 -p64 -n4 -zs",
 			"inPorts": [
 				{
 					"portName"   : "playback_1"
@@ -200,6 +199,10 @@
 				"connect effect_12:lv2_audio_out_2 effect_19:inR",
 				"connect effect_9:outL effect_12:lv2_sidechain_in",
 				"connect effect_9:outR effect_12:lv2_sidechain_in",
+				"connect gpioctl:midi_out effect_1:control",
+				"connect gpioctl:midi_out effect_11:control",
+				"midi_map 1 gain 1 41 -18 +18",
+				"midi_map 11 gain 1 43 -18 +19",
 				"param_set 9 threshold -2",
 				"param_set 19 threshold -2"
 			]
@@ -278,7 +281,7 @@
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-a2j",
-			"options" : "-j %jackName% -d hw:sndrpihifiberry -c 2 -r 44100 -p 128 -n 2 -zs",
+			"options" : "-j %jackName% -d hw:sndrpihifiberry -c 2 -r 44100 -p 64 -n 2 -zs",
 			"outPorts": [
 				{
 					"portName" : "capture_1"
