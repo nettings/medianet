@@ -138,11 +138,11 @@ scream "Update systemd jack unit connections:"
 DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.outPorts or .inPorts) | "\(.unit)"'`
 while read UNIT ; do
 	CONFIG=
-	COUT=`cat "$CONFIG_FILE" | jq --arg unit $UNIT -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
+	COUT=`cat "$CONFIG_FILE" | jq --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
 	if [[ "$COUT" ]] ; then
 		CONFIG="CONNECTIONS_OUT=\"$COUT\n\"\n"
 	fi
-	CIN=`cat "$CONFIG_FILE" | jq --arg unit $UNIT -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/input_connections.jq`
+	CIN=`cat "$CONFIG_FILE" | jq --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/input_connections.jq`
 	if [[ "$CIN" ]] ; then
 		CONFIG+="CONNECTIONS_IN=\"$CIN\n\"\n"
 	fi
