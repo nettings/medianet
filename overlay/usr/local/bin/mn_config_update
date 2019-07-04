@@ -141,7 +141,10 @@ while read UNIT ; do
         read TYPE
         DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
         DROPIN_FILE="$UNIT"."$TYPE".connections
-
+	if [[ ! -e "$DROPIN_DIR" ]] ; then
+		echo -n "Creating $DROPIN_DIR..."
+		mkdir "$DROPIN_DIR" && success || failure
+	fi
 	COUT=`cat "$CONFIG_FILE" | jq --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
 	if [[ "$COUT" ]] ; then
 		CONFIG="CONNECTIONS_OUT=\"$COUT\n\"\n"
