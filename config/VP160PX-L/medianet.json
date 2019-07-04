@@ -1,0 +1,256 @@
+{
+	"product": "VP200PX-L",
+	"description": "[mn] VoicePoint VP160P Active crossover",
+	"hostname": "mn-VP200PX-L",
+	"location": "Showroom",
+	"version": "2019-07-03",
+	"bootConfig": {
+		"arm_freq" : 600,
+		"arm_freq_min" : 600,
+		"hdmi_blanking" : 2,
+		"gpio" : [
+			"5,6,13=ip,pu"
+		],
+		"dtparam" : [
+			"audio=off"
+		],
+		"dtoverlay" : [
+			"pi3-disable-wifi",
+			"pi3-disable-bt",
+			"hifiberry-dacplus"
+		]
+	},
+	"alsaOptions": {
+		"master": [
+			"Digital"
+		],
+		"masterDefault": "-3dB"
+	},
+	"systemdUnits": [
+		{
+			"unit"    : "apt-daily-upgrade", 
+			"type"    : "timer",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "apt-daily",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "apt-daily-upgrade",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "apt-daily",
+			"type"    : "timer",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "cpufrequtils",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "gpioctl",
+			"type"    : "service",
+			"enabled" : 1,
+			"options" : "-r  6,5,master,osc.udp://239.0.0.254:3042,4  -s 13,master,osc.udp://239.0.0.254:3042 -U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
+		},
+		{
+			"unit"    : "hciuart",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "jackd", 
+			"type"    : "service",
+			"enabled" : 1,
+			"jackName": "system",
+			"options" : "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P -r48000 -p256 -n2 -zs",
+			"inPorts": [
+				{
+					"portName"   : "playback_1"
+				},
+				{
+					"portName"   : "playback_2"
+				}
+			],
+			"outPorts": []
+		},
+		{
+			"unit"    : "mn_config_watch",
+			"type"    : "service",
+			"enabled" : 1
+		},
+		{
+			"unit"    : "mod-host",
+			"type"    : "service",
+			"enabled" : 1,
+			"jackName": "mod-host",
+			"options" : "",
+			"inPorts" : [
+				{
+					"portName"   : "effect_1:inL"
+				},
+				{	
+					"portName"   : "effect_1:inR"
+				}
+			],
+			"outPorts": [
+				{
+					"portName"   : "effect_9:outL",
+					"targetUnit" : "jackd",
+					"targetPort" : 0
+				},
+				{
+					"portName"   : "effect_9:outR",
+					"targetUnit" : "jackd",
+					"targetPort" : 1
+				} 
+			],
+			"config": [
+				"add http://gareus.org/oss/lv2/fil4#stereo 1",
+				"add http://stackingdwarves.net/lv2/sm 4",
+				"add http://gareus.org/oss/lv2/dpl#stereo 9",
+ 				"connect effect_1:out effect_4:inL",
+				"connect effect_1:out effect_4:inR",
+				"connect effect_4:outL effect_9:inL",
+				"connect effect_4:outR effect_9:inR"
+			]
+		},
+		{
+			"unit"    : "phpsessionclean",
+			"type"    : "timer",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "shairport-sync",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "shairport-sync",
+			"inPorts" : [],
+			"outPorts": [
+				{
+					"portName"   : "out_L",
+					"targetUnit" : "mod-host",
+					"targetPort" : 0
+				},
+				{
+					"portName"   : "out_R",
+					"targetUnit" : "mod-host",
+					"targetPort" : 1
+				}					
+			]
+		},
+		{
+			"unit"    : "ufw",
+			"type"    : "service",
+			"enabled" : 1
+		},
+		{
+			"unit"    : "wifi-country",
+			"type"    : "service",
+			"enabled" : 0
+		},
+		{
+			"unit"    : "zita-n2j",
+			"type"    : "service",
+			"enabled" : 1,
+			"jackName": "zita-n2j",
+			"options" : "--jname %jackName% --chan 1 --buff 20 239.0.0.1 3000 medianet0",
+			"inPorts" : [],
+			"outPorts": [
+				{
+					"portName"   : "out_1",
+					"targetUnit" : "zita-lrx",
+					"targetPort" : 0
+				}
+			]
+		},
+		{
+			"unit"    : "zita-j2n",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-j2n",
+			"options" : "--jname %jackName% --chan 2 239.0.0.1 3000 medianet0",
+			"inPorts": [
+				{
+					"portName" : "in_1"
+				},
+				{
+					"portName" : "in_2"
+				}
+			]
+		},
+		{
+			"unit"    : "zita-a2j",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-a2j",
+			"options" : "-j %jackName% -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"outPorts": [
+				{
+					"portName" : "capture_1"
+				},
+				{
+					"portName" : "capture_2"
+				}
+			]
+		},
+		{
+			"unit"    : "zita-j2a",
+			"type"    : "service",
+			"enabled" : 0,
+			"jackName": "zita-j2a",
+			"options" : "-j %jackName% -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"inPorts" : [
+				{
+					"portName" : "playback_1"
+				},
+				{
+					"portName" : "playback_2"
+				}
+			]
+		},
+		{
+			"unit"    : "zita-lrx",
+			"type"    : "service",
+			"enabled" : 1,
+			"options" : "",
+			"jackName": "zita-lrx",
+			"inPorts" : [
+				{
+					"portName" : "inp-1"
+				}
+			],
+			"outPorts": [
+				{
+					"portName" : "out-1.sub",
+					"targetUnit" : "mod-host",
+					"targetPort" : 0
+				},
+				{
+					"portName" : "out-1.top",
+					"targetUnit" : "mod-host",
+					"targetPort" : 1
+				}
+			],
+			"config": [
+				"# One channel, two frequency bands.",
+				"/zita-lrx       1  2",
+				"# Channel names.",
+				"/chann/label    1  1",
+				"# Output port suffixes.",
+				"/fband/suffix   1  sub",
+				"/fband/suffix   2  top",
+				"# Xover filters, Linkwitz-Riley.",
+				"/xover/freq     1  80",
+				"/fband/gain     2  0.0",
+				"/fband/delay    2  0.0"
+			]
+		}
+	]
+}
+		
