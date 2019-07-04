@@ -1,7 +1,7 @@
 {
-	"product": "VP200PX-L",
+	"product": "VP160PX-L",
 	"description": "[mn] VoicePoint VP160P Active crossover",
-	"hostname": "mn-VP200PX-L",
+	"hostname": "mn-VP160PX-L",
 	"location": "Showroom",
 	"version": "2019-07-03",
 	"bootConfig": {
