@@ -135,9 +135,13 @@ done <<< "$DATA"
 
 scream "Update systemd jack unit connections:"
 
-DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.outPorts or .inPorts) | "\(.unit)"'`
+DATA=`cat "$CONFIG_FILE" | jq -r '.systemdUnits[] | select(.outPorts or .inPorts) | "\(.unit)\n\(.type)"'`
 while read UNIT ; do
 	CONFIG=
+        read TYPE
+        DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
+        DROPIN_FILE="$UNIT"."$TYPE".connections
+
 	COUT=`cat "$CONFIG_FILE" | jq --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
 	if [[ "$COUT" ]] ; then
 		CONFIG="CONNECTIONS_OUT=\"$COUT\n\"\n"
@@ -147,10 +151,10 @@ while read UNIT ; do
 		CONFIG+="CONNECTIONS_IN=\"$CIN\n\"\n"
 	fi
 
-	echo "Writing to $DROPIN_DIR/$UNIT.$TYPE.connections ..."
+	echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
 	echo -e "$CONFIG"
 	CONFIG="$NOEDIT\n\n$CONFIG"
-	echo -e "$CONFIG" > "$DROPIN_DIR"/"$UNIT"."$TYPE".connections && success || failure
+	echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
 done <<< "$DATA"
 
 
