@@ -1,7 +1,7 @@
 This directory holds git checkouts of any additional software.
-You can automatically populate it with bin/mn_checkout, and build all 
-components in one go with bin/mn_compile. Individual components can be 
-fetched and built by adding the package name.
+You can automatically populate it with /medianet/sbin/mn_checkout, and build
+all components in one go with /medianet/sbin/mn_build. Individual components
+can be fetched and built by adding the package name.
 
 To include a new custom component FOO, you need to write two little modules:
 custom_builds/FOO.checkout, which fetches the software, and 
