@@ -3,7 +3,7 @@
 	"description": "[mn] VoicePoint VP iDSP 2in 2out integrated Signal Processor",
 	"hostname": "mn-VPiDSP-2x2",
 	"location": "Showroom",
-	"version": "2019-05-11",
+	"version": "2019-08-03",
 	"bootConfig": {
 		"arm_freq" : 1400,
 		"arm_freq_min" : 600,

@@ -1,0 +1,8 @@
+from_git https://github.com/x42/x42-plugins x42-plugins
+from_package \
+	libcairo2-dev libpango1.0-dev fonts-freefont-ttf \
+	libglu1-mesa-dev libgl1-mesa-dev ftgl-dev \
+	liblo-dev \
+	libsndfile1-dev libsamplerate0-dev \
+	libzita-convolver-dev \
+	libltc-dev 
