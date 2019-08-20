@@ -12,4 +12,6 @@ else
 	echo -n "Trying manual method... "
 	"$SWAPOFF" -a && "$SED" -i '/^[^#]/ s/\(^.*swap.*$\)/#\ \1/' /etc/fstab && success || failure
 fi
+"$SYSTEMCTL" disable dphys-swapfile && success || failure
+
 
