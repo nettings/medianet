@@ -11,7 +11,7 @@ git lilv-utils
 # telnet for mod-host debugging
 telnet
 # local lightweight webserver to run lv2rdf2html interface
-lighttpd php7.0 php7.0-cgi php7.0-fpm
+lighttpd php php-cgi php-fpm
 # local mplayer and mpv
 mplayer mpv
 # local monitoring
