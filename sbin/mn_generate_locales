@@ -22,5 +22,5 @@ echo "LANG=en_US.UTF-8" > /etc/default/locale && \
 
 echo -n "Setting timezone to $TIMEZONE... "
 echo "$TIMEZONE" > /etc/timezone \
-	&& "$DPKGRECONFIGURE"-f noninteractive tzdata \
+	&& "$DPKGRECONFIGURE" -f noninteractive tzdata \
 	&& success || bail
