@@ -7,8 +7,7 @@ echo -n "Hardware: "
 cat /proc/device-tree/model
 echo
 . /etc/os-release
-echo -n "System software: $NAME "
-cat /etc/debian_version
+echo "System software: $NAME $VERSION_ID ($VERSION_CODENAME)"
 echo -en "medianet overlay: "
 mn_get_version
 echo -e "\033[0m"
