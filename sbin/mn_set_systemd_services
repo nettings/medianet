@@ -1,0 +1,28 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+scream "Configuring default systemd units"
+
+for i in $SYSTEMD_DEFAULT_ENABLE ; do
+	echo -n "Enabling $i..."
+	"$SYSTEMCTL" --quiet is-enabled "$i" 2> /dev/null && {
+		echo "already enabled."	
+	} || {
+		"$SYSTEMCTL" enable "$i" && success || failure
+	}
+done
+
+for i in $SYSTEMD_DEFAULT_DISABLE; do
+	echo -n "Disabling $i..."
+	"$SYSTEMCTL" --quiet is-enabled "$i" 2> /dev/null && {
+		"$SYSTEMCTL" disable "$i" && success || failure
+	}  || {
+		echo "not enabled."
+	}
+done
+
+
+
