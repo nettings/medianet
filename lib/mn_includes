@@ -50,6 +50,20 @@ SYSTEM_CONFIG="$PREFIX"/config/this/medianet.json
 SYSTEMD_UNIT_DIR=/etc/systemd/system
 SYSTEMD_UNITS_LOCAL="$PREFIX"/systemd
 
+SYSTEMD_DEFAULT_DISABLE="
+	apt-daily.timer
+	apt-daily.service
+	apt-daily-upgrade.timer
+	apt-daily-upgrade.service
+	cpufrequtils.service
+	hciuart.service
+	phpsessionclean.timer
+	wifi-country.service
+"
+SYSTEMD_DEFAULT_ENABLE="
+	systemd-time-wait-sync.service
+"
+
 # binaries
 APTGET=/usr/bin/apt-get
 CHOWN=/bin/chown
