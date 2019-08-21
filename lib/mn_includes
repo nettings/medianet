@@ -33,12 +33,13 @@ function needroot {
 	fi
 }
 
-# legacy globals
-
-MEDIANETCONF="/medianet/config/this/medianet.conf"
 
 # globals
+USER=medianet
+GROUP=medianet
+
 PREFIX=/medianet
+MEDIANETCONF="$PREFIX/config/this/medianet.conf"
 
 CONFIG_INCLUDE=/etc/mn_config
 CONF_FILE_MODHOST=/etc/mod-host.conf
@@ -52,13 +53,14 @@ SYSTEMD_UNITS_LOCAL="$PREFIX"/systemd
 
 SYSTEMD_DEFAULT_DISABLE="
 	apt-daily.timer
-	apt-daily.service
 	apt-daily-upgrade.timer
-	apt-daily-upgrade.service
 	cpufrequtils.service
 	hciuart.service
+	man-db.timer
+	ModemManager.service
 	phpsessionclean.timer
 	wifi-country.service
+	wpa_supplicant.service
 "
 SYSTEMD_DEFAULT_ENABLE="
 	systemd-time-wait-sync.service
