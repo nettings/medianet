@@ -27,26 +27,6 @@
 	},
 	"systemdUnits": [
 		{
-			"unit"    : "apt-daily-upgrade", 
-			"type"    : "timer",
-			"enabled" : 0
-		},
-		{
-			"unit"    : "apt-daily",
-			"type"    : "service",
-			"enabled" : 0
-		},
-		{
-			"unit"    : "apt-daily-upgrade",
-			"type"    : "service",
-			"enabled" : 0
-		},
-		{
-			"unit"    : "apt-daily",
-			"type"    : "timer",
-			"enabled" : 0
-		},
-		{
 			"unit"    : "cpufreq",
 			"type"    : "service",
 			"enabled" : 1,
@@ -57,11 +37,6 @@
 			"type"    : "service",
 			"enabled" : 1,
 			"options" : "-r 12,16,alsa,Digital -s 26,alsa,Digital -r 8,7,jack,43,1 -s 25,jack,44,1,1 -r 23,24,jack,45,1 -s 22,jack,46,1,1 -r 27,17,jack,47,1 -s 13,jack,48,1,1"
-		},
-		{
-			"unit"    : "hciuart",
-			"type"    : "service",
-			"enabled" : 0
 		},
 		{
 			"unit"    : "jackd", 
@@ -208,11 +183,6 @@
 			]
 		},
 		{
-			"unit"    : "phpsessionclean",
-			"type"    : "timer",
-			"enabled" : 0
-		},
-		{
 			"unit"    : "shairport-sync",
 			"type"    : "service",
 			"enabled" : 0,
@@ -235,11 +205,6 @@
 			"unit"    : "ufw",
 			"type"    : "service",
 			"enabled" : 1
-		},
-		{
-			"unit"    : "wifi-country",
-			"type"    : "service",
-			"enabled" : 0
 		},
 		{
 			"unit"    : "zita-n2j",
