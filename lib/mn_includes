@@ -29,7 +29,14 @@ function bail {
 function needroot {
 	if [ "$EUID" -ne 0 ] ; then
 		echo -e "\033[1;31mYou must be root to run $0.\033[0m"
-	exit 2
+		exit 2
+	fi
+}
+
+function noroot {
+	if [ "$EUID" -eq 0 ] ; then
+		echo -e "\033[1;31mFor security reasons, you must not run $0 as root!\033[0m"
+		exit 2
 	fi
 }
 

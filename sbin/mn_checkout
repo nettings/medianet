@@ -3,7 +3,7 @@
 
 . /medianet/lib/mn_includes
 
-needroot
+noroot
 
 # from_FOO <URL> <dirname>
 from_git() {
@@ -43,7 +43,7 @@ from_tar() {
 from_package()
 {
 	echo -ne "Installing packages ..."
-  	"$APTGET" -qqy install --no-install-recommends "$@" || failure && success
+  	sudo "$APTGET" -qqy install --no-install-recommends "$@" || failure && success
 }
 
 

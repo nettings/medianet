@@ -2,7 +2,7 @@
 
 . /medianet/lib/mn_includes
 
-needroot
+noroot
 
 OLDWD=`pwd`
 DESTDIR="$PREFIX"/overlay
