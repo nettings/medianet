@@ -4,9 +4,9 @@
 
 needroot
 
-scream "Cleaning backup files *.mn_ and *~:"
+scream "Cleaning backup files *.mn_, *~ and *.bak:"
 
-FILELIST=`"$FIND" / -name "*mn_" -o -name "*~"`
+FILELIST=`"$FIND" / -name '*mn_' -o -name '*.bak' -o -name '*~'`
 
 for FILE in $FILELIST ;  do
 	echo -n "(Recursively) delete $FILE (y/N)?..."
