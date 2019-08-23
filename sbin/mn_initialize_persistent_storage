@@ -1,0 +1,52 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+LOCALDIRS="/local/lib
+/local/lib/alsa
+/local/lib/dhcpcd5
+/local/lib/resolvconf
+/local/lib/sudo
+/local/lib/systemd
+/local/cache
+/local/cache/lighttpd
+/local/cache/lighttpd/uploads
+/local/cache/lighttpd/compress
+/local/data
+"
+
+scream "Populating persistant storage in /local:"
+for i in $LOCALDIRS ; do
+	echo -n "Creating directory $i..."
+	"$MKDIR" $i && success || failure
+done
+
+
+echo -n "Recursively changing owner/group of /local/cache/lighttpd to www-data..."
+"$CHOWN" -R www-data:www-data /local/cache/lighttpd && success || failure
+echo -n "Recursively changing owner/group of /local/data to $USER:$GROUP..."
+"$CHOWN" -R "$USER":"$GROUP" /local/data && success || failure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
