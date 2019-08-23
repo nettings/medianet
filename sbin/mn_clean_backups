@@ -1,0 +1,21 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+scream "Cleaning backup files *.mn_ and *~:"
+
+FILELIST=`"$FIND" / -name "*mn_" -o -name "*~"`
+
+for FILE in $FILELIST ;  do
+	echo -n "(Recursively) delete $FILE (y/N)?..."
+	read -r -n 1 YESNO
+	if [[ "$YESNO" =~ ^[Yy]$ ]] ; then
+		"$RM" -r "$FILE" && success || failure
+	else
+		echo " skipped."
+	fi
+done
+
+
