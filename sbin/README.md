@@ -30,7 +30,7 @@ Number  Start   End     Size    Type     File system  Flags
  2      277MB   4096MB  3819MB  primary  ext4         type=83
  3      4097MB  31.0GB  26.9GB  primary  ext4         type=83
 ```
-1. Mount boot partition.
+6. Mount boot partition.
 1. As root, create a file ```ssh``` in boot partition to enable remote login with default user *pi*, password *raspberry*. Docs say it can be empty, but its more robust to have it contain a single "\n".
 1. Mount root partition.
 1. Unmount all card partitions.
