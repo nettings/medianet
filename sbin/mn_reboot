@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./medianet/lib/mn_includes
+. /medianet/lib/mn_includes
 
 needroot
 
