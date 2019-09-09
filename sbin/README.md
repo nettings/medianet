@@ -18,7 +18,7 @@ https://downloads.raspberrypi.org/raspbian_lite_latest (tested with Stretch, req
    1. Create data partition to span remainder of card: ```sudo parted -a optimal /dev/<device> mkpart primary ext4 4097MB 100%```
    1. Create ext4 file system on data partition: ```sudo mkfs.ext4 -L data /dev/<device>3```
    1. Check partition table: ```sudo parted /dev/<device> print``` should look like
-      ```
+```
 Model: Generic STORAGE DEVICE (scsi)
 Disk /dev/sdl: 31.0GB
 Sector size (logical/physical): 512B/512B
