@@ -92,6 +92,7 @@ INOTIFYWAIT=/usr/bin/inotifywait
 IPBIN=/sbin/ip
 MN_CONFIG_UPDATE="$PREFIX"/overlay/usr/local/bin/mn_config_update
 MKDIR=/bin/mkdir
+MOUNT=/bin/mount
 MV=/bin/mv
 PASSWD=/usr/bin/passwd
 READLINK=/bin/readlink
@@ -114,4 +115,9 @@ XARGS=/usr/bin/xargs
 PROGNAME=`basename -- "$0"`
 
 # make config variables available
-. $CONFIG_INCLUDE
+if [[ -f "$CONFIG_INCLUDE" ]] ; then
+	. $CONFIG_INCLUDE
+else
+	echo "$CONFIG_INCLUDE does not exist yet - skipping."
+fi
+
