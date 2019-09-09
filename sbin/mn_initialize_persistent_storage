@@ -4,38 +4,19 @@
 
 needroot
 
-LOCALDIRS="/local/lib
-/local/lib/alsa
-/local/lib/dhcpcd5
-/local/lib/resolvconf
-/local/lib/sudo
-/local/lib/systemd
-/local/cache
-/local/cache/lighttpd
-/local/cache/lighttpd/uploads
-/local/cache/lighttpd/compress
-/local/data
-"
-
 scream "Populating persistant storage in /local:"
 
 "$MOUNT" | "$GREP" "\s/local\s" || bail "No device mounted under /local." 
 
-for i in $LOCALDIRS ; do
-	echo -n "Creating directory $i..."
-	"$MKDIR" $i && success || failure
-done
-
-
-echo -n "Recursively changing owner/group of /local/cache/lighttpd to www-data..."
-"$CHOWN" -R www-data:www-data /local/cache/lighttpd && success || failure
-echo -n "Recursively changing owner/group of /local/data to $USER:$GROUP..."
-"$CHOWN" -R "$USER":"$GROUP" /local/data && success || failure
-
-
-
-
-
+while read LINE ;  do
+	echo $LINE | "$GREP" "^#" && continue # ignore comments
+	echo $LINE | "$GREP" "^$" && continue # ignore empty lines 
+	TASK=($LINE)
+	echo -n "Creating directory ${TASK[0]} with mode ${TASK[3]}..."
+	"$MKDIR" --parents --mode ${TASK[3]} ${TASK[0]} && success || failure
+	echo -ne "\tChanging owner/group to ${TASK[1]}:${TASK[2]}..."
+	"$CHOWN" -R ${TASK[1]}:${TASK[2]} ${TASK[0]} && success || failure
+done <<< "$LOCALDIRS"
 
 
 
