@@ -18,6 +18,9 @@ LOCALDIRS="/local/lib
 "
 
 scream "Populating persistant storage in /local:"
+
+"$MOUNT" | "$GREP" "\s/local\s" || bail "No device mounted under /local." 
+
 for i in $LOCALDIRS ; do
 	echo -n "Creating directory $i..."
 	"$MKDIR" $i && success || failure
