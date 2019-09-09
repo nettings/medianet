@@ -9,12 +9,14 @@ FIXME: This should eventually be turned into a script for true continuous
 integration, but the process is somewhat non-trivial to automate.
 
 1. Download the latest **Raspbian Buster lite** image from
-https://downloads.raspberrypi.org/raspbian_lite_latest (tested with Stretch, requalify for newer Debian versions).
+https://downloads.raspberrypi.org/raspbian_lite_latest (tested with Buster, requalify for newer releases).
 1. Unzip image.
 1. Insert empty SD card into reader, determine device name with: ```sudo parted -l```
-1. Copy image to SD memory card: sudo ```dd if=/your/path/to/raspbian.img of=/dev/<device>> bs=4M status=progress```
-1. With gparted or similar tool:
+1. Copy image to SD memory card: sudo ```dd if=/your/path/to/raspbian.img of=/dev/<device> bs=4M status=progress```
+1. Modify partition structure:
    1. Resize root partition to 4096 minus 256 (size of boot) MB: ```sudo parted -a optimal /dev/<device> resizepart 2 4096MB```
+   1. Check root file system in preparation of resizing: ```sudo e2fsck -f /dev/<device>2```
+   1. Resize root file system: ```sudo resize2fs /dev/<device>2```
    1. Create data partition to span remainder of card: ```sudo parted -a optimal /dev/<device> mkpart primary ext4 4097MB 100%```
    1. Create ext4 file system on data partition: ```sudo mkfs.ext4 -L data /dev/<device>3```
    1. Check partition table: ```sudo parted /dev/<device> print``` should look like
@@ -30,9 +32,9 @@ Number  Start   End     Size    Type     File system  Flags
  2      277MB   4096MB  3819MB  primary  ext4         type=83
  3      4097MB  31.0GB  26.9GB  primary  ext4         type=83
 ```
-6. Mount boot partition.
-1. As root, create a file ```ssh``` in boot partition to enable remote login with default user *pi*, password *raspberry*. Docs say it can be empty, but its more robust to have it contain a single "\n".
-1. Mount root partition.
+6. Mount and enter boot partition.
+   1. Prevent automatic resizing of root partition on first boot (which would undo the changes made before): ```sudo sed -i 's/init=[^[:space:]]*//' cmdline.txt```
+   1. Enable remote login with default user *pi*, password *raspberry* by creating magic file: ```sudo touch ssh```
 1. Unmount all card partitions.
 1. Create card image with dd if=/dev/<partition> of=YYYY-MM-DD_medianet_base_image.img bs=4M count=2048 status=progress.
 
