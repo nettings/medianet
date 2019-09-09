@@ -34,9 +34,13 @@ Number  Start   End     Size    Type     File system  Flags
 ```
 6. Mount and enter boot partition.
    1. Prevent automatic resizing of root partition on first boot (which would undo the changes made before): ```sudo sed -i 's/init=[^[:space:]]*//' cmdline.txt```
+   1. Update partition (the original PARTUUID changed when we repartitioned above): ```sudo sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' cmdline.txt```
    1. Enable remote login with default user *pi*, password *raspberry* by creating magic file: ```sudo touch ssh```
-1. Unmount all card partitions.
-1. Create card image with dd if=/dev/<partition> of=YYYY-MM-DD_medianet_base_image.img bs=4M count=2048 status=progress.
+1. Unmount boot partition
+1. Mount and enter rootfs partition.
+   1. Update partitions in system fstab: ```sed -i 's/PARTUUID=[0-9a-zA-Z]*-0/\/dev\/mmcblk0p/' etc/fstab```
+1. Unmount rootfs partition.
+1. Create card image with dd if=/dev/<device> of=YYYY-MM-DD_medianet_base_image.img bs=4M count=2048 status=progress.
 
 ## Bootstrapping the system
 
