@@ -42,16 +42,22 @@ After booting the system image created above in a Raspberry Pi, it will have
 to be turned into a medianet system, which requires three remote logins
 followed by a reboot.
 
+1. Log into the system as user *pi* with default password *raspberry* (this opens a window of vulnerability and should only be done on a trusted private network).
+1. Check out medianet environment
+   1. ```sudo apt-get update```
+   1. ```sudo apt-get install git```
+   1. ```sudo git clone https://github.com/nettings/medianet.git /medianet```
+   1. cd /medianet
+   1. (only until Buster becomes default:) ```sudo git checkout buster```
 1. Basic setup
-   1. Log into the system as user *pi* with default password *raspberry* (this opens a window of vulnerability and should only be done on a trusted private network).
-   1. Change into ```./10-basics-as_user_pi/``` and execute the symlinks in numerical order, carefully noting any error messages in the output. The final one will reboot the system
+   1. Change into ```sbin/10-basics-as_user_pi/``` and execute the symlinks in numerical order, carefully noting any error messages in the output. The final one will reboot the system
    1. Drop your own public key into ```/home/medianet/.ssh/authorized_keys```, since the one installed by default is ours and the private key is not part of this repository
 1. Customization
    1. Log into the system as the user *medianet* with the appropriate public key.
-   1. Change into ```./50-customize-as_user_medianet/``` and again execute the symlinks in numerical order.
+   1. Change into ```sbin/50-customize-as_user_medianet/``` and again execute the symlinks in numerical order.
 1. Finish (optional)
    1. Log in a last time as user medianet. By now the system is in its default read-only state and can be used.
-   1. Change into ```./90-finish-as_user_medianet/``` and repeat. The only remaining step is to upgrade the kernel to the latest version, which will necessitate another reboot.
+   1. Change into ```sbin/90-finish-as_user_medianet/``` and repeat. The only remaining step is to upgrade the kernel to the latest version, which will necessitate another reboot.
 
 
 
