@@ -90,6 +90,7 @@ SYSTEMD_DEFAULT_ENABLE="
 
 # binaries
 APTGET=/usr/bin/apt-get
+CAT=/bin/cat
 CHOWN=/bin/chown
 CHMOD=/bin/chmod
 CHSH=/usr/bin/chsh
@@ -113,6 +114,7 @@ PASSWD=/usr/bin/passwd
 READLINK=/bin/readlink
 RM=/bin/rm
 SED=/bin/sed
+SSH=/usr/sbin/ssh
 SLEEP=/bin/sleep
 SWAPOFF=/sbin/swapoff
 SYSTEMCTL=/bin/systemctl
