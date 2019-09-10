@@ -45,7 +45,7 @@ function noroot {
 USER=medianet
 GROUP=medianet
 
-PREFIX=/medianet
+PREFIX=${PREFIX:-/medianet}
 MEDIANETCONF="$PREFIX/config/this/medianet.conf"
 
 CONFIG_INCLUDE=/etc/mn_config
@@ -105,7 +105,7 @@ GROUPADD=/usr/sbin/groupadd
 HOSTNAMEBIN=/bin/hostname
 INOTIFYWAIT=/usr/bin/inotifywait
 IPBIN=/sbin/ip
-MN_CONFIG_UPDATE="$PREFIX"/overlay/usr/local/bin/mn_config_update
+MN_CONFIG_UPDATE=/usr/local/bin/mn_config_update
 MKDIR=/bin/mkdir
 MOUNT=/bin/mount
 MV=/bin/mv
