@@ -13,7 +13,7 @@ cd "$PREFIX"/overlay
 
 scream "Checking directory tree..."
 # Iterate over all directories in overlay
-for DIR in `find -P * -type d` ; do
+$FIND -P * -type d | while read DIR ; do
 	TARGET=/"$DIR"
 	echo -n "$TARGET:"
 	if [[ ! -d "$TARGET" && ! -L "$TARGET" ]] ; then
@@ -30,10 +30,10 @@ done
 
 scream "Deploying overlay..."
 # Iterate over all files in overlay
-for SOURCE in `find -P * \! -name README \! -name *~ \! -type d` ; do
+$FIND -P  * \! -name README \! -name *~ \! -type d | while read SOURCE ; do
 	TARGET=/"$SOURCE"
 	BACKUP=/"$SOURCE".mn_
-	LINK="$PWD"/"$SOURCE"
+	LINK="$PWD/$SOURCE"
 
 	echo -ne "$TARGET:\t" 
 
