@@ -11,37 +11,45 @@ DEFPERMS="u=rwX,g=rX,o=rX"
 
 cd "$PREFIX"
 
+while read LINE ; do
+	
+done < "$CONF_FILE_PERMISSIONS"
 # HACK: fix sudoers first to avoid a warning on each subsequent action:
-for FILE in `"$FIND" overlay/etc/sudoers.d` `"$FIND" -P overlay/ boot/ ! -type l `; do
+for QUERY in "overlay/etc/sudoers.d" "-P overlay/ boot/ ! -type l"; do
+
+  $FIND $QUERY | while read FILE ; do
   
-  echo -ne "$FILE:\n\t"
+    echo -ne "$FILE:\n\t"
   
-  RULE=`"$GREP" -E "^.$FILE." $CONF_FILE_PERMISSIONS`
-  if [[ -n "$RULE" ]] ; then
-    OWNER=`echo $RULE | cut -d ' ' -f 2`
-    PERMS=`echo $RULE | cut -d ' ' -f 3`
-    CUROWNER=`"$STAT" -c "%U:%G" "$FILE"`
-    CURPERMS=`"$STAT" -c "%a" "$FILE"`
-    if [[ "$CUROWNER" != "$OWNER" ]] ; then
-      echo -ne "Owner to $OWNER. "
-      "$CHOWN" "$OWNER" "$FILE" || failure
-    else 
-      echo -ne "Owner ok. "
-    fi
-    if [[ "$CURPERMS" != "$PERMS" ]] ; then
-      echo -ne "Permissions to $PERMS..."
-      "$CHMOD" "$PERMS" "$FILE" || failure
+    RULE=`"$GREP" -E "^'$FILE'" $CONF_FILE_PERMISSIONS`
+    if [[ -n "$RULE" ]] ; then
+      OWNER=`echo $RULE | sed "s/'.*' \([[:alnum:]]*:[[:alnum:]]*\) \([0-9]*\)/\1/"`
+      PERMS=`echo $RULE |  sed "s/'.*' \([[:alnum:]]*:[[:alnum:]]*\) \([0-9]*\)/\2/"`
+      CUROWNER=`"$STAT" -c "%U:%G" "$FILE"`
+      CURPERMS=`"$STAT" -c "%a" "$FILE"`
+      if [[ "$CUROWNER" != "$OWNER" ]] ; then
+        echo -ne "Owner to $OWNER. "
+        "$CHOWN" "$OWNER" "$FILE" || failure
+      else 
+        echo -ne "Owner ok. "
+      fi
+      if [[ "$CURPERMS" != "$PERMS" ]] ; then
+        echo -ne "Permissions to $PERMS..."
+        "$CHMOD" "$PERMS" "$FILE" || failure
+      else
+        echo -ne "Permissions ok."
+      fi
     else
-      echo -ne "Permissions ok."
+      echo -ne "No rule. "
+      echo -ne "Setting to default $DEFOWNER"
+      "$CHOWN" "$DEFOWNER" "$FILE" || failure
+      echo -ne " $DEFPERMS..."
+      "$CHMOD" "$DEFPERMS" "$FILE" || failure 
     fi
-  else
-    echo -ne "No rule. "
-    echo -ne "Setting to default $DEFOWNER"
-    "$CHOWN" "$DEFOWNER" "$FILE" || failure
-    echo -ne " $DEFPERMS..."
-    "$CHMOD" "$DEFPERMS" "$FILE" || failure 
-  fi
-  echo
+    echo
+
+  done
+
 done
 
 cd "$OLDPWD"
