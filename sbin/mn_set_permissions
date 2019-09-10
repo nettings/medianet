@@ -11,31 +11,45 @@ DEFPERMS="u=rwX,g=rX,o=rX"
 
 cd "$PREFIX"
 
-while read LINE ; do
-	
-done < "$CONF_FILE_PERMISSIONS"
+declare -A OWNER
+declare -A PERMS
+
+while read FILE ; do
+#  echo "File '$FILE'" 
+  read O
+  OWNER["$FILE"]="$O"
+#  echo Owner ${OWNER["$FILE"]}
+  read P
+  PERMS["$FILE"]="$P"
+#  echo Perms ${PERMS["$FILE"]}
+done <<< $($CAT "$CONF_FILE_PERMISSIONS" \
+  | $SED "s/'\(.*\)'[[:space:]]\{1,\}\([[:alnum:]]*:[[:alnum:]]*\)[[:space:]]\{1,\}\([0-9]*\)[[:space:]]*/\1\n\2\n\3/")
+
 # HACK: fix sudoers first to avoid a warning on each subsequent action:
 for QUERY in "overlay/etc/sudoers.d" "-P overlay/ boot/ ! -type l"; do
 
-  $FIND $QUERY | while read FILE ; do
+  while read FILE ; do
   
     echo -ne "$FILE:\n\t"
-  
-    RULE=`"$GREP" -E "^'$FILE'" $CONF_FILE_PERMISSIONS`
-    if [[ -n "$RULE" ]] ; then
-      OWNER=`echo $RULE | sed "s/'.*' \([[:alnum:]]*:[[:alnum:]]*\) \([0-9]*\)/\1/"`
-      PERMS=`echo $RULE |  sed "s/'.*' \([[:alnum:]]*:[[:alnum:]]*\) \([0-9]*\)/\2/"`
+
+    if [[ -n "$FILE" ]] ; then
+      OWNER_RULE=${OWNER["$FILE"]}
+    else
+      continue
+    fi
+    if [[ -n "$OWNER_RULE" ]] ; then
+      PERMS_RULE=${PERMS["$FILE"]}
       CUROWNER=`"$STAT" -c "%U:%G" "$FILE"`
       CURPERMS=`"$STAT" -c "%a" "$FILE"`
-      if [[ "$CUROWNER" != "$OWNER" ]] ; then
-        echo -ne "Owner to $OWNER. "
-        "$CHOWN" "$OWNER" "$FILE" || failure
+      if [[ "$CUROWNER" != "$OWNER_RULE" ]] ; then
+        echo -ne "Owner to $OWNER_RULE. "
+        "$CHOWN" "$OWNER_RULE" "$FILE" || failure
       else 
         echo -ne "Owner ok. "
       fi
-      if [[ "$CURPERMS" != "$PERMS" ]] ; then
-        echo -ne "Permissions to $PERMS..."
-        "$CHMOD" "$PERMS" "$FILE" || failure
+      if [[ "$CURPERMS" != "$PERMS_RULE" ]] ; then
+        echo -ne "Permissions to $PERMS_RULE..."
+        "$CHMOD" "$PERMS_RULE" "$FILE" || failure
       else
         echo -ne "Permissions ok."
       fi
@@ -48,8 +62,8 @@ for QUERY in "overlay/etc/sudoers.d" "-P overlay/ boot/ ! -type l"; do
     fi
     echo
 
-  done
-
+  done <<< $($FIND $QUERY)
+ 
 done
 
 cd "$OLDPWD"
