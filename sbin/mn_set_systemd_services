@@ -24,5 +24,10 @@ for i in $SYSTEMD_DEFAULT_DISABLE; do
 	}
 done
 
+for i in $SYSTEMD_DEFAULT_LINK; do
+	echo -n "Linking $i..."
+	"$SYSTEMCTL" link "$i" && success || failure
+done
+
 
 

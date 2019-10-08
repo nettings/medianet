@@ -88,6 +88,10 @@ SYSTEMD_DEFAULT_ENABLE="
 	systemd-time-wait-sync.service
 "
 
+SYSTEMD_DEFAULT_LINK="
+	$SYSTEMD_UNITS_LOCAL/jackd.target
+"
+
 # binaries
 APTGET=/usr/bin/apt-get
 CAT=/bin/cat
