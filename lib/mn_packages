@@ -12,8 +12,8 @@ git lilv-utils
 telnet
 # local lightweight webserver to run lv2rdf2html interface
 lighttpd php php-cgi php-fpm
-# local mplayer and mpv
-mplayer mpv
+# local mpv and remote control
+mpv socat
 # local monitoring
 icecast2 darkice
 # i2c tools for peripheral devices such as SenseHat or HifiBerries
