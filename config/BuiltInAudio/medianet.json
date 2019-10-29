@@ -1,17 +1,19 @@
 {
-	"product": "Minimal",
-	"description": "Minimal configuration",
-	"hostname": "mn-minimal",
-	"location": "überall und nirgends",
-	"version": "2019-05-11",
+	"product": "AnalogIO",
+	"description": "[mn] medianet example setup using HifiBerry DAC+ADC",
+	"hostname": "mn-DACADC",
+	"location": "Frankenlab",
+	"version": "2019-10-29",
 	"bootConfig": {
-		"arm_freq" : 600,
+		"arm_freq" : 1500,
 		"arm_freq_min" : 600,
 		"hdmi_blanking" : 2,
-		"gpio" : [
-		],
+                "gpio" : [
+                        "5,6,13=ip,pu"
+                ],
+
 		"dtparam" : [
-			"audio=off"
+			"audio=on"
 		],
 		"dtoverlay" : [
 			"pi3-disable-wifi",
@@ -22,7 +24,7 @@
 		"master": [
 			"Digital"
 		],
-			"masterDefault": "-3dB"
+		"masterDefault": "-3dB"
 	},
 	"systemdUnits": [
 		{
@@ -34,14 +36,14 @@
 			"unit"    : "gpioctl",
 			"type"    : "service",
 			"enabled" : 0,
-			"options" : "-r  5,6,master,osc.udp://239.0.0.254:3042,4  -s 13,master,osc.udp://239.0.0.254:3042 -U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
+			"options" : "-U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
 		},
 		{
 			"unit"    : "jackd", 
 			"type"    : "service",
-			"enabled" : 0,
+			"enabled" : 1,
 			"jackName": "system",
-			"options" : "-R -t 4500 -P 70 -dalsa -dhw:sndrpihifiberry -P -r48000 -p256 -n2 -zs",
+			"options" : "-R -t 4500 -P 70 -dalsa -dhw:0 -P -r44100 -p512 -n2 -zs",
 			"inPorts": [
 				{
 					"portName"   : "playback_1"
@@ -50,7 +52,8 @@
 					"portName"   : "playback_2"
 				}
 			],
-			"outPorts": []
+			"outPorts": [
+			]
 		},
 		{
 			"unit"    : "mn_config_watch",
@@ -60,20 +63,63 @@
 		{
 			"unit"    : "mod-host",
 			"type"    : "service",
-			"enabled" : 0,
+			"enabled" : 1,
 			"jackName": "mod-host",
 			"options" : "",
 			"inPorts" : [
+				{
+					"portName"   : "effect_1:inL"
+				},
+				{
+					"portName"   : "effect_1:inR"
+				}
 			],
 			"outPorts": [
+				{
+					"portName"   : "effect_9:outL",
+					"targetUnit"     : "jackd",
+					"targetPort" : 0
+				},{
+					"portName"   : "effect_9:outR",
+					"targetUnit"     : "jackd",
+					"targetPort" : 1
+				}
 			],
 			"config": [
+				"add http://gareus.org/oss/lv2/fil4#stereo 1",
+				"add http://stackingdwarves.net/lv2/sm 4",
+				"add http://gareus.org/oss/lv2/dpl#stereo 9",
+ 				"connect effect_1:outL effect_4:inL",
+				"connect effect_1:outR effect_4:inR",
+				"connect effect_4:outL effect_9:inL",
+				"connect effect_4:outR effect_9:inR",
+				"param_set 4 gain -2.0000",
+				"param_set 4 attL 0.0000",
+				"param_set 4 attOnL 1.0000",
+				"param_set 4 delayL 0.0000",
+				"param_set 4 delayLOn 0.0000",
+				"param_set 4 activeL 1.0000",
+				"param_set 4 attR 0.0000",
+				"param_set 4 attOnR 1.0000",
+				"param_set 4 delayR 0.0000",
+				"param_set 4 delayROn 0.0000",
+				"param_set 4 activeR 1.0000",
+				"param_set 9 threshold -2"
 			]
 		},
-		{
+                {
+                        "unit"    : "mpv",
+                        "type"    : "service",
+                        "enabled" : 0,
+                        "jackName": "mpv",
+                        "options" : "",
+                        "inPorts" : [],
+                        "outPorts": []
+                },
+ 		{
 			"unit"    : "shairport-sync",
 			"type"    : "service",
-			"enabled" : 0,
+			"enabled" : 1,
 			"jackName": "shairport-sync",
 			"inPorts" : [],
 			"outPorts": [
@@ -97,15 +143,20 @@
 		{
 			"unit"    : "zita-n2j",
 			"type"    : "service",
-			"enabled" : 0,
+			"enabled" : 1,
 			"jackName": "zita-n2j",
-			"options" : "--jname %jackName% --chan 1 --buff 20 239.0.0.1 3000 medianet0",
+			"options" : "--jname %jackName% --chan 1,2 --buff 20 239.0.0.1 3000 medianet0",
 			"inPorts" : [],
 			"outPorts": [
 				{
 					"portName"   : "out_1",
 					"targetUnit" : "mod-host",
 					"targetPort" : 0
+				},
+				{
+					"portName"   : "out_2",
+					"targetUnit" : "mod-host",
+					"targetPort" : 1
 				}
 			]
 		},
