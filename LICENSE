@@ -12,11 +12,13 @@ info@medianet-home.de
 
 https://www.medianet-home.de
 
-All configuration files you find here are in the public domain.
+All configuration files you find here are in the public domain, or, in 
+jurisdictions where that is not possible, licensed to you under the GNU
+General Public License v3.
 All scripts and helper programs based on external open source works are
 subject to the license of the original work.
-All original work found in here is subject individual licenses attached
-to the work.
+All original work found in this repository is subject to individual licenses
+attached to the work.
 
 You are welcome to use all or parts of this derivative work. Please respect
 the rights of [mn] medianet Margit Hermsen and do not use the company name in
@@ -31,9 +33,17 @@ This project and derived products owe their existence to the amazing work and
 generosity of the free software community. It is offered to the community in
 the same spirit.
 
+Where required by the licenses of any third-party software used, this repository
+contains the source code and build infrastructure to any in-house modifications
+under the same license terms.
+Unchanged software is pulled in via the Raspbian repository, where all other
+sources are available. If you as a user of medianet products have trouble 
+locating those original sources to exercise your rights granted by the 
+respective licenses, please write to nettings@medianet-home.de and we will
+assist you in obtaining those sources.
+
 If you notice anything amiss with license compliance or are not happy with how
 your own work is handled in the context of this project, please contact
 nettings@medianet-home.de so that we can resolve the issue as quickly as
 possible. The project is at an early stage, and we're still getting our
 infrastructure in place.
-
