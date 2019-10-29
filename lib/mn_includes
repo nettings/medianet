@@ -58,6 +58,7 @@ LOCALDIRS="
 /local/lib                      root            root            755
 /local/lib/alsa                 root            root            755
 /local/lib/dhcpcd5              root            root            755
+/local/lib/mysql		mysql		mysql		755
 /local/lib/resolvconf           root            root            755
 /local/lib/sudo                 root            root            711
 /local/lib/systemd              root            root            755
