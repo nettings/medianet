@@ -7,41 +7,46 @@ needroot
 # This script deploys all files in the /medianet/overlay directory as symbolic links
 # throughout the distribution file system.
 
-OLDPWD=$PWD
-# we're deploying the main overlay
-cd "$PREFIX"/overlay
+OLDWD=$PWD
+
+SUBTREE=
+VERBOSE=echo
+# optionally restrict to subtree
+if [[ -n "$1" ]] ; then
+	SUBTREE="$1/"
+	VERBOSE="/bin/false"
+fi
+
+cd "$PREFIX"/overlay/"$SUBTREE"
 
 scream "Checking directory tree..."
 # Iterate over all directories in overlay
 $FIND -P * -type d | while read DIR ; do
-	TARGET=/"$DIR"
-	echo -n "$TARGET:"
+	TARGET=/"$SUBTREE""$DIR"
 	if [[ ! -d "$TARGET" && ! -L "$TARGET" ]] ; then
-		echo -n " creating..."
+		echo -n "$TARGET: creating..."
 		"$MKDIR" "$TARGET" && success || bail
 		echo -en "\tsetting file permissions..."
 		"$CHOWN" --reference "$DIR" "$TARGET"\
 		&& "$CHMOD" --reference "$DIR" "$TARGET"\
 		&& success || fail		
 	else
-		echo " exists."
+		$VERBOSE "$TARGET exists." 
 	fi
 done
 
 scream "Deploying overlay..."
 # Iterate over all files in overlay
 $FIND -P  * \! -name README \! -name *~ \! -type d | while read SOURCE ; do
-	TARGET=/"$SOURCE"
-	BACKUP=/"$SOURCE".mn_
+	TARGET=/"$SUBTREE""$SOURCE"
+	BACKUP=/"$SUBTREE""$SOURCE".mn_
 	LINK="$PWD/$SOURCE"
-
-	echo -ne "$TARGET:\t" 
 
 	# Does a correct already exist from a previous run? Then don't stress the flash unneccessarily.
 	LINKSTO=`"$READLINK" --canonicalize "$TARGET"`
 	REALLINK=`"$READLINK" --canonicalize "$LINK"`
 	if [[ "$REALLINK" = "$LINKSTO" ]] ; then
-		echo -e "Unchanged."
+		$VERBOSE "$TARGET unchanged."
 		continue
 	fi
 
@@ -50,17 +55,17 @@ $FIND -P  * \! -name README \! -name *~ \! -type d | while read SOURCE ; do
 	if [[ ( -f "$TARGET" && ! -L "$TARGET" ) || ( -d "$TARGET" && ! -L "$TARGET" ) ]] ; then
 		# Do not overwrite existing backups.
 		if [[ ! -e "$BACKUP" ]] ; then
-			echo -ne "Backing up. "
+			echo -ne "Backing up $TARGET... "
 			"$MV" "$TARGET" "$BACKUP" || bail
 		fi
 	fi
 
 	# Replace original file with symbolic link to medianet overlay.
 	if [[ -e "$TARGET" || -L "$TARGET" ]] ; then
-		echo -ne "Removing old file/link. "
+		echo -ne "Removing old file/link $TARGET... "
                 "$RM" -r "$TARGET" || failure
         fi
-	echo -ne "Linking... "
+	echo -ne "Linking $TARGET... "
 	ln -Tn -r -s "$LINK" "$TARGET" && success || bail
 done
-cd "$OLDPWD"
+cd "$OLDWD"
