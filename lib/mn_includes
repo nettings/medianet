@@ -82,6 +82,7 @@ SYSTEMD_DEFAULT_DISABLE="
 	man-db.timer
 	ModemManager.service
 	phpsessionclean.timer
+	rpi-eeprom-update.service
 	wifi-country.service
 	wpa_supplicant.service
 "
