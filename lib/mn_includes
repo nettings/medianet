@@ -126,6 +126,7 @@ HOSTNAMEBIN=/bin/hostname
 INOTIFYWAIT=/usr/bin/inotifywait
 IPBIN=/sbin/ip
 MN_CONFIG_UPDATE=/usr/local/bin/mn_config_update
+MN_DEPLOY_OVERLAY=$PREFIX/sbin/mn_deploy_overlay
 MKDIR=/bin/mkdir
 MOUNT=/bin/mount
 MV=/bin/mv

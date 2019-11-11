@@ -31,7 +31,8 @@ for i in $TARGET; do
       failure
     }
   cd ..
+  sudo $MN_DEPLOY_OVERLAY usr/local
+  echo "Compiled programs have been installed to $DESTDIR and deployed."
 done
 
 cd "$OLDWD"
-echo "Compiled programs have been installed to $DESTDIR. Deploy with 'sudo $PREFIX/sbin/mn_deploy_overlay' to activate them."
