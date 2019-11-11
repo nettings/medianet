@@ -1,0 +1,7 @@
+[Match]
+# for RPi 3B, 3B+, and 4B
+Driver=brcmfmac
+[Link]
+Name=medianet1
+#NamePolicy=kernel database onboard slot path
+MACAddressPolicy=persistent
