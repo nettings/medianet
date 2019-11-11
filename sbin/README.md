@@ -54,7 +54,6 @@ followed by a reboot.
    1. ```sudo apt-get install git```
    1. ```sudo git clone https://github.com/nettings/medianet.git /medianet```
    1. cd /medianet
-   1. (only until Buster becomes default:) ```sudo git checkout buster```
 1. Basic setup
    1. Change into ```sbin/10-basics-as_user_pi/``` and execute the symlinks in numerical order, carefully noting any error messages in the output. The final one will reboot the system
    1. Drop your own public key into ```/home/medianet/.ssh/authorized_keys```, since the one installed by default is ours and the private key is not part of this repository
