@@ -4,4 +4,5 @@
 
 needroot
 
-/usr/bin/rpi-update
+/usr/bin/rpi-eeprom-update -a
+#/usr/bin/rpi-update
