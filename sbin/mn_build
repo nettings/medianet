@@ -11,13 +11,16 @@ cd "$PREFIX"/custom_builds
 if [[ -n "$1" ]] ; then
 	TARGET="$1.build"
 else
-	TARGET="*.build"
+	TARGET=
+	for i in $CUSTOM_BUILDS ; do
+		TARGET+="$i.build "
+	done
 fi
 
 scream "Building \"$TARGET\"."
 
-"$FIND" -name "$TARGET" | while read line ; do
-  line=`"$READLINK" --canonicalize "$line"`
+for i in $TARGET; do
+  line=`"$READLINK" --canonicalize "$i"`
   WORKDIR=`echo "$line" | "$SED" 's/\.build$//'`
   cd "$WORKDIR"
   scream "********* Compiling $line...\n"

@@ -94,6 +94,19 @@ SYSTEMD_DEFAULT_LINK="
 	$SYSTEMD_UNITS_LOCAL/jackd.target
 "
 
+# be sure to order them to resolve dependencies!
+CUSTOM_BUILDS="
+	gpioctl
+	sm.lv2
+	mod-host
+	shairport-sync
+	x42-plugins
+	lv2rdf2html
+	zita-lrx
+	zita-njbridge
+"
+
+
 # binaries
 APTGET=/usr/bin/apt-get
 CAT=/bin/cat

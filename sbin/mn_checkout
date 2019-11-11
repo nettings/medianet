@@ -48,27 +48,30 @@ from_package()
 
 
 OLDWD=`pwd`
-CUSTOMBUILDS="$PREFIX"/custom_builds
-cd "$CUSTOMBUILDS"
+CUSTOM_BUILD_DIR="$PREFIX"/custom_builds
+cd "$CUSTOM_BUILD_DIR"
 
 if [[ -n "$1" ]] ; then
 	TARGET="$1.checkout"
 else
-	TARGET="*.checkout"
+	TARGET=
+        for i in $CUSTOM_BUILDS ; do
+                TARGET+="$i.checkout "
+        done
 fi
 
 scream "Checking out \"$TARGET\"."
 
-$FIND -name "$TARGET" | while read line ; do
-  scream "********* Checking out $line..."
-  . "$line" \
-    && scream "********* ... $line and dependencies successfully checked out." \
+for i in $TARGET ; do
+  scream "********* Checking out $i..."
+  . "$i" \
+    && scream "********* ... $i and dependencies successfully checked out." \
     || { 
-      scream "********* ... $line " 
+      scream "********* ... $i "
       bail
     }
 done
 
-echo "Checked out sources have been installed to $CUSTOMBUILDS."
+echo "Checked out sources have been installed to $CUSTOM_BUILD_DIR."
 cd "$OLDWD"
 
