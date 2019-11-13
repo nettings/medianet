@@ -23,6 +23,8 @@
 'overlay/etc/bluetooth' root:root 755
 'overlay/etc/bluetooth/main.conf' root:root 644
 'overlay/etc/cron.hourly' root:root 755
+'overlay/etc/wpa_supplicant' root:root 755
+'overlay/etc/wpa_supplicant/wpa_supplicant.conf' root:root 644
 'overlay/etc/sudoers.d' root:root 755
 'overlay/etc/sudoers.d/10_medianet-nopasswd' root:root 440
 'overlay/etc/ufw' root:root 755
