@@ -1,5 +1,5 @@
 # basic system packages
-cpufrequtils joe screen ufw lsof inotify-tools expect rpi-eeprom-update
+cpufrequtils joe screen ufw lsof inotify-tools expect rpi-eeprom
 # JSON configuration
 jq
 # basic audio packages
