@@ -1,0 +1,5 @@
+[Match]
+Driver=bcmgenet
+[Link]
+Name=medianet0
+MACAddressPolicy=persistent
