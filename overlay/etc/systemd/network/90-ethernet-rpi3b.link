@@ -1,0 +1,5 @@
+[Match]
+Driver=smsc95xx
+[Link]
+Name=medianet0
+MACAddressPolicy=persistent
