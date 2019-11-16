@@ -16,7 +16,6 @@ User=medianet
 # this is a player (source), hence no upstream connections
 #ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
 ExecStart=/usr/bin/mpv --quiet --ao="jack" --jack-name="wifi-rx" --jack-connect="no" --profile="low-latency" --audio-buffer=0.1 $OPTIONS 
-# downstream connections are handled by mpv (potentially more robust)
 ExecStartPost=-/usr/local/bin/mn_connect %n
 RestartSec=1
 Restart=always
