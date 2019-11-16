@@ -1,0 +1,24 @@
+[Unit]
+Description=[mn] Wifi RTP stream sender
+After=sound.target
+After=jackd.target
+BindsTo=jackd.target
+BindsTo=network-online.target
+
+[Service]
+Type=exec
+# we read Environment= from a drop-in file
+# /etc/systemd/system/wifi-tx.service.d/wifi-tx.service.conf
+# created by mn_config_update
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+# this is a player (source), hence no upstream connections
+ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
+ExecStart=/usr/bin/ffmpeg -f jack -i wifi-tx -acodec libopus -b:a 192000 -vbr on -frame_duration 20 -packet_loss 5 -application audio -f rtp rtp://239.0.0.250:3000 $OPTIONS 
+ExecStartPost=-/usr/local/bin/mn_connect %n
+RestartSec=1
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
