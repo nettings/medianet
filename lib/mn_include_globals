@@ -41,6 +41,7 @@ SYSTEMD_DEFAULT_DISABLE="
 	wpa_supplicant.service
 "
 SYSTEMD_DEFAULT_ENABLE="
+	ufw.service
 	systemd-time-wait-sync.service
 	$SYSTEMD_UNITS_LOCAL/mn_config_watch.service
 "
