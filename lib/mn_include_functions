@@ -1,0 +1,41 @@
+function scream {
+  echo
+  echo -e "\033[1;1m$1\033[0m"
+}
+
+function success {
+  echo  -e " \033[1;32msucceeded.\033[0m"
+}
+
+function failure {
+	ERR=$?
+	ERRSTR=""
+	if [[ $ERR != 0 ]] ; then
+		ERRSTR=" (return code $ERR)"
+	fi
+	echo  -e " \033[1;31mfailed$ERRSTR. $@\033[0m"
+}
+
+function bail {
+	ERR=$?
+	ERRSTR=""
+	if [[ $ERR != 0 ]] ; then
+		ERRSTR=" (return code $ERR)"
+	fi
+	echo -e "\033[1;31mFatal error \"$@\"$ERRSTR ... Exiting.\033[0m"
+  exit 1
+}
+
+function needroot {
+	if [ "$EUID" -ne 0 ] ; then
+		echo -e "\033[1;31mYou must be root to run $0.\033[0m"
+		exit 2
+	fi
+}
+
+function noroot {
+	if [ "$EUID" -eq 0 ] ; then
+		echo -e "\033[1;31mFor security reasons, you must not run $0 as root!\033[0m"
+		exit 2
+	fi
+}

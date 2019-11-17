@@ -1,0 +1,82 @@
+# globals
+USER=medianet
+GROUP=medianet
+
+MEDIANETCONF="$PREFIX/config/this/medianet.conf"
+
+CONFIG_INCLUDE=/etc/mn_config
+CONF_FILE_MODHOST=/etc/mod-host.conf
+CONF_FILE_MODHOST_STATE=/local/data/mod-host.state
+CONF_FILE_ZITALRX=/etc/zita-lrx.conf
+CONF_FILE_BOOT=/boot/medianet.txt
+CONF_FILE_PERMISSIONS="$PREFIX"/permissions.medianet
+LOCALDIRS="
+/local/lib                      root            root            755
+/local/lib/alsa                 root            root            755
+/local/lib/dhcpcd5              root            root            755
+/local/lib/mysql		mysql		mysql		755
+/local/lib/resolvconf           root            root            755
+/local/lib/sudo                 root            root            711
+/local/lib/systemd              root            root            755
+/local/cache                    root            root            755
+/local/cache/lighttpd           www-data        www-data        750
+/local/cache/lighttpd/uploads   www-data        www-data        750
+/local/cache/lighttpd/compress  www-data        www-data        750
+/local/data                     medianet        medianet        700
+/local/log                      root            root            755
+/local/log/lighttpd             www-data        www-data        755
+"
+SYSTEM_CONFIG="$PREFIX"/config/this/medianet.json
+SYSTEMD_UNIT_DIR=/etc/systemd/system
+SYSTEMD_UNITS_LOCAL="$PREFIX"/systemd
+
+SYSTEMD_DEFAULT_DISABLE="
+	apt-daily.timer
+	apt-daily-upgrade.timer
+	cpufrequtils.service
+	hciuart.service
+	man-db.timer
+	ModemManager.service
+	phpsessionclean.timer
+	rpi-eeprom-update.service
+	wifi-country.service
+	wpa_supplicant.service
+"
+SYSTEMD_DEFAULT_ENABLE="
+	systemd-time-wait-sync.service
+	$SYSTEMD_UNITS_LOCAL/mn_config_watch.service
+"
+
+SYSTEMD_DEFAULT_LINK="
+	$SYSTEMD_UNITS_LOCAL/jackd.target
+"
+
+SYSTEMD_MEDIANET_SERVICES="
+	cpufreq.service
+	gpioctl.service
+	jackd.service
+	jackminimix.service
+	jconvolver.service
+	mod-host.service
+	mpv.service
+	shairport-sync.service
+	wifi-rx.service
+	wifi-tx.service
+	zita-a2j.service
+	zita-j2a.service
+	zita-j2n.service
+	zita-lrx.service
+	zita-n2j.service
+"
+
+# be sure to order them to resolve dependencies!
+CUSTOM_BUILDS="
+	gpioctl
+	sm.lv2
+	mod-host
+	shairport-sync
+	x42-plugins
+	lv2rdf2html
+	zita-lrx
+	zita-njbridge
+"
