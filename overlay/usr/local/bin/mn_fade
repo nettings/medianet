@@ -2,8 +2,6 @@
 
 . /medianet/lib/mn_includes
 
-. $MEDIANETCONF
-
 case $1 in
   down)
     MODE=down
@@ -15,7 +13,7 @@ case $1 in
 $0 controls the soundcard's hardware volume in a smooth way
 $0 [down|up]
 "down" fades from current value to zero.
-"up" fades from current value to target value configured in "$ALSA_VOLUME_DEFAULT" in file $MEDIANETCONF.
+"up" fades from current value to max.
 EOF
     exit 1
     ;;
@@ -23,7 +21,7 @@ esac
 
 
 if [[ -z "$ALSA_VOLUME" ]] ; then
-  fail "No ALSA_VOLUME configured in $MEDIANETCONF. Skipping."
+  fail "No ALSA_VOLUME configured. Skipping."
 fi
 
 CURVALS=`amixer sget "$ALSA_VOLUME" | grep -Eo \[[0-9]+%\] | grep -Eo [0-9]+`

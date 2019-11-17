@@ -2,8 +2,6 @@
 USER=medianet
 GROUP=medianet
 
-MEDIANETCONF="$PREFIX/config/this/medianet.conf"
-
 CONFIG_INCLUDE=/etc/mn_config
 CONF_FILE_MODHOST=/etc/mod-host.conf
 CONF_FILE_MODHOST_STATE=/local/data/mod-host.state

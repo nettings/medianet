@@ -19,7 +19,7 @@ case $1 in
   *)
     echo "$0 [--base-setup ][--parameters ][--all]"
     echo "configures a running mod-host instance via its local telnet interface."
-    echo "--base-setup sets the mod-host base configuration defined in $MEDIANETCONF."
+    echo "--base-setup sets the mod-host base configuration defined in $SYSTEM_CONFIG."
     echo "--parameters restores the most recent user settings of the plugin chain."
     echo "--all does both."
     ;;

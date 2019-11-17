@@ -4,7 +4,7 @@
 
 needroot
 
-echo "Boot options from $MEDIANETCONF:"
+echo "Boot options from $SYSTEM_CONFIG:"
 echo "$CONFIG_TXT_OPTIONS"
 echo -n "Writing to $CONF..."
 echo "$CONFIG_TXT_OPTIONS" > "$CONF_FILE_BOOT" || failure && success
