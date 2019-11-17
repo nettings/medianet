@@ -1,0 +1,9 @@
+[Unit]
+Description=[mn] mn_modsave timer
+
+[Timer]
+OnCalendar=*-*-* *:00:00
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target

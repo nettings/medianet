@@ -44,6 +44,8 @@ SYSTEMD_DEFAULT_ENABLE="
 	ufw.service
 	systemd-time-wait-sync.service
 	$SYSTEMD_UNITS_LOCAL/mn_config_watch.service
+	$SYSTEMD_UNITS_LOCAL/mn_modsave.service
+	$SYSTEMD_UNITS_LOCAL/mn_modsave.timer
 "
 
 SYSTEMD_DEFAULT_LINK="
