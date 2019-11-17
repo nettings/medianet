@@ -21,7 +21,7 @@
 # store array of all units for later use
 .systemdUnits as $units
 # iterate over all units individually
-	| .systemdUnits[]
+	| .systemdUnits[]?
 # only look at those which are jack clients and enabled
 # 	| select(.enabled == 1 and .jackName != null) as $u
 	| select(.enabled == 1 and .jackName != null and .unit == $unit) as $u
@@ -36,7 +36,7 @@
 			else "\($u.jackName):\($o.portName)"
 		end, "\n", (
 # de-reference target ports via array of all units
-			$units[] 
+			$units[]? 
 # find the unit of the target port
 			| select(.unit == $o.targetUnit) as $t
 # find the target port using the array index

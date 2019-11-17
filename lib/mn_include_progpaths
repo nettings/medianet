@@ -1,5 +1,6 @@
 # program paths
 APTGET=/usr/bin/apt-get
+BASENAME=/usr/bin/basename
 CAT=/bin/cat
 CHOWN=/bin/chown
 CHMOD=/bin/chmod
@@ -16,6 +17,7 @@ GROUPADD=/usr/sbin/groupadd
 HOSTNAMEBIN=/bin/hostname
 INOTIFYWAIT=/usr/bin/inotifywait
 IPBIN=/sbin/ip
+JQ=/usr/bin/jq
 MN_CONFIG_UPDATE=/usr/local/bin/mn_config_update
 MN_DEPLOY_OVERLAY=$PREFIX/sbin/mn_deploy_overlay
 MKDIR=/bin/mkdir

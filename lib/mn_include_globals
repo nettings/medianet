@@ -49,22 +49,22 @@ SYSTEMD_DEFAULT_LINK="
 	$SYSTEMD_UNITS_LOCAL/jackd.target
 "
 
-SYSTEMD_MEDIANET_SERVICES="
-	cpufreq.service
-	gpioctl.service
-	jackd.service
-	jackminimix.service
-	jconvolver.service
-	mod-host.service
-	mpv.service
-	shairport-sync.service
-	wifi-rx.service
-	wifi-tx.service
-	zita-a2j.service
-	zita-j2a.service
-	zita-j2n.service
-	zita-lrx.service
-	zita-n2j.service
+SYSTEMD_MEDIANET_UNITS="
+	$SYSTEMD_UNITS_LOCAL/cpufreq.service
+	$SYSTEMD_UNITS_LOCAL/gpioctl.service
+	$SYSTEMD_UNITS_LOCAL/jackd.service
+	$SYSTEMD_UNITS_LOCAL/jackminimix.service
+	$SYSTEMD_UNITS_LOCAL/jconvolver.service
+	$SYSTEMD_UNITS_LOCAL/mod-host.service
+	$SYSTEMD_UNITS_LOCAL/mpv.service
+	$SYSTEMD_UNITS_LOCAL/shairport-sync.service
+	$SYSTEMD_UNITS_LOCAL/wifi-rx.service
+	$SYSTEMD_UNITS_LOCAL/wifi-tx.service
+	$SYSTEMD_UNITS_LOCAL/zita-a2j.service
+	$SYSTEMD_UNITS_LOCAL/zita-j2a.service
+	$SYSTEMD_UNITS_LOCAL/zita-j2n.service
+	$SYSTEMD_UNITS_LOCAL/zita-lrx.service
+	$SYSTEMD_UNITS_LOCAL/zita-n2j.service
 "
 
 # be sure to order them to resolve dependencies!
