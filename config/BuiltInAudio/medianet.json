@@ -1,9 +1,9 @@
 {
 	"product": "AnalogIO",
-	"description": "[mn] medianet example setup using HifiBerry DAC+ADC",
-	"hostname": "mn-DACADC",
+	"description": "[mn] medianet example setup using built-in audio",
+	"hostname": "mn-basic",
 	"location": "Frankenlab",
-	"version": "2019-10-29",
+	"version": "2020-01-20",
 	"bootConfig": {
 		"arm_freq" : 1500,
 		"arm_freq_min" : 600,
@@ -132,7 +132,7 @@
 					"portName"   : "out_R",
 					"targetUnit" : "mod-host",
 					"targetPort" : 1
-				}					
+				}
 			]
 		},
 		{
@@ -261,4 +261,3 @@
 		}
 	]
 }
-		
