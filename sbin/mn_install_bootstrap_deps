@@ -1,0 +1,18 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+"$APTGET" update
+
+cat "$PREFIX"/lib/mn_packages_early | while read line ; do
+	for package in $line; do
+		if [[ $package == \#* ]] ; then
+			# we've found a comment, ignore all that follows on the line:
+			break
+		else
+			echo -n "$package "
+		fi
+	done
+done | "$XARGS" -n 32 "$APTGET" -y install
