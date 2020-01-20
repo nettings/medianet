@@ -4,11 +4,6 @@
 
 needroot
 
-echo "Boot options from $SYSTEM_CONFIG:"
-echo "$CONFIG_TXT_OPTIONS"
-echo -n "Writing to $CONF..."
-echo "$CONFIG_TXT_OPTIONS" > "$CONF_FILE_BOOT" || failure && success
-
 echo -n "Checking if `basename $CONF_FILE_BOOT` is included from config.txt..."
 LINE="include `basename $CONF_FILE_BOOT`"
 
