@@ -1,7 +1,0 @@
-#!/bin/bash
-
-. /medianet/lib/mn_includes
-
-needroot
-
-"$SYSTEMCTL" enable ssh && success || failure

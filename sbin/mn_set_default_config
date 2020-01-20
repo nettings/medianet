@@ -1,0 +1,11 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+scream "Activating default configuration"
+
+echo -n "Linking default configuration file..."
+$LN -fs /medianet/config/BuiltInAudio /medianet/config/this && success || failure
+
