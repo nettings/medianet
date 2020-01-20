@@ -1,0 +1,85 @@
+#!/bin/bash
+
+URL="$1"
+THIS=`basename $0`
+
+if [[ -z "$1" ]] ; then
+	echo Usage: $THIS [image URL]
+	echo $THIS creates a [mn] medianet base image from a Raspbian lite release.
+	echo You must provide the full URL.
+	echo For available releases, see http://downloads.raspberrypi.org/raspbian_lite/images
+	exit 2
+fi
+
+
+IMG_BASENAME=`basename "$URL"`
+IMG=`echo "$IMG_BASENAME" | sed 's/\.zip/\.img/'`
+FINAL_IMG=`echo "$IMG" | sed 's/raspbian-buster-lite/medianet-base/'`
+
+echo $IMG
+
+function scream {
+  echo
+  echo -e "\033[1;1m$1\033[0m"
+}
+
+function success {
+  echo  -e " \033[1;32msucceeded.\033[0m"
+}
+
+function failure {
+	ERR=$?
+	ERRSTR=""
+	if [[ $ERR != 0 ]] ; then
+		ERRSTR=" (return code $ERR)"
+	fi
+	echo  -e " \033[1;31mfailed$ERRSTR. $@\033[0m"
+}
+
+function bail {
+	ERR=$?
+	ERRSTR=""
+	if [[ $ERR != 0 ]] ; then
+		ERRSTR=" (return code $ERR)"
+	fi
+	echo -e "\033[1;31mFatal error \"$@\"$ERRSTR ... Exiting.\033[0m"
+  exit 1
+}
+
+
+scream "Creating a [mn] medianet base image:"
+
+echo -n "Downloading image $IMG..."
+wget -q --show-progress  "$URL" | tr '\n' ' ' && success || bail
+echo -n "Unzipping image..."
+unzip -q "${IMG_BASENAME}" && success || bail
+echo "Padding the image to 8G..."
+dd if=/dev/zero bs=4M count=1512 status=noxfer >> "$IMG" && success || bail
+echo -n "Resizing the rootfs partition to 4G, aligning to sectors assumed 512K..."
+sudo bash -c "parted \"$IMG\" resizepart 2 8388607s" && success || bail 
+echo -n "Creating a localfs partition of 4G, again aligning to sectors..."
+sudo bash -c "parted \"$IMG\" mkpart primary ext4 8388608s 16777215s" && success || bail 
+echo "Creating loop devices for the image..."
+PARTITIONS=`sudo kpartx -av "$IMG"`
+PART1=/dev/mapper/`echo $PARTITIONS | grep -o loop.p1`
+PART2=/dev/mapper/`echo $PARTITIONS | grep -o loop.p2`
+PART3=/dev/mapper/`echo $PARTITIONS | grep -o loop.p3`
+echo -n "Mounting the boot partition to /mnt..."
+sudo bash -c "mount \"${PART1}\" /mnt" && success || bail
+echo -n "Activating SSH login on the image..."
+sudo bash -c "touch /mnt/ssh" && success || bail 
+echo -n "Disabling automatic resizing of root partition..."
+sudo bash -c "sed -i 's/init=[^[:space:]]*//' /mnt/cmdline.txt" && success || bail
+echo -n "Fixing root fs entry in kernel cmdline..."
+sudo bash -c "sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' /mnt/cmdline.txt"  && success || bail 
+echo -n "Unmounting boot partition..."
+sudo bash -c "umount /mnt" && success || bail 
+echo "Creating new ext4 file system on $PART3..."
+sudo bash -c "mkfs.ext4 -L localfs \"${PART3}\"" && success || bail
+echo "Removing loop devices..."
+sudo bash -c "kpartx -d \"$IMG\"" && success || bail
+echo -n "Renaming image to $FINAL_IMG..."
+mv "$IMG" "$FINAL_IMG" && success || bail
+
+
+
