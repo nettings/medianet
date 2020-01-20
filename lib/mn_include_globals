@@ -8,22 +8,7 @@ CONF_FILE_MODHOST_STATE=/local/data/mod-host.state
 CONF_FILE_ZITALRX=/etc/zita-lrx.conf
 CONF_FILE_BOOT=/boot/medianet.txt
 CONF_FILE_PERMISSIONS="$PREFIX"/permissions.medianet
-LOCALDIRS="
-/local/lib                      root            root            755
-/local/lib/alsa                 root            root            755
-/local/lib/dhcpcd5              root            root            755
-/local/lib/mysql		mysql		mysql		755
-/local/lib/resolvconf           root            root            755
-/local/lib/sudo                 root            root            711
-/local/lib/systemd              root            root            755
-/local/cache                    root            root            755
-/local/cache/lighttpd           www-data        www-data        750
-/local/cache/lighttpd/uploads   www-data        www-data        750
-/local/cache/lighttpd/compress  www-data        www-data        750
-/local/data                     medianet        medianet        700
-/local/log                      root            root            755
-/local/log/lighttpd             www-data        www-data        755
-"
+
 SYSTEM_CONFIG="$PREFIX"/config/this/medianet.json
 SYSTEMD_UNIT_DIR=/etc/systemd/system
 SYSTEMD_UNITS_LOCAL="$PREFIX"/systemd
