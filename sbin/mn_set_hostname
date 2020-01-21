@@ -11,4 +11,5 @@ echo -n "Setting hostname to $NEW_HOSTNAME..."
 echo $NEW_HOSTNAME > /etc/hostname && success || failure
 echo -n "Modifying hosts file..."
 "$SED" -i "s/$HOSTNAME/$NEW_HOSTNAME/g" /etc/hosts && success || failure
-
+echo -n "Setting hostname to $NEW_HOSTNAME..."
+"$HOSTNAMEBIN" "$NEW_HOSTNAME" && success || failure
