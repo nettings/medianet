@@ -35,6 +35,10 @@ editing the partition table):
 1. Remove the loop devices:
 ```kpartx -d *-raspbian-*-lite.img```
 
+Alternatively, you can use the experimental script ```sbin/mn_make_image```.
+Make sure you have at least 9GB free space in the directory where you invoke
+it.
+
 ## Bootstrapping the system
 
 After booting the system image created above in a Raspberry Pi, it will have
@@ -48,8 +52,9 @@ followed by a reboot.
    1. ```sudo git clone https://github.com/nettings/medianet.git /medianet```
    1. cd /medianet
 1. Basic setup
-   1. Drop your own public key into ```/home/medianet/.ssh/authorized_keys```, since the one installed by default is ours and the private key is not part of this repository
-   1. Change into ```sbin/10-basics-as_user_pi/``` and execute the symlinks in numerical order using ```sudo```, carefully noting any error messages in the output. The final one will reboot the system.
+   1. Change into ```sbin/10-basics-as_user_pi/``` and execute the symlinks in numerical order using ```sudo```, carefully noting any error messages in the output. Do not run the final one (reboot) just yet.
+   1. Drop your own public key into ```/home/medianet/.ssh/authorized_keys```, since the one installed by default is ours and the private key is not part of this repository.
+   1. Reboot
 1. Customization
    1. Log into the system as the user *medianet* with the appropriate public key.
    1. Change into ```sbin/50-customize-as_user_medianet/``` and again execute the symlinks in numerical order using ```sudo```.
