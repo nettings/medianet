@@ -15,7 +15,7 @@ LimitMEMLOCK=700000000
 User=medianet
 # this is a player (source), hence no upstream connections
 #ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
-ExecStart=/usr/bin/mpv --quiet --ao="jack" --jack-name="wifi-rx" --jack-connect="no" --profile="low-latency" --audio-buffer=0.1 $OPTIONS 
+ExecStart=/usr/bin/mpv --quiet --ao="jack" --vo=null --jack-name="wifi-rx" --jack-connect="no" --profile="low-latency" --audio-buffer=0.1 $OPTIONS
 ExecStartPost=-/usr/local/bin/mn_connect %n
 RestartSec=1
 Restart=always
