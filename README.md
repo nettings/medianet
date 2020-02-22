@@ -57,7 +57,7 @@ followed by a reboot.
    1. ```sudo apt-get update```
    1. ```sudo apt-get install git```
    1. ```sudo git clone https://github.com/nettings/medianet.git /medianet```
-   1. cd /medianet
+   1. ```cd /medianet```
 1. Basic setup
    1. Change into ```sbin/10-basics-as_user_pi/``` and execute the symlinks in numerical order using ```sudo```, carefully noting any error messages in the output. Do not run the final one (reboot) just yet.
    1. Drop your own public key into ```/home/medianet/.ssh/authorized_keys```, since the one installed by default is ours and the private key is not part of this repository.
@@ -73,7 +73,7 @@ You can either shut down the Pi, remove the card and read it out on your other m
 
 1. Make sure your medianet system is running read-only, either by rebooting it or by issuing  
 ```sudo mn_make_readonly```
-1. Make sure you have 8G of space on a machine that you can reach over the network via ssh, and do
+1. Make sure you have 8G of space on a machine that you can reach over the network via ssh, and do  
 ```sudo dd if=/dev/mmcblk0 bs=512 | ssh user@bigmachine ' cat > /home/user/medianet-final.img ' ```
 
 Now is a good time to fetch a coffee.
