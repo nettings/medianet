@@ -5,34 +5,34 @@ Buster image into a medianet distribution. The process is as follows:
 
 ## Creating a base image
 
-1. Download the latest **Raspbian Buster lite** image (tested with Buster, requalify for newer releases): 
+1. Download the latest **Raspbian Buster lite** image (tested with Buster, requalify for newer releases):  
 ```wget https://downloads.raspberrypi.org/raspbian_lite_latest```
-1. Unzip image:
+1. Unzip image:  
 ```unzip *raspbian-*-lite.zip```
-1. Pad the image file with zeros up to 8GB:
+1. Pad the image file with zeros up to 8GB:  
 ```dd if=/dev/zero bs=4M count=1512 >> *-raspbian-*-lite.img```
-1. Resize the rootfs partition to 4G, using sectors for proper alignment:
+1. Resize the rootfs partition to 4G, using sectors for proper alignment:  
 ```parted *-raspbian-*-lite.img resizepart 2 8388607s```
-1. Create a 4G localfs partition: 
+1. Create a 4G localfs partition:  
 ```parted *-raspbian-*-lite.img mkpart primary ext4 8388608s 16777215s```
-1. Create loop devices for the image partitions and find the boot partition:
+1. Create loop devices for the image partitions and find the boot partition:  
 ```PART=/dev/mapper/`kpartx -av 2019-09-26-raspbian-buster-lite.img | grep -o "loop.p1"` ```
-1. Mount the boot partition:
+1. Mount the boot partition:  
 ```mount $PART /mnt```
-1. Activate SSH login on the image:  
+1. Activate SSH login on the image:   
 ```touch /mnt/ssh```
-1. Disable automatic resizing of root partition in Raspbian:
+1. Disable automatic resizing of root partition in Raspbian:  
 ```sed -i 's/init=[^[:space:]]*//' /mnt/cmdline.txt```
 1. Fix kernel commandline link to root fs (the PARTUUID has changed after
-editing the partition table):
+editing the partition table):  
 ```sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' /mnt/cmdline.txt```
-1. Unmount the boot partition:
+1. Unmount the boot partition:  
 ```umount /mnt```
-1. Find the new localfs partition:
+1. Find the new localfs partition:  
 ```PART=/dev/mapper/`kpartx -av 2019-09-26-raspbian-buster-lite.img | grep -o "loop.p3"` ```
-1. Create an ext4 file system:
+1. Create an ext4 file system:  
 ```mkfs.ext4 -L localfs $PART```
-1. Remove the loop devices:
+1. Remove the loop devices:  
 ```kpartx -d *-raspbian-*-lite.img```
 
 Alternatively, you can use the experimental script ```sbin/mn_make_image```.
