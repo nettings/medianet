@@ -3,12 +3,12 @@
 This directory contains scripts used to convert an almost-vanilla Raspbian
 Buster image into a medianet distribution. The process is as follows:
 
-## Creating a base image
+## Create a base image
 
-1. Download the latest **Raspbian Buster lite** image (tested with Buster, requalify for newer releases):  
+1. Download the latest **Raspbian lite** image (tested with Buster, requalify for newer releases):  
 ```wget https://downloads.raspberrypi.org/raspbian_lite_latest```
 1. Unzip image:  
-```unzip *raspbian-*-lite.zip```
+```unzip *-raspbian-*-lite.zip```
 1. Pad the image file with zeros up to 8GB:  
 ```dd if=/dev/zero bs=4M count=1512 >> *-raspbian-*-lite.img```
 1. Resize the rootfs partition to 4G, using sectors for proper alignment:  
@@ -16,7 +16,7 @@ Buster image into a medianet distribution. The process is as follows:
 1. Create a 4G localfs partition:  
 ```parted *-raspbian-*-lite.img mkpart primary ext4 8388608s 16777215s```
 1. Create loop devices for the image partitions and find the boot partition:  
-```PART=/dev/mapper/`kpartx -av 2019-09-26-raspbian-buster-lite.img | grep -o "loop.p1"` ```
+```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p1"` ```
 1. Mount the boot partition:  
 ```mount $PART /mnt```
 1. Activate SSH login on the image:   
@@ -29,7 +29,7 @@ editing the partition table):
 1. Unmount the boot partition:  
 ```umount /mnt```
 1. Find the new localfs partition:  
-```PART=/dev/mapper/`kpartx -av 2019-09-26-raspbian-buster-lite.img | grep -o "loop.p3"` ```
+```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p3"` ```
 1. Create an ext4 file system:  
 ```mkfs.ext4 -L localfs $PART```
 1. Remove the loop devices:  
@@ -39,7 +39,14 @@ Alternatively, you can use the experimental script ```sbin/mn_make_image```.
 Make sure you have at least 9GB free space in the directory where you invoke
 it.
 
-## Bootstrapping the system
+## Create an SD card
+
+At this point, it probably makes sense to rename the image to reflect the customisations:
+```mv *-raspbian-*-lite.img medianet-base.img```
+Now the image is ready to be written to a µ-SD card using the tool of your choice, which is probably dd:
+```dd if=medianet-base.img of=/dev/$CARDREADER bs=4M status=progress```
+
+## Bootstrap the system
 
 After booting the system image created above in a Raspberry Pi, it will have
 to be turned into a medianet system, which requires two remote logins each
@@ -59,5 +66,15 @@ followed by a reboot.
    1. Log into the system as the user *medianet* with the appropriate public key.
    1. Change into ```sbin/50-customize-as_user_medianet/``` and again execute the symlinks in numerical order using ```sudo```.
 
+## Create a final medianet image
 
+Once your system has been bootstrapped natively, it is probably a good idea to dump the whole system to an image file.
+You can either shut down the Pi, remove the card and read it out on your other machine, or (and that works surprisingly well given that the medianet system is meant to run read-only), copy it out from a running system:
+
+1. Make sure your medianet system is running read-only, either by rebooting it or by issuing  
+```sudo mn_make_readonly```
+1. Make sure you have 8G of space on a machine that you can reach over the network via ssh, and do
+```sudo dd if=/dev/mmcblk0 bs=512 | ssh user@bigmachine ' cat > /home/user/medianet-final.img ' ```
+
+Now is a good time to fetch a coffee.
 
