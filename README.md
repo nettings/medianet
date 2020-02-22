@@ -41,9 +41,9 @@ it.
 
 ## Create an SD card
 
-At this point, it probably makes sense to rename the image to reflect the customisations:
+At this point, it makes sense to rename the image to reflect the customisations:  
 ```mv *-raspbian-*-lite.img medianet-base.img```
-Now the image is ready to be written to a µ-SD card using the tool of your choice, which is probably dd:
+Now the image is ready to be written to a µ-SD card using the tool of your choice, which is dd:  
 ```dd if=medianet-base.img of=/dev/$CARDREADER bs=4M status=progress```
 
 ## Bootstrap the system
