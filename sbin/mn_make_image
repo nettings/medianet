@@ -15,6 +15,7 @@ fi
 IMG_BASENAME=`basename "$URL"`
 IMG=`echo "$IMG_BASENAME" | sed 's/\.zip/\.img/'`
 FINAL_IMG=`echo "$IMG" | sed 's/raspbian-buster-lite/medianet-base/'`
+IMG_SIZE=7969177600
 
 echo $IMG
 
@@ -49,16 +50,16 @@ function bail {
 
 scream "Creating a [mn] medianet base image:"
 
-echo -n "Downloading image $IMG..."
+echo "Downloading image $IMG..."
 wget -q --show-progress  "$URL" | tr '\n' ' ' && success || bail
 echo -n "Unzipping image..."
 unzip -q "${IMG_BASENAME}" && success || bail
-echo "Padding the image to 8G..."
-truncate -s 8G "$IMG" && success || bail
+echo "Padding the image to $IMG_SIZE..."
+truncate -s $IMG_SIZE "$IMG" && success || bail
 echo -n "Resizing the rootfs partition to 4G, aligning to sectors assumed 512K..."
 sudo bash -c "parted \"$IMG\" resizepart 2 8388607s" && success || bail 
-echo -n "Creating a localfs partition of 4G, again aligning to sectors..."
-sudo bash -c "parted \"$IMG\" mkpart primary ext4 8388608s 16777215s" && success || bail 
+echo -n "Creating a localfs partition spanning the remainder of the disk..."
+sudo bash -c "parted \"$IMG\" mkpart primary ext4 8388608s 100%" && success || bail
 echo "Creating loop devices for the image..."
 PARTITIONS=`sudo kpartx -av "$IMG"`
 PART1=/dev/mapper/`echo $PARTITIONS | grep -o loop.p1`
