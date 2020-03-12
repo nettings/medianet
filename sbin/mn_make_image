@@ -54,7 +54,7 @@ wget -q --show-progress  "$URL" | tr '\n' ' ' && success || bail
 echo -n "Unzipping image..."
 unzip -q "${IMG_BASENAME}" && success || bail
 echo "Padding the image to 8G..."
-dd if=/dev/zero bs=4M count=1512 status=noxfer >> "$IMG" && success || bail
+truncate -s 8G "$IMG" && success || bail
 echo -n "Resizing the rootfs partition to 4G, aligning to sectors assumed 512K..."
 sudo bash -c "parted \"$IMG\" resizepart 2 8388607s" && success || bail 
 echo -n "Creating a localfs partition of 4G, again aligning to sectors..."
