@@ -10,11 +10,11 @@ Buster image into a medianet distribution. The process is as follows:
 1. Unzip image:  
 ```unzip *-raspbian-*-lite.zip```
 1. Pad the image file with zeros up to 8GB:  
-```dd if=/dev/zero bs=4M count=1512 >> *-raspbian-*-lite.img```
+```truncate -s 7969177600 *-raspbian-*-lite.img```
 1. Resize the rootfs partition to 4G, using sectors for proper alignment:  
 ```parted *-raspbian-*-lite.img resizepart 2 8388607s```
-1. Create a 4G localfs partition:  
-```parted *-raspbian-*-lite.img mkpart primary ext4 8388608s 16777215s```
+1. Create a localfs partition spanning the remainder of the disk:  
+```parted *-raspbian-*-lite.img mkpart primary ext4 8388608s 100%```
 1. Create loop devices for the image partitions and find the boot partition:  
 ```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p1"` ```
 1. Mount the boot partition:  
@@ -34,6 +34,8 @@ editing the partition table):
 ```mkfs.ext4 -L localfs $PART```
 1. Remove the loop devices:  
 ```kpartx -d *-raspbian-*-lite.img```
+1. At this point, it makes sense to rename the image to reflect the customisations:  
+```mv *-raspbian-*-lite.img medianet-base.img```
 
 Alternatively, you can use the experimental script ```sbin/mn_make_image```.
 Make sure you have at least 9GB free space in the directory where you invoke
@@ -41,8 +43,7 @@ it.
 
 ## Create an SD card
 
-At this point, it makes sense to rename the image to reflect the customisations:  
-```mv *-raspbian-*-lite.img medianet-base.img```
+
 Now the image is ready to be written to a µ-SD card using the tool of your choice, which is dd:  
 ```dd if=medianet-base.img of=/dev/$CARDREADER bs=4M status=progress```
 
@@ -53,6 +54,7 @@ to be turned into a medianet system, which requires two remote logins each
 followed by a reboot.
 
 1. Log into the system as user *pi* with default password *raspberry* (this opens a window of vulnerability and should only be done on a trusted private network).
+```ssh pi@raspberrypi```
 1. Check out medianet environment
    1. ```sudo apt-get update```
    1. ```sudo apt-get install git```
@@ -63,7 +65,8 @@ followed by a reboot.
    1. Drop your own public key into ```/home/medianet/.ssh/authorized_keys```, since the one installed by default is ours and the private key is not part of this repository.
    1. Reboot
 1. Customization
-   1. Log into the system as the user *medianet* with the appropriate public key.
+   1. Log into the system as the user *medianet* with the appropriate public key. The host name is now "mn-basic":
+   ```ssh -i $PATH_TO_YOURKEY medianet@mn-basic```
    1. Change into ```sbin/50-customize-as_user_medianet/``` and again execute the symlinks in numerical order using ```sudo```.
 
 ## Create a final medianet image
