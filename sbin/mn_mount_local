@@ -9,7 +9,7 @@ echo -n "Checking for existence of /local..."
 $TEST -d /local && {
 	echo "exists."
 } || {
-	echo "creating..."
+	echo -n "creating..."
 	"$MKDIR" -p /local && success || bail
 }
 echo -n "Mounting data partition /dev/mmcblk0p3 to /local..."
