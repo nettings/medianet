@@ -8,8 +8,9 @@ needroot
 
 MID=`/usr/bin/dbus-uuidgen`
 # see https://unix.stackexchange.com/questions/191313/why-is-my-systemd-journal-not-persistent-across-reboots
-echo -n "Unmounting /etc/machine-id..."
-umount /etc/machine-id && success || failure
+# there is no machine-id mount on Raspbian:
+# echo -n "Unmounting /etc/machine-id..."
+# umount /etc/machine-id && success || failure
 echo -n "Setting machine ID to new random value \'$MID\'..."
 echo "$MID" > /etc/machine-id && success || failure
 echo -n "Setting read-only..."
