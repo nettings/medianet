@@ -1,0 +1,17 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+
+echo -n "Checking for existence of /local..."
+$TEST -d /local && {
+	echo "exists."
+} || {
+	echo "creating..."
+	"$MKDIR" -p /local && success || bail
+}
+echo -n "Mounting data partition /dev/mmcblk0p3 to /local..."
+"$MOUNT" -o rw,noatime,nodelalloc,data=journal -t ext4 /dev/mmcblk0p3 /local && success || failure
+
