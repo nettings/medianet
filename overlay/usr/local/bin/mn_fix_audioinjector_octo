@@ -5,8 +5,9 @@
 # that prevented snd_soc_cs42xx8_i2c from starting properly.
 #
 # With current kernels, it is now obsolete.
+# Update: apparently there is a regression in 4.19.97 which again needs this workaround.
 
-./medianet/lib/mn_includes
+. /medianet/lib/mn_includes
 
 needroot
 
