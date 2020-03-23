@@ -119,7 +119,7 @@ done
 
 scream "Update systemd unit options:"
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | select(.options) | "\(.unit)\n\(.type)\n\(.jackName)\n\(.options)"'`
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | select(.options) | "\(.unit)\n\(.type)\n\(.jackName)\n\(.execStartPre)\n\(.options)"'`
 while read UNIT ; do
 	read TYPE
 	if [[ -z "$UNIT" || -z "$TYPE" ]] ; then continue ; fi 
@@ -130,10 +130,16 @@ while read UNIT ; do
 		mkdir "$DROPIN_DIR" && success || failure
 	fi
 	read JACKNAME
+	read EXECSTARTPRE
 	read OPTIONS
-	CONFIG="Environment=\"OPTIONS="
-	CONFIG+=`echo "$OPTIONS" | sed "s/%jackName%/\'$JACKNAME\'/g"`
-	CONFIG+="\""
+	if [[ "$OPTIONS" != "null" ]] ; then
+		CONFIG="Environment=\"OPTIONS="
+		CONFIG+=`echo "$OPTIONS" | sed "s/%jackName%/\'$JACKNAME\'/g"`
+		CONFIG+="\"\n"
+	fi
+	if [[ "$EXECSTARTPRE" != "null" ]] ; then
+		CONFIG+="ExecStartPre=$EXECSTARTPRE\n"
+	fi
 	echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
 	echo -e "$CONFIG"
 	CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
