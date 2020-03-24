@@ -25,6 +25,7 @@ MKDIR=/bin/mkdir
 MOUNT=/bin/mount
 MV=/bin/mv
 PASSWD=/usr/bin/passwd
+PS=/bin/ps
 READLINK=/bin/readlink
 RM=/bin/rm
 SED=/bin/sed
