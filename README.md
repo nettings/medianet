@@ -3,13 +3,18 @@
 This directory contains scripts used to convert an almost-vanilla Raspbian
 Buster image into a medianet distribution. The process is as follows:
 
-## Create a base image
+## Automatically create a base image
+You can use the experimental script ```mn_make_image```. Since the image creation process is all BASH code, you can check out this repo to any modern Linux on any architecture, and it will work (i.e. you don't need to run this on a Pi even though it's part of the medianet repository). Make sure you have at least 9 GB free space in the directory where you invoke it.
+```
+medianet/sbin/mn_make_image http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip
+```
 
+## Alternative: Manually create a base image
 1. Download the latest **Raspbian lite** image (tested with Buster, requalify for newer releases):  
 ```wget https://downloads.raspberrypi.org/raspbian_lite_latest```
 1. Unzip image:  
 ```unzip *-raspbian-*-lite.zip```
-1. Pad the image file with zeros up to 8GB:  
+1. Pad the image file with zeros up to 8 GB:  
 ```truncate -s 7969177600 *-raspbian-*-lite.img```
 1. Resize the rootfs partition to 4G, using sectors for proper alignment:  
 ```parted *-raspbian-*-lite.img resizepart 2 8388607s```
@@ -23,8 +28,7 @@ Buster image into a medianet distribution. The process is as follows:
 ```touch /mnt/ssh```
 1. Disable automatic resizing of root partition in Raspbian:  
 ```sed -i 's/init=[^[:space:]]*//' /mnt/cmdline.txt```
-1. Fix kernel commandline link to root fs (the PARTUUID has changed after
-editing the partition table):  
+1. Fix kernel commandline link to root fs (the PARTUUID has changed after editing the partition table):  
 ```sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' /mnt/cmdline.txt```
 1. Unmount the boot partition:  
 ```umount /mnt```
@@ -37,18 +41,11 @@ editing the partition table):
 1. At this point, it makes sense to rename the image to reflect the customisations:  
 ```mv *-raspbian-*-lite.img medianet-base.img```
 
-Alternatively, you can use the experimental script ```sbin/mn_make_image```.
-Make sure you have at least 9GB free space in the directory where you invoke
-it.
-
 ## Create an SD card
-
-
 Now the image is ready to be written to a µ-SD card using the tool of your choice, which is dd:  
 ```dd if=medianet-base.img of=/dev/$CARDREADER bs=4M status=progress```
 
 ## Bootstrap the system
-
 After booting the system image created above in a Raspberry Pi, it will have
 to be turned into a medianet system, which requires two remote logins each
 followed by a reboot.
@@ -70,7 +67,6 @@ followed by a reboot.
    1. Change into ```sbin/50-customize-as_user_medianet/``` and again execute the symlinks in numerical order using ```sudo```.
 
 ## Create a final medianet image
-
 Once your system has been bootstrapped natively, it is probably a good idea to dump the whole system to an image file.
 You can either shut down the Pi, remove the card and read it out on your other machine, or (and that works surprisingly well given that the medianet system is meant to run read-only), copy it out from a running system:
 
