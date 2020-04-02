@@ -193,6 +193,19 @@ echo -n "Writing to $CONF_FILE_MODHOST..."
 echo -e "$CONFIG" > "$CONF_FILE_MODHOST" && success || failure
 
 
+scream "Update shairport-sync configuration:"
+
+CONFIG=
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "shairport-sync") | .config[]'`
+while read COMMAND ; do
+        CONFIG+="$COMMAND\n"
+done <<< "$DATA"
+echo -en "$CONFIG"
+CONFIG="$NOEDIT\n\n$CONFIG"
+echo -n "Writing to $CONF_FILE_SHAIRPORT_SYNC..."
+echo -e "$CONFIG" > "$CONF_FILE_SHAIRPORT_SYNC" && success || failure
+
+
 scream "Update zita-lrx configuration:"
 
 CONFIG=

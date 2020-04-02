@@ -5,6 +5,7 @@ GROUP=medianet
 CONFIG_INCLUDE=/etc/mn_config
 CONF_FILE_MODHOST=/etc/mod-host.conf
 CONF_FILE_MODHOST_STATE=/local/data/mod-host.state
+CONF_FILE_SHAIRPORT_SYNC=/etc/shairport-sync.conf
 CONF_FILE_ZITALRX=/etc/zita-lrx.conf
 CONF_FILE_BOOT=/boot/medianet.txt
 CONF_FILE_PERMISSIONS="$PREFIX"/permissions.medianet
