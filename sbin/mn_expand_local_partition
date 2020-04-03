@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+echo "Expanding /local partition on /dev/mmcblk0p3 to maximum size..."
+"$PARTED" -m /dev/mmcblk0 resizepart 3 yes 100% && success || failure
+echo "Growing /local filesystem to partition size..."
+"$RESIZE2FS" /dev/mmcblk0p3 && success || failure
