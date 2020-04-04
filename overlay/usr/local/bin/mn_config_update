@@ -95,90 +95,97 @@ echo -n "Writing $CONF_FILE_BOOT..."
 echo -en "$CONFIG" > "$CONF_FILE_BOOT" && success || failure
 
 
-scream "Update systemd unit status:"
+# systemd unit status
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | "\(.unit).\(.type)"'`
-# we iterate over known list of services, so we can disable anything not enabled in the config file
-for i in $SYSTEMD_MEDIANET_UNITS ; do
-	UNIT=`"$BASENAME" "$i"`
-	"$GREP" --quiet "^${UNIT}$" <<< "$DATA" && {
-		# service should be enabled
-		echo -n "Enabling $UNIT..."
-		"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
-			echo " is already enabled."
+if [[ -n "$DATA" ]] ; then
+	scream "Update systemd unit status:"
+	# we iterate over known list of services, so we can disable anything not enabled in the config file
+	for i in $SYSTEMD_MEDIANET_UNITS ; do
+		UNIT=`"$BASENAME" "$i"`
+		"$GREP" --quiet "^${UNIT}$" <<< "$DATA" && {
+			# service should be enabled
+			echo -n "Enabling $UNIT..."
+			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
+				echo " is already enabled."
+			} || {
+				"$SYSTEMCTL" --quiet enable "$i" && success || failure
+			}
 		} || {
-			"$SYSTEMCTL" --quiet enable "$i" && success || failure
+			# service should be disabled
+			echo -n "Disabling $UNIT..."
+			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
+				"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
+			} || echo " already disabled."
 		}
-	} || {
-		# service should be disabled
-		echo -n "Disabling $UNIT..."
-		"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
-			"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
-		} || echo " already disabled."
-	}
-done
+	done
+fi
 
-scream "Update systemd unit options:"
+# systemd unit options
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | select(.options) | "\(.unit)\n\(.type)\n\(.jackName)\n\(.execStartPre)\n\(.options)"'`
-while read UNIT ; do
-	read TYPE
-	if [[ -z "$UNIT" || -z "$TYPE" ]] ; then continue ; fi 
-	DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
-	DROPIN_FILE="$UNIT"."$TYPE".conf
-	if [[ ! -e "$DROPIN_DIR" ]] ; then
-		echo -n "Creating $DROPIN_DIR..."
-		mkdir "$DROPIN_DIR" && success || failure
-	fi
-	read JACKNAME
-	read EXECSTARTPRE
-	read OPTIONS
-	if [[ "$OPTIONS" != "null" ]] ; then
-		CONFIG="Environment=\"OPTIONS="
-		CONFIG+=`echo "$OPTIONS" | sed "s/%jackName%/\'$JACKNAME\'/g"`
-		CONFIG+="\"\n"
-	fi
-	if [[ "$EXECSTARTPRE" != "null" ]] ; then
-		CONFIG+="ExecStartPre=$EXECSTARTPRE\n"
-	fi
-	echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
-	echo -e "$CONFIG"
-	CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
-	echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
-done <<< "$DATA"
-
-scream "Update systemd jack unit connections:"
+if [[ -n "$DATA" ]] ; then
+	scream "Update systemd unit options:"
+	while read UNIT ; do
+		read TYPE
+		if [[ -z "$UNIT" || -z "$TYPE" ]] ; then continue ; fi 
+		DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
+		DROPIN_FILE="$UNIT"."$TYPE".conf
+		if [[ ! -e "$DROPIN_DIR" ]] ; then
+			echo -n "Creating $DROPIN_DIR..."
+			mkdir "$DROPIN_DIR" && success || failure
+		fi
+		read JACKNAME
+		read EXECSTARTPRE
+		read OPTIONS
+		if [[ "$OPTIONS" != "null" ]] ; then
+			CONFIG="Environment=\"OPTIONS="
+			CONFIG+=`echo "$OPTIONS" | sed "s/%jackName%/\'$JACKNAME\'/g"`
+			CONFIG+="\"\n"
+		fi
+		if [[ "$EXECSTARTPRE" != "null" ]] ; then
+			CONFIG+="ExecStartPre=$EXECSTARTPRE\n"
+		fi
+		echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
+		echo -e "$CONFIG"
+		CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
+		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
+	done <<< "$DATA"
+fi
+	
+# systemd jack unit connections
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.outPorts or .inPorts) | "\(.unit)\n\(.type)"'`
-while read UNIT ; do
-	CONFIG=
-        read TYPE
-	if [[ -z "$UNIT" || -z "$TYPE" ]] ; then continue ; fi 
-        DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
-        DROPIN_FILE="$UNIT"."$TYPE".connections
-	if [[ ! -e "$DROPIN_DIR" ]] ; then
-		echo -n "Creating $DROPIN_DIR..."
-		mkdir "$DROPIN_DIR" && success || failure
-	fi
-	COUT=`cat "$CONFIG_FILE" | "$JQ" --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
-	if [[ "$COUT" ]] ; then
-		CONFIG="CONNECTIONS_OUT=\"$COUT\n\"\n"
-	fi
-	CIN=`cat "$CONFIG_FILE" | "$JQ" --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/input_connections.jq`
-	if [[ "$CIN" ]] ; then
-		CONFIG+="CONNECTIONS_IN=\"$CIN\n\"\n"
-	fi
-
-	echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
-	echo -e "$CONFIG"
-	CONFIG="$NOEDIT\n\n$CONFIG"
-	echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
-done <<< "$DATA"
-
+if [[ -n "$DATA" ]] ; then
+	scream "Update systemd jack unit connections:"
+	while read UNIT ; do
+		CONFIG=
+	        read TYPE
+		if [[ -z "$UNIT" || -z "$TYPE" ]] ; then continue ; fi 
+	        DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
+	        DROPIN_FILE="$UNIT"."$TYPE".connections
+		if [[ ! -e "$DROPIN_DIR" ]] ; then
+			echo -n "Creating $DROPIN_DIR..."
+			mkdir "$DROPIN_DIR" && success || failure
+		fi
+		COUT=`cat "$CONFIG_FILE" | "$JQ" --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
+		if [[ "$COUT" ]] ; then
+			CONFIG="CONNECTIONS_OUT=\"$COUT\n\"\n"
+		fi
+		CIN=`cat "$CONFIG_FILE" | "$JQ" --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/input_connections.jq`
+		if [[ "$CIN" ]] ; then
+			CONFIG+="CONNECTIONS_IN=\"$CIN\n\"\n"
+		fi
+		echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
+		echo -e "$CONFIG"
+		CONFIG="$NOEDIT\n\n$CONFIG"
+		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
+	done <<< "$DATA"
+fi
 
 scream "Update systemd daemon settings:"
-
 echo -n "Performing 'systemctl daemon-reload'..."
 $SYSTEMCTL daemon-reload && success || failure
 
+# write config files
 
 # mod-host
 CONFIG=
