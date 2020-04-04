@@ -145,9 +145,10 @@ if [[ -n "$DATA" ]] ; then
 		if [[ "$EXECSTARTPRE" != "null" ]] ; then
 			CONFIG+="ExecStartPre=$EXECSTARTPRE\n"
 		fi
-		echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
-		echo -e "$CONFIG"
+		echo "$UNIT options:"
+		echo -en "$CONFIG"
 		CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
+		echo -n "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
 		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
 	done <<< "$DATA"
 fi
@@ -174,9 +175,10 @@ if [[ -n "$DATA" ]] ; then
 		if [[ "$CIN" ]] ; then
 			CONFIG+="CONNECTIONS_IN=\"$CIN\n\"\n"
 		fi
-		echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
-		echo -e "$CONFIG"
+		echo "$UNIT connections:"
+		echo -en "$CONFIG"
 		CONFIG="$NOEDIT\n\n$CONFIG"
+		echo -n "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
 		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
 	done <<< "$DATA"
 fi
