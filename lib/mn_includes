@@ -6,7 +6,8 @@ PREFIX=${PREFIX:-/medianet}
 
 # dynamic helper variables
 # don't barf if \$0 starts with dash (as for login shell)
-PROGNAME=`basename -- "$0"`
+PROGNAME=`realpath -- "$0"`
+PROGNAME=`basename -- "$PROGNAME"`
 
 # make config variables available
 if [[ -f "$CONFIG_INCLUDE" ]] ; then
