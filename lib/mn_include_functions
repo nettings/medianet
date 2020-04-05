@@ -7,6 +7,7 @@ function success {
   echo  -e " \033[1;32msucceeded.\033[0m"
 }
 
+# $@: error message
 function failure {
 	ERR=$?
 	ERRSTR=""
@@ -16,6 +17,7 @@ function failure {
 	echo  -e " \033[1;31mfailed$ERRSTR. $@\033[0m"
 }
 
+# $@: error message
 function bail {
 	ERR=$?
 	ERRSTR=""
@@ -24,6 +26,12 @@ function bail {
 	fi
 	echo -e "\033[1;31mFatal error \"$@\"$ERRSTR ... Exiting.\033[0m"
   exit 1
+}
+
+# this function works as a filter ("|")!
+# $1: indent string
+function indent {
+	sed -E "s/^(.*)/${1:-  }\1/"
 }
 
 function needroot {
