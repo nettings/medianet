@@ -10,6 +10,7 @@ CONF_FILE_ZITALRX=/etc/zita-lrx.conf
 CONF_FILE_BOOT=/boot/medianet.txt
 CONF_FILE_PERMISSIONS="$PREFIX"/permissions.medianet
 CONF_FILE_FSTAB=/etc/fstab
+CONF_FILE_FSTAB_DEFAULT="$PREFIX"/overlay/etc/fstab.medianet
 
 SYSTEM_CONFIG="$PREFIX"/config/this/medianet.json
 SYSTEMD_UNIT_DIR=/etc/systemd/system

@@ -15,9 +15,9 @@ if [[ ! -e "$CONFIG_FILE" ]] ; then
 fi
 
 NOEDIT="# automatically created by $PROGNAME from $CONFIG_FILE, do not edit!"
-NOEDITBELOW="# automatically created by $PROGNAME, do not edit below this line!"
 NONE="[none]\n"
 
+# globals
 MATCH="product description hostname location version"
 # make nice headline:
 FMATCH=
@@ -52,6 +52,7 @@ echo -e "$CONFIG" > "$CONFIG_INCLUDE" && success || failure
 
 . $CONFIG_INCLUDE
 
+# hostname
 if [[ $CONFIG_HOSTNAME =~ [a-zA-Z0-9][a-zA-Z0-9-]{0,62} ]] ; then
 	echo -n "Updating /etc/hostname to $CONFIG_HOSTNAME..."
 	if [[ `cat /etc/hostname 2> /dev/null | "$TR" -d '[:space:]'` != "$CONFIG_HOSTNAME" ]] ; then 
@@ -103,16 +104,13 @@ DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.mounts[]'`
 if [[ -n "$DATA" ]] ; then
 	scream "Update custom mounts in $CONF_FILE_FSTAB:"
 	while read LINE ; do
-		if [[ "$LINE" == "$NOEDITBELOW" ]] ; then
-			break
-		fi
 		CONFIG+="$LINE\n"
-	done < "$CONF_FILE_FSTAB"
-	CONFIG+="$NOEDITBELOW\n"
+	done < "$CONF_FILE_FSTAB_DEFAULT"
 	while read LINE ; do
 		CONFIG+="$LINE\n"
 	done <<< "$DATA"
 	echo -en "${CONFIG:-${NONE}}" | indent
+	CONFIG="$NOEDIT\n$CONFIG"
 	echo -n "Writing $CONF_FILE_FSTAB..."
 	echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
 fi
