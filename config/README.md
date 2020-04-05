@@ -89,11 +89,24 @@ any of the following into a live configuration.
 # connections (if applicable), and other hacks:
 	"systemdUnits"	: [
 		{
+# The name of the unit:
 			"unit"		: "jackd",
+# The type (currently, only services are supported):
 			"type"		: "service",
+# Set this to 0 to quickly disable a service without having
+# to delete it from the configuration:
 			"enabled"	: 1,
+# This option is required for all JACK client units. It allows
+# you to set a JACK client name other than the application
+# default, if supported by the service (check the unit file for
+# a "$JACKNAME" parameter).
+# It also allows you to use relative port names if the JACK
+# client name is different from the unit name.
 			"jackName"      : "system",
+# Options that are passed through to the service application.
+# The service unit file may add default options.
 			"options"       : "-R -t 4500 -P 70 -d alsa -d hw:sndrpihifiberry -P -r 48000 -p 128 -n 2 -z shaped"
+# A list of JACK input ports:
 			"inPorts"	: [ 
 				{
                                         "portName"   : "playback_1"
@@ -102,6 +115,7 @@ any of the following into a live configuration.
                                         "portName"   : "playback_2"
                                 }
                         ],
+# A list of JACK output ports and their connection targets:
                         "outPorts": []
 		}
 	]

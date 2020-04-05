@@ -16,6 +16,7 @@ fi
 
 NOEDIT="# automatically created by $PROGNAME from $CONFIG_FILE, do not edit!"
 NOEDITBELOW="# automatically created by $PROGNAME, do not edit below this line!"
+NONE="[none]\n"
 
 MATCH="product description hostname location version"
 # make nice headline:
@@ -44,7 +45,7 @@ for i in $FMATCH; do
 	fi
 done <<< "$DATA"
 
-echo -en "$CONFIG"
+echo -en "${CONFIG:-${NONE}}" | indent
 CONFIG="$NOEDIT\n$CONFIG"
 echo -n "Writing $CONFIG_INCLUDE..."
 echo -e "$CONFIG" > "$CONFIG_INCLUDE" && success || failure
@@ -90,7 +91,7 @@ DATA=`cat "$CONFIG_FILE"  | "$JQ" -r '.bootConfig.dtoverlay[]?'`
 while read VALUE ; do
 	[[ $VALUE ]] && CONFIG+="dtoverlay=$VALUE\n"
 done <<< "$DATA"
-echo -en "$CONFIG"
+echo -en "${CONFIG:-${NONE}}" | indent
 CONFIG="$NOEDIT\n$CONFIG"
 echo -n "Writing $CONF_FILE_BOOT..."
 echo -en "$CONFIG" > "$CONF_FILE_BOOT" && success || failure
@@ -111,7 +112,7 @@ if [[ -n "$DATA" ]] ; then
 	while read LINE ; do
 		CONFIG+="$LINE\n"
 	done <<< "$DATA"
-	echo -en "$CONFIG"
+	echo -en "${CONFIG:-${NONE}}" | indent
 	echo -n "Writing $CONF_FILE_FSTAB..."
 	echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
 fi
@@ -142,11 +143,11 @@ if [[ -n "$DATA" ]] ; then
 fi
 
 # systemd unit options
-CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | select(.options) | "\(.unit)\n\(.type)\n\(.jackName)\n\(.execStartPre)\n\(.options)"'`
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | select(.jackName or .execStartPre or .options) | "\(.unit)\n\(.type)\n\(.jackName)\n\(.execStartPre)\n\(.options)"'`
 if [[ -n "$DATA" ]] ; then
 	scream "Update systemd unit options:"
 	while read UNIT ; do
+		CONFIG=
 		read TYPE
 		if [[ -z "$UNIT" || -z "$TYPE" ]] ; then continue ; fi 
 		DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
@@ -156,18 +157,23 @@ if [[ -n "$DATA" ]] ; then
 			mkdir "$DROPIN_DIR" && success || failure
 		fi
 		read JACKNAME
-		read EXECSTARTPRE
-		read OPTIONS
-		if [[ "$OPTIONS" != "null" ]] ; then
-			CONFIG="Environment=\"OPTIONS="
-			CONFIG+=`echo "$OPTIONS" | sed "s/%jackName%/\'$JACKNAME\'/g"`
-			CONFIG+="\"\n"
+		if [[ "$JACKNAME" != "null" ]] ; then
+			CONFIG+="Environment=\"JACKNAME=$JACKNAME\"\n"
 		fi
+		read EXECSTARTPRE
 		if [[ "$EXECSTARTPRE" != "null" ]] ; then
 			CONFIG+="ExecStartPre=$EXECSTARTPRE\n"
 		fi
+		read OPTIONS
+		if [[ "$OPTIONS" != "null" ]] ; then
+			CONFIG+="Environment=\"OPTIONS="
+			# deprecated hack to substitute %jackName% in the options string
+			# now hardcoded into service file for all services that support it
+			CONFIG+=`echo "$OPTIONS" | sed "s/%jackName%/\'$JACKNAME\'/g"`
+			CONFIG+="\"\n"
+		fi
 		echo "$UNIT options:"
-		echo -en "$CONFIG"
+		echo -en "${CONFIG:-${NONE}}" | indent
 		CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
 		echo -n "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
 		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
@@ -197,7 +203,7 @@ if [[ -n "$DATA" ]] ; then
 			CONFIG+="CONNECTIONS_IN=\"$CIN\n\"\n"
 		fi
 		echo "$UNIT connections:"
-		echo -en "$CONFIG"
+		echo -en "${CONFIG:-${NONE}}" | indent
 		CONFIG="$NOEDIT\n\n$CONFIG"
 		echo -n "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
 		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
@@ -218,7 +224,7 @@ if [[ -n "$DATA" ]] ; then
 	while read COMMAND ; do
 		CONFIG+="$COMMAND\n"
 	done <<< "$DATA"
-	echo -en "$CONFIG"
+	echo -en "${CONFIG:-${NONE}}" | indent
 	CONFIG="$NOEDIT\n\n$CONFIG"
 	echo -n "Writing to $CONF_FILE_MODHOST..."
 	echo -e "$CONFIG" > "$CONF_FILE_MODHOST" && success || failure
@@ -232,7 +238,7 @@ if [[ -n "$DATA" ]] ; then
 	while read COMMAND ; do
 		CONFIG+="$COMMAND\n"
 	done <<< "$DATA"
-	echo -en "$CONFIG"
+	echo -en "${CONFIG:-${NONE}}" | indent
 	CONFIG="$NOEDIT\n\n$CONFIG"
 	echo -n "Writing to $CONF_FILE_SHAIRPORT_SYNC..."
 	echo -e "$CONFIG" > "$CONF_FILE_SHAIRPORT_SYNC" && success || failure
@@ -246,7 +252,7 @@ if [[ -n "$DATA" ]] ; then
 	while read COMMAND ; do
 		CONFIG+="$COMMAND\n"
 	done <<< "$DATA"
-	echo -en "$CONFIG"
+	echo -en "${CONFIG:-${NONE}}" | indent
 	CONFIG="$NOEDIT\n\n$CONFIG"
 	echo -n "Writing to $CONF_FILE_ZITALRX..."
 	echo -e "$CONFIG" > "$CONF_FILE_ZITALRX" && success || failure
