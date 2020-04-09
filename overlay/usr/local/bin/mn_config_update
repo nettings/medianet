@@ -101,19 +101,21 @@ echo -en "$CONFIG" > "$CONF_FILE_BOOT" && success || failure
 # mounts
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.mounts[]'`
+scream "Write $CONF_FILE_FSTAB and check for custom mounts:"
+# always read default fstab
+while read LINE ; do
+	CONFIG+="$LINE\n"
+done < "$CONF_FILE_FSTAB_DEFAULT"
 if [[ -n "$DATA" ]] ; then
-	scream "Update custom mounts in $CONF_FILE_FSTAB:"
-	while read LINE ; do
-		CONFIG+="$LINE\n"
-	done < "$CONF_FILE_FSTAB_DEFAULT"
 	while read LINE ; do
 		CONFIG+="$LINE\n"
 	done <<< "$DATA"
 	echo -en "${CONFIG:-${NONE}}" | indent
-	CONFIG="$NOEDIT\n$CONFIG"
-	echo -n "Writing $CONF_FILE_FSTAB..."
-	echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
 fi
+CONFIG="$NOEDIT\n$CONFIG"
+echo -n "Writing $CONF_FILE_FSTAB..."
+echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
+
 
 # systemd unit status
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | "\(.unit).\(.type)"'`
