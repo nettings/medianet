@@ -61,7 +61,11 @@ if [[ $CONFIG_HOSTNAME =~ [a-zA-Z0-9][a-zA-Z0-9-]{0,62} ]] ; then
 		echo " not changed".
 	fi
 	echo -n "Updating /etc/hosts to $CONFIG_HOSTNAME..."
-	"$SED" -i "s/$HOSTNAME/$CONFIG_HOSTNAME/g" /etc/hosts && success || failure
+	if [[ -n `grep $HOSTNAME /etc/hosts` ]] ; then
+		"$SED" -i "s/$HOSTNAME/$CONFIG_HOSTNAME/g" /etc/hosts && success || failure
+	else
+		echo -e "127.0.0.1\t$CONFIG_HOSTNAME" >> /etc/hosts && success || failure
+	fi
 	echo -n "Setting hostname to $CONFIG_HOSTNAME..."
 	"$HOSTNAMEBIN" "$CONFIG_HOSTNAME" && success || failure
 else
