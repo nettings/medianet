@@ -1,0 +1,15 @@
+[Unit]
+Description = Kodi Media Center
+After = remote-fs.target network-online.target jackd.target
+Wants = network-online.target
+
+[Service]
+User = medianet
+Group = medianet
+Type = simple
+ExecStart = /usr/bin/kodi --standalone $OPTIONS
+Restart = on-abort
+RestartSec = 5
+
+[Install]
+WantedBy = multi-user.target
