@@ -2,6 +2,7 @@
 Description = Kodi Media Center
 After = remote-fs.target network-online.target jackd.target
 Wants = network-online.target
+Requires = jackd.target
 
 [Service]
 User = medianet
