@@ -5,6 +5,8 @@ Wants = network-online.target
 Requires = jackd.target
 
 [Service]
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
 User = medianet
 Group = medianet
 Type = simple
