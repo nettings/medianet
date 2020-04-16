@@ -11,7 +11,7 @@ medianet/sbin/mn_make_image http://downloads.raspberrypi.org/raspbian_lite/image
 
 ## Alternative: Manually create a base image
 1. Download the latest **Raspbian lite** image (tested with Buster, requalify for newer releases):  
-```wget https://downloads.raspberrypi.org/raspbian_lite_latest```
+```wget http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip```
 1. Unzip image:  
 ```unzip *-raspbian-*-lite.zip```
 1. Pad the image file with zeros up to 8 GB:  
@@ -62,9 +62,12 @@ followed by a reboot.
    1. Drop your own public key into ```/home/medianet/.ssh/authorized_keys```, since the one installed by default is ours and the private key is not part of this repository.
    1. Reboot
 1. Customization
-   1. Log into the system as the user *medianet* with the appropriate public key. The host name is now "mn-basic":
+   1. Log into the system as the user *medianet* with the appropriate public key. The host name is now "mn-basic":  
    ```ssh -i $PATH_TO_YOURKEY medianet@mn-basic```
-   1. Change into ```sbin/50-customize-as_user_medianet/``` and again execute the symlinks in numerical order using ```sudo```.
+   1. Change into ```sbin/50-customize-as_user_medianet/``` and again execute the symlinks in numerical order using ```sudo```, except for the checkout and build steps of custom software, those are done with user rights for security reasons.  
+   During package installation, you will be asked whether to configure Icecast2. Answer ```no```.  
+   Then you will be asked whether to enable realtime privileges for JACK. Answer ```yes```.
+   
 
 ## Create a final medianet image
 Once your system has been bootstrapped natively, it is probably a good idea to dump the whole system to an image file.
