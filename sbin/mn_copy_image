@@ -1,0 +1,39 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+THIS=`basename $0`
+
+if [[ "$1" =~ [a-z0-9]+ ]] ; then
+	USER="$1"
+	echo 1 $USER
+fi
+if [[ "$2" =~ [a-z0-9.-]+ ]] ; then
+	HOST="$2"
+	echo 2 $HOST
+fi
+if [[ -n "$3" ]] ; then
+	TARGET="$3/"
+fi
+
+if [[ -z "$USER" || -z "$HOST" ]] ; then
+	echo "Usage: $THIS user host [path]"
+	echo "Copies a deployment-ready [mn] medianet image from the running system to an"
+	echo "external host for duplication. Make sure the system is running in read-only"
+	echo "mode with all unnecessary services disabled."
+	echo "(This is usually the case when following the bootstrapping routine.)"
+	exit 2
+fi
+
+IMGNAME=`$DATE -Idate`"-medianet.img"
+
+
+scream "Copying image from running system to ${USER}@${HOST}:${TARGET}${IMGNAME}."
+
+"$DD" if=/dev/mmcblk0 bs=4M count=2048 status=progress | "$SSH" "$USER"@"$HOST" "cat > ${TARGET}${IMGNAME}"
+
+
+
+

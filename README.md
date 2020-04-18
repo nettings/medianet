@@ -3,15 +3,15 @@
 This directory contains scripts used to convert an almost-vanilla Raspbian
 Buster image into a medianet distribution. The process is as follows:
 
-## Automatically create a base image
-You can use the experimental script ```mn_make_image```. Since the image creation process is all BASH code, you can check out this repo to any modern Linux on any architecture, and it will work (i.e. you don't need to run this on a Pi even though it's part of the medianet repository). Make sure you have at least 9 GB free space in the directory where you invoke it.
+## Automatically create a Raspbian base image
+You can use the experimental script ```mn_make_image``` in ```sbin/```. Since the image creation process is all BASH code, you can check out this repo to any modern Linux on any architecture, and it will work (i.e. you don't need to run this on a Pi even though it's part of the medianet repository). Make sure you have at least 9 GB free space in the directory where you invoke it.
 ```
 medianet/sbin/mn_make_image http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip
 ```
 
-## Alternative: Manually create a base image
+## Alternative: Manually create a Raspbian base image
 1. Download the latest **Raspbian lite** image (tested with Buster, requalify for newer releases):  
-```wget https://downloads.raspberrypi.org/raspbian_lite_latest```
+```wget http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip```
 1. Unzip image:  
 ```unzip *-raspbian-*-lite.zip```
 1. Pad the image file with zeros up to 8 GB:  
@@ -62,18 +62,29 @@ followed by a reboot.
    1. Drop your own public key into ```/home/medianet/.ssh/authorized_keys```, since the one installed by default is ours and the private key is not part of this repository.
    1. Reboot
 1. Customization
-   1. Log into the system as the user *medianet* with the appropriate public key. The host name is now "mn-basic":
+   1. Log into the system as user *medianet* with the appropriate public key. The host name is now "mn-basic":  
    ```ssh -i $PATH_TO_YOURKEY medianet@mn-basic```
-   1. Change into ```sbin/50-customize-as_user_medianet/``` and again execute the symlinks in numerical order using ```sudo```.
+   1. Change into ```sbin/50-customize-as_user_medianet/``` and again execute the symlinks in numerical order using ```sudo```, except for the checkout and build steps of custom software, those are done with user rights for security reasons.  
+   During package installation, you will be asked whether to configure Icecast2. Answer ```no```.  
+   Then you will be asked whether to enable realtime privileges for JACK. Answer ```yes```.
 
-## Create a final medianet image
-Once your system has been bootstrapped natively, it is probably a good idea to dump the whole system to an image file.
-You can either shut down the Pi, remove the card and read it out on your other machine, or (and that works surprisingly well given that the medianet system is meant to run read-only), copy it out from a running system:
-
-1. Make sure your medianet system is running read-only, either by rebooting it or by issuing  
-```sudo mn_make_readonly```
-1. Make sure you have 8G of space on a machine that you can reach over the network via ssh, and do  
-```sudo dd if=/dev/mmcblk0 bs=512 | ssh user@bigmachine ' cat > /home/user/medianet-final.img ' ```
+   The next steps in this directory will guide you to create a medianet image
+file and copy it to a remote machine, which you can use to deploy different
+medianet systems. Make sure you have 8G free on the target machine.
 
 Now is a good time to fetch a coffee.
 
+## Deploy the system
+Whether you just continue on your first system which you used for the native
+bootstrap process, or you cloned several memory cards from the medianet
+image created above, you will now have to "individualize" each host to
+prevent odd things from happening:
+
+   1. If not already there, log back into the system (still called "mn-basic" as user *medianet*.
+   1. Change into ```/medianet/sbin/80-deploy-as_user_medianet``` and execute the symlinks in numerical order using ```sudo```.
+   1. If it's been a while, you might throw in an extra  
+   ```
+   sudo apt update
+   sudo apt upgrade
+   ```
+   before rebooting.
