@@ -4,7 +4,6 @@ autoreconf -i -f
 	--with-stdout \
 	--with-alsa \
 	--with-jack \
-	--with-pa \
 	--with-avahi \
 	--with-systemd \
 	--with-soxr \
