@@ -29,7 +29,7 @@
 	| (.outPorts[]? | select(.targetPort)) as $o
 # construct connection command
 	| 
-# mod-host hack: check for fully-qualified port names (containing a ":")
+# check for fully-qualified port names (containing a ":")
 		if ($o.portName | contains(":"))  
 			then "\($o.portName)" 
 # if not fully qualified, prepend client name

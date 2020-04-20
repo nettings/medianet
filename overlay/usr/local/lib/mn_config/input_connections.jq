@@ -26,7 +26,7 @@
  	| select(.enabled == 1 and .jackName != null) as $u
 # iterate over their output ports and take those which point to this unit
 	| (.outPorts[]? | select(.targetUnit == $unit)) as $o
-# mod-host hack: check for fully-qualified port names (containing a ":")
+# check for fully-qualified port names (containing a ":")
 	| if ($o.portName | contains(":"))
 		then "\($o.portName)"
 # if not fully qualified, prepend client name

@@ -15,7 +15,9 @@ if [[ ! -e "$CONFIG_FILE" ]] ; then
 fi
 
 NOEDIT="# automatically created by $PROGNAME from $CONFIG_FILE, do not edit!"
+NONE="[none]\n"
 
+# globals
 MATCH="product description hostname location version"
 # make nice headline:
 FMATCH=
@@ -43,13 +45,14 @@ for i in $FMATCH; do
 	fi
 done <<< "$DATA"
 
-echo -en "$CONFIG"
+echo -en "${CONFIG:-${NONE}}" | indent
 CONFIG="$NOEDIT\n$CONFIG"
 echo -n "Writing $CONFIG_INCLUDE..."
 echo -e "$CONFIG" > "$CONFIG_INCLUDE" && success || failure
 
 . $CONFIG_INCLUDE
 
+# hostname
 if [[ $CONFIG_HOSTNAME =~ [a-zA-Z0-9][a-zA-Z0-9-]{0,62} ]] ; then
 	echo -n "Updating /etc/hostname to $CONFIG_HOSTNAME..."
 	if [[ `cat /etc/hostname 2> /dev/null | "$TR" -d '[:space:]'` != "$CONFIG_HOSTNAME" ]] ; then 
@@ -58,7 +61,11 @@ if [[ $CONFIG_HOSTNAME =~ [a-zA-Z0-9][a-zA-Z0-9-]{0,62} ]] ; then
 		echo " not changed".
 	fi
 	echo -n "Updating /etc/hosts to $CONFIG_HOSTNAME..."
-	"$SED" -i "s/$HOSTNAME/$CONFIG_HOSTNAME/g" /etc/hosts && success || failure
+	if [[ -n `grep $HOSTNAME /etc/hosts` ]] ; then
+		"$SED" -i "s/$HOSTNAME/$CONFIG_HOSTNAME/g" /etc/hosts && success || failure
+	else
+		echo -e "127.0.0.1\t$CONFIG_HOSTNAME" >> /etc/hosts && success || failure
+	fi
 	echo -n "Setting hostname to $CONFIG_HOSTNAME..."
 	"$HOSTNAMEBIN" "$CONFIG_HOSTNAME" && success || failure
 else
@@ -89,112 +96,168 @@ DATA=`cat "$CONFIG_FILE"  | "$JQ" -r '.bootConfig.dtoverlay[]?'`
 while read VALUE ; do
 	[[ $VALUE ]] && CONFIG+="dtoverlay=$VALUE\n"
 done <<< "$DATA"
-echo -en "$CONFIG"
+echo -en "${CONFIG:-${NONE}}" | indent
 CONFIG="$NOEDIT\n$CONFIG"
 echo -n "Writing $CONF_FILE_BOOT..."
 echo -en "$CONFIG" > "$CONF_FILE_BOOT" && success || failure
 
 
-scream "Update systemd unit status:"
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | "\(.unit).\(.type)"'`
-# we iterate over known list of services, so we can disable anything not enabled in the config file
-for i in $SYSTEMD_MEDIANET_UNITS ; do
-	UNIT=`"$BASENAME" "$i"`
-	"$GREP" --quiet "^${UNIT}$" <<< "$DATA" && {
-		# service should be enabled
-		echo -n "Enabling $UNIT..."
-		"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
-			echo " is already enabled."
-		} || {
-			"$SYSTEMCTL" --quiet enable "$i" && success || failure
-		}
-	} || {
-		# service should be disabled
-		echo -n "Disabling $UNIT..."
-		"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
-			"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
-		} || echo " already disabled."
-	}
-done
-
-scream "Update systemd unit options:"
+# mounts
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | select(.options) | "\(.unit)\n\(.type)\n\(.jackName)\n\(.options)"'`
-while read UNIT ; do
-	read TYPE
-	if [[ -z "$UNIT" || -z "$TYPE" ]] ; then continue ; fi 
-	DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
-	DROPIN_FILE="$UNIT"."$TYPE".conf
-	if [[ ! -e "$DROPIN_DIR" ]] ; then
-		echo -n "Creating $DROPIN_DIR..."
-		mkdir "$DROPIN_DIR" && success || failure
-	fi
-	read JACKNAME
-	read OPTIONS
-	CONFIG="Environment=\"OPTIONS="
-	CONFIG+=`echo "$OPTIONS" | sed "s/%jackName%/\'$JACKNAME\'/g"`
-	CONFIG+="\""
-	echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
-	echo -e "$CONFIG"
-	CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
-	echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
-done <<< "$DATA"
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.mounts[]'`
+scream "Write $CONF_FILE_FSTAB and check for custom mounts:"
+# always read default fstab
+while read LINE ; do
+	CONFIG+="$LINE\n"
+done < "$CONF_FILE_FSTAB_DEFAULT"
+if [[ -n "$DATA" ]] ; then
+	while read LINE ; do
+		CONFIG+="$LINE\n"
+	done <<< "$DATA"
+	echo -en "${CONFIG:-${NONE}}" | indent
+fi
+CONFIG="$NOEDIT\n$CONFIG"
+echo -n "Writing $CONF_FILE_FSTAB..."
+echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
 
-scream "Update systemd jack unit connections:"
+
+# systemd unit status
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | "\(.unit).\(.type)"'`
+if [[ -n "$DATA" ]] ; then
+	scream "Update systemd unit status:"
+	# we iterate over known list of services, so we can disable anything not enabled in the config file
+	for i in $SYSTEMD_MEDIANET_UNITS ; do
+		UNIT=`"$BASENAME" "$i"`
+		"$GREP" --quiet "^${UNIT}$" <<< "$DATA" && {
+			# service should be enabled
+			echo -n "Enabling $UNIT..."
+			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
+				echo " is already enabled."
+			} || {
+				"$SYSTEMCTL" --quiet enable "$i" && success || failure
+			}
+		} || {
+			# service should be disabled
+			echo -n "Disabling $UNIT..."
+			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
+				"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
+			} || echo " already disabled."
+		}
+	done
+fi
+
+# systemd unit options
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | select(.jackName or .execStartPre or .options) | "\(.unit)\n\(.type)\n\(.jackName)\n\(.execStartPre)\n\(.options)"'`
+if [[ -n "$DATA" ]] ; then
+	scream "Update systemd unit options:"
+	while read UNIT ; do
+		CONFIG=
+		read TYPE
+		if [[ -z "$UNIT" || -z "$TYPE" ]] ; then continue ; fi 
+		DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
+		DROPIN_FILE="$UNIT"."$TYPE".conf
+		if [[ ! -e "$DROPIN_DIR" ]] ; then
+			echo -n "Creating $DROPIN_DIR..."
+			mkdir "$DROPIN_DIR" && success || failure
+		fi
+		read JACKNAME
+		if [[ "$JACKNAME" != "null" ]] ; then
+			CONFIG+="Environment=\"JACKNAME=$JACKNAME\"\n"
+		fi
+		read EXECSTARTPRE
+		if [[ "$EXECSTARTPRE" != "null" ]] ; then
+			CONFIG+="ExecStartPre=$EXECSTARTPRE\n"
+		fi
+		read OPTIONS
+		if [[ "$OPTIONS" != "null" ]] ; then
+			CONFIG+="Environment=\"OPTIONS="
+			# deprecated hack to substitute %jackName% in the options string
+			# now hardcoded into service file for all services that support it
+			CONFIG+=`echo "$OPTIONS" | sed "s/%jackName%/\'$JACKNAME\'/g"`
+			CONFIG+="\"\n"
+		fi
+		echo "$UNIT options:"
+		echo -en "${CONFIG:-${NONE}}" | indent
+		CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
+		echo -n "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
+		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
+	done <<< "$DATA"
+fi
+	
+# systemd jack unit connections
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.outPorts or .inPorts) | "\(.unit)\n\(.type)"'`
-while read UNIT ; do
-	CONFIG=
-        read TYPE
-	if [[ -z "$UNIT" || -z "$TYPE" ]] ; then continue ; fi 
-        DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
-        DROPIN_FILE="$UNIT"."$TYPE".connections
-	if [[ ! -e "$DROPIN_DIR" ]] ; then
-		echo -n "Creating $DROPIN_DIR..."
-		mkdir "$DROPIN_DIR" && success || failure
-	fi
-	COUT=`cat "$CONFIG_FILE" | "$JQ" --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
-	if [[ "$COUT" ]] ; then
-		CONFIG="CONNECTIONS_OUT=\"$COUT\n\"\n"
-	fi
-	CIN=`cat "$CONFIG_FILE" | "$JQ" --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/input_connections.jq`
-	if [[ "$CIN" ]] ; then
-		CONFIG+="CONNECTIONS_IN=\"$CIN\n\"\n"
-	fi
-
-	echo "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
-	echo -e "$CONFIG"
-	CONFIG="$NOEDIT\n\n$CONFIG"
-	echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
-done <<< "$DATA"
-
+if [[ -n "$DATA" ]] ; then
+	scream "Update systemd jack unit connections:"
+	while read UNIT ; do
+		CONFIG=
+	        read TYPE
+		if [[ -z "$UNIT" || -z "$TYPE" ]] ; then continue ; fi 
+	        DROPIN_DIR="$SYSTEMD_UNIT_DIR"/"$UNIT"."$TYPE".d
+	        DROPIN_FILE="$UNIT"."$TYPE".connections
+		if [[ ! -e "$DROPIN_DIR" ]] ; then
+			echo -n "Creating $DROPIN_DIR..."
+			mkdir "$DROPIN_DIR" && success || failure
+		fi
+		COUT=`cat "$CONFIG_FILE" | "$JQ" --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/output_connections.jq`
+		if [[ "$COUT" ]] ; then
+			CONFIG="CONNECTIONS_OUT=\"$COUT\n\"\n"
+		fi
+		CIN=`cat "$CONFIG_FILE" | "$JQ" --arg unit "$UNIT" -rjf "$PREFIX"/overlay/usr/local/lib/mn_config/input_connections.jq`
+		if [[ "$CIN" ]] ; then
+			CONFIG+="CONNECTIONS_IN=\"$CIN\n\"\n"
+		fi
+		echo "$UNIT connections:"
+		echo -en "${CONFIG:-${NONE}}" | indent
+		CONFIG="$NOEDIT\n\n$CONFIG"
+		echo -n "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
+		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
+	done <<< "$DATA"
+fi
 
 scream "Update systemd daemon settings:"
-
 echo -n "Performing 'systemctl daemon-reload'..."
 $SYSTEMCTL daemon-reload && success || failure
 
+# write config files
 
-scream "Update mod-host configuration:"
-
+# mod-host
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mod-host") | .config[]'`
-while read COMMAND ; do
-	CONFIG+="$COMMAND\n"
-done <<< "$DATA"
-echo -en "$CONFIG"
-CONFIG="$NOEDIT\n\n$CONFIG"
-echo -n "Writing to $CONF_FILE_MODHOST..."
-echo -e "$CONFIG" > "$CONF_FILE_MODHOST" && success || failure
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mod-host") | .config[]?'`
+if [[ -n "$DATA" ]] ; then
+	scream "Update mod-host configuration:"
+	while read COMMAND ; do
+		CONFIG+="$COMMAND\n"
+	done <<< "$DATA"
+	echo -en "${CONFIG:-${NONE}}" | indent
+	CONFIG="$NOEDIT\n\n$CONFIG"
+	echo -n "Writing to $CONF_FILE_MODHOST..."
+	echo -e "$CONFIG" > "$CONF_FILE_MODHOST" && success || failure
+fi
 
-
-scream "Update zita-lrx configuration:"
-
+# shairport-sync
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "zita-lrx") | .config[]'`
-while read COMMAND ; do
-	CONFIG+="$COMMAND\n"
-done <<< "$DATA"
-echo -en "$CONFIG"
-CONFIG="$NOEDIT\n\n$CONFIG"
-echo -n "Writing to $CONF_FILE_ZITALRX..."
-echo -e "$CONFIG" > "$CONF_FILE_ZITALRX" && success || failure
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "shairport-sync") | .config[]?'`
+if [[ -n "$DATA" ]] ; then
+	scream "Update shairport-sync configuration:"
+	while read COMMAND ; do
+		CONFIG+="$COMMAND\n"
+	done <<< "$DATA"
+	echo -en "${CONFIG:-${NONE}}" | indent
+	CONFIG="$NOEDIT\n\n$CONFIG"
+	echo -n "Writing to $CONF_FILE_SHAIRPORT_SYNC..."
+	echo -e "$CONFIG" > "$CONF_FILE_SHAIRPORT_SYNC" && success || failure
+fi
+
+# zita-lrx
+CONFIG=
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "zita-lrx") | .config[]?'`
+if [[ -n "$DATA" ]] ; then
+	scream "Update zita-lrx configuration:"
+	while read COMMAND ; do
+		CONFIG+="$COMMAND\n"
+	done <<< "$DATA"
+	echo -en "${CONFIG:-${NONE}}" | indent
+	CONFIG="$NOEDIT\n\n$CONFIG"
+	echo -n "Writing to $CONF_FILE_ZITALRX..."
+	echo -e "$CONFIG" > "$CONF_FILE_ZITALRX" && success || failure
+fi
