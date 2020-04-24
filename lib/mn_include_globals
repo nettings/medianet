@@ -14,7 +14,6 @@ CONF_FILE_FSTAB_DEFAULT="$PREFIX"/overlay/etc/fstab.medianet
 
 SYSTEM_CONFIG="$PREFIX"/config/this/medianet.json
 SYSTEMD_UNIT_DIR=/etc/systemd/system
-SYSTEMD_UNITS_LOCAL="$PREFIX"/overlay/usr/local/lib/systemd/system
 
 SYSTEMD_DEFAULT_DISABLE="
 	apt-daily.timer
@@ -32,32 +31,32 @@ SYSTEMD_DEFAULT_DISABLE="
 SYSTEMD_DEFAULT_ENABLE="
 	ufw.service
 	systemd-time-wait-sync.service
-	$SYSTEMD_UNITS_LOCAL/mn_config_watch.service
-	$SYSTEMD_UNITS_LOCAL/mn_modsave.service
-	$SYSTEMD_UNITS_LOCAL/mn_modsave.timer
+	mn_config_watch.service
+	mn_modsave.service
+	mn_modsave.timer
 "
 
 SYSTEMD_DEFAULT_LINK="
-	$SYSTEMD_UNITS_LOCAL/jackd.target
+	jackd.target
 "
 
 SYSTEMD_MEDIANET_UNITS="
-	$SYSTEMD_UNITS_LOCAL/cpufreq.service
-	$SYSTEMD_UNITS_LOCAL/gpioctl.service
-	$SYSTEMD_UNITS_LOCAL/jackd.service
-	$SYSTEMD_UNITS_LOCAL/jackminimix.service
-	$SYSTEMD_UNITS_LOCAL/jconvolver.service
-	$SYSTEMD_UNITS_LOCAL/kodi.service
-	$SYSTEMD_UNITS_LOCAL/mod-host.service
-	$SYSTEMD_UNITS_LOCAL/mpv.service
-	$SYSTEMD_UNITS_LOCAL/shairport-sync.service
-	$SYSTEMD_UNITS_LOCAL/wifi-rx.service
-	$SYSTEMD_UNITS_LOCAL/wifi-tx.service
-	$SYSTEMD_UNITS_LOCAL/zita-a2j.service
-	$SYSTEMD_UNITS_LOCAL/zita-j2a.service
-	$SYSTEMD_UNITS_LOCAL/zita-j2n.service
-	$SYSTEMD_UNITS_LOCAL/zita-lrx.service
-	$SYSTEMD_UNITS_LOCAL/zita-n2j.service
+	cpufreq.service
+	gpioctl.service
+	jackd.service
+	jackminimix.service
+	jconvolver.service
+	kodi.service
+	mod-host.service
+	mpv.service
+	shairport-sync.service
+	wifi-rx.service
+	wifi-tx.service
+	zita-a2j.service
+	zita-j2a.service
+	zita-j2n.service
+	zita-lrx.service
+	zita-n2j.service
 "
 
 # be sure to order them to resolve dependencies!
