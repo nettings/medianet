@@ -36,10 +36,6 @@ SYSTEMD_DEFAULT_ENABLE="
 	mn_modsave.timer
 "
 
-SYSTEMD_DEFAULT_LINK="
-	jackd.target
-"
-
 SYSTEMD_MEDIANET_UNITS="
 	cpufreq.service
 	gpioctl.service
