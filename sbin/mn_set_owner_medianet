@@ -6,7 +6,7 @@ needroot
 
 OLDPWD=`pwd`
 
-cd "$PREFIX"
+cd "$BASEDIR"
 
 echo -n  "Setting ownership of /medianet tree to medianet:medianet... "
 "$CHOWN" -R medianet:medianet . || failure && success

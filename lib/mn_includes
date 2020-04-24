@@ -1,8 +1,11 @@
-PREFIX=${PREFIX:-/medianet}
+BASEDIR=/medianet
 
-. $PREFIX/lib/mn_include_functions
-. $PREFIX/lib/mn_include_globals
-. $PREFIX/lib/mn_include_progpaths
+# can be overridden for custom overlays
+PREFIX=${PREFIX:-$BASEDIR}
+
+. $BASEDIR/lib/mn_include_functions
+. $BASEDIR/lib/mn_include_globals
+. $BASEDIR/lib/mn_include_progpaths
 
 # dynamic helper variables
 # don't barf if \$0 starts with dash (as for login shell)
@@ -16,3 +19,11 @@ else
 	echo "$CONFIG_INCLUDE does not exist yet - skipping."
 fi
 
+if [[ "$PREFIX" != "$BASEDIR" ]] ; then
+	# user wants a custom overlay
+	if [[ -f "$PREFIX"/lib/mn_includes ]] ; then
+		# we have a custom overlay include (can be used
+		# to selectively override/extend variables
+		. "$PREFIX"/lib/mn_includes
+	fi
+fi
