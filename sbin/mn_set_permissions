@@ -14,6 +14,7 @@ cd "$PREFIX"
 declare -A OWNER
 declare -A PERMS
 
+scream "Setting permissions from $CONF_FILE_PERMISSIONS:"
 while read FILE ; do
 #  echo "File '$FILE'" 
   read O

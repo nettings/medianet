@@ -4,10 +4,12 @@
 
 needroot
 
+scream "Updating/upgrading base system:"
 "$APTGET" update
 "$APTGET" -y upgrade
 
-cat "$PREFIX"/lib/mn_packages | while read line ; do
+scream "Adding packages from $CONF_FILE_PACKAGES"
+cat "$CONF_FILE_PACKAGES" | while read line ; do
 	for package in $line; do
 		if [[ $package == \#* ]] ; then
 			# we've found a comment, ignore all that follows on the line:

@@ -3,6 +3,7 @@
 . /medianet/lib/mn_includes
 
 OLDPWD=`pwd`
+scream "Updating $CONF_FILE_PERMISSIONS:"
 cd "$PREFIX"
 mv "$CONF_FILE_PERMISSIONS" "$CONF_FILE_PERMISSIONS".old
 "$FIND" overlay boot ! -type l ! -name "*~" -exec "$STAT" -c "%N %U:%G %a" {} \; >> "$CONF_FILE_PERMISSIONS"

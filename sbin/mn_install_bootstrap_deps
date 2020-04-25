@@ -4,9 +4,10 @@
 
 needroot
 
+scream "Installing early boostrap dependencies:"
 "$APTGET" update
 
-cat "$PREFIX"/lib/mn_packages_early | while read line ; do
+cat "$CONF_FILE_PACKAGES_EARLY" | while read line ; do
 	for package in $line; do
 		if [[ $package == \#* ]] ; then
 			# we've found a comment, ignore all that follows on the line:
