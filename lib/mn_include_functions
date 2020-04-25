@@ -1,10 +1,17 @@
+ESC_RED="\033[0;31m"
+ESC_GRN="\033[1;32m"
+ESC_YLW="\033[1;33m"
+ESC_BLU="\033[1;34m"
+ESC_BLD="\033[1m"
+ESC_CLR="\033[0m"
+
 function scream {
   echo
   echo -e "\033[1;1m$@\033[0m"
 }
 
 function success {
-  echo  -e " \033[1;32msucceeded.\033[0m"
+  echo  -e " ${ESC_GRN}succeeded.${ESC_CLR}"
 }
 
 # $@: error message
@@ -14,7 +21,7 @@ function failure {
 	if [[ $ERR != 0 ]] ; then
 		ERRSTR=" (return code $ERR)"
 	fi
-	echo  -e " \033[1;31mfailed$ERRSTR. $@\033[0m"
+	echo  -e " ${ESC_RED}failed${ERRSTR}. $@${ESC_CLR}"
 }
 
 # $@: error message
@@ -24,7 +31,7 @@ function bail {
 	if [[ $ERR != 0 ]] ; then
 		ERRSTR=" (return code $ERR)"
 	fi
-	echo -e "\033[1;31mFatal error \"$@\"$ERRSTR ... Exiting.\033[0m"
+	echo -e "${ESC_RED}Fatal error \"$@\"$ERRSTR ... Exiting.${ESC_CLR}"
   exit 1
 }
 
@@ -36,14 +43,14 @@ function indent {
 
 function needroot {
 	if [ "$EUID" -ne 0 ] ; then
-		echo -e "\033[1;31mYou must be root to run $0.\033[0m"
+		echo -e "${ESC_RED}You must be root to run $0.${ESC_CLR}"
 		exit 2
 	fi
 }
 
 function noroot {
 	if [ "$EUID" -eq 0 ] ; then
-		echo -e "\033[1;31mFor security reasons, you must not run $0 as root!\033[0m"
+		echo -e "${ESC_RED}For security reasons, you must not run $0 as root!${ESC_CLR}"
 		exit 2
 	fi
 }
