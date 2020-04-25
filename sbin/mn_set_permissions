@@ -34,7 +34,7 @@ for QUERY in "overlay/etc/sudoers.d" "-P overlay/ boot/ ! -type l"; do
 
   while read FILE ; do
   
-    echo -ne "$FILE:\n\t"
+    echo -ne "$FILE: \t"
 
     if [[ -n "$FILE" ]] ; then
       OWNER_RULE=${OWNER["$FILE"]}
@@ -46,22 +46,21 @@ for QUERY in "overlay/etc/sudoers.d" "-P overlay/ boot/ ! -type l"; do
       CUROWNER=`"$STAT" -c "%U:%G" "$FILE"`
       CURPERMS=`"$STAT" -c "%a" "$FILE"`
       if [[ "$CUROWNER" != "$OWNER_RULE" ]] ; then
-        echo -ne "Owner to $OWNER_RULE. "
+        echo -ne "${ESC_BLU}Owner to $OWNER_RULE.${ESC_CLR} "
         "$CHOWN" "$OWNER_RULE" "$FILE" || failure
       else 
         echo -ne "Owner ok. "
       fi
       if [[ "$CURPERMS" != "$PERMS_RULE" ]] ; then
-        echo -ne "Permissions to $PERMS_RULE..."
+        echo -ne "${ESC_BLU}Permissions to $PERMS_RULE.${ESC_CLR}"
         "$CHMOD" "$PERMS_RULE" "$FILE" || failure
       else
         echo -ne "Permissions ok."
       fi
     else
-      echo -ne "No rule. "
-      echo -ne "Setting to default $DEFOWNER"
+      echo -ne "${ESC_YLW}No rule.${ESC_CLR} Setting to default $DEFOWNER$"
       "$CHOWN" "$DEFOWNER" "$FILE" || failure
-      echo -ne " $DEFPERMS..."
+      echo -ne " $DEFPERMS."
       "$CHMOD" "$DEFPERMS" "$FILE" || failure 
     fi
     echo
