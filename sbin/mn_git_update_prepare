@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+OLDWD="$PWD"
+cd "$PREFIX"
+
+echo -n "Changing ownership to $USER:$GROUP..."
+"$CHOWN" -R "$USER":"$GROUP" /"$PREFIX" && success || failure
+
+cd "$OLDWD"

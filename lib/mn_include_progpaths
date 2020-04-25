@@ -38,6 +38,7 @@ SLEEP=/bin/sleep
 SWAPOFF=/sbin/swapoff
 SYSTEMCTL=/bin/systemctl
 STAT=/usr/bin/stat
+SUDO=/usr/bin/sudo
 TAR=/bin/tar
 TEST=/usr/bin/test
 TR=/usr/bin/tr
