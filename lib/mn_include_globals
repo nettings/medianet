@@ -34,8 +34,6 @@ SYSTEMD_DEFAULT_ENABLE="
 	ufw.service
 	systemd-time-wait-sync.service
 	mn_config_watch.service
-	mn_modsave.service
-	mn_modsave.timer
 "
 
 SYSTEMD_MEDIANET_UNITS="

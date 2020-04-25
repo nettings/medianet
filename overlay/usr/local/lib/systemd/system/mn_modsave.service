@@ -1,14 +1,11 @@
 [Unit]
 Description=[mn] save mod-host settings
-BindsTo=mod-host.service
 Requires=lighttpd.service
-After=mod-host.service
 After=lighttpd.service
+BindsTo=mod-host.service
+After=mod-host.service
 
 [Service]
 Type=exec
 User=medianet
 ExecStart=/usr/local/bin/mn_modsave
-
-[Install]
-WantedBy=multi-user.target

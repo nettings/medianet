@@ -1,5 +1,7 @@
 [Unit]
 Description=[mn] mn_modsave timer
+PartOf=mod-host.service
+After=mod-host.service
 
 [Timer]
 OnCalendar=*-*-* *:00:00

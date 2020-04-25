@@ -4,6 +4,8 @@ BindsTo=jackd.target
 After=jackd.target 
 Wants=lighttpd.service
 After=lighttpd.service
+Wants=mn_modsave.timer
+Before=mn_modsave.timer
 
 [Service]
 Type=forking
