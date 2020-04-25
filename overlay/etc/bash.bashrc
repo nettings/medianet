@@ -15,8 +15,6 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# set custom prompt with writable warning
-PROMPT_COMMAND="/usr/local/bin/mn_is_writable && . /medianet/shell/shellprompt.writable || . /medianet/shell/shellprompt"
 
 # Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
 # If this is an xterm set the title to user@host:dir
@@ -63,5 +61,8 @@ alias ....="cd ../../../"
 alias rm="rm -i"
 
 . /medianet/lib/mn_includes
+
+# set custom prompt with writable warning
+PROMPT_COMMAND='/usr/local/bin/mn_is_writable && PS1="$SHELLPROMPT_WRITABLE" || PS1="$SHELLPROMPT"'
 
 /usr/local/bin/mn_info
