@@ -15,6 +15,10 @@ declare -A OWNER
 declare -A PERMS
 
 scream "Setting permissions from $CONF_FILE_PERMISSIONS:"
+
+PERM_LIST=`$CAT "$CONF_FILE_PERMISSIONS" \
+	| $SED "s/'\(.*\)'[[:space:]]\{1,\}\([[:alnum:]-]*:[[:alnum:]-]*\)[[:space:]]\{1,\}\([0-9]\{3,4\}\)[[:space:]]*/\1\n\2\n\3/"`
+
 while read FILE ; do
 #  echo "File '$FILE'" 
   read O
@@ -23,8 +27,7 @@ while read FILE ; do
   read P
   PERMS["$FILE"]="$P"
 #  echo Perms ${PERMS["$FILE"]}
-done <<< $($CAT "$CONF_FILE_PERMISSIONS" \
-  | $SED "s/'\(.*\)'[[:space:]]\{1,\}\([[:alnum:]]*:[[:alnum:]]*\)[[:space:]]\{1,\}\([0-9]*\)[[:space:]]*/\1\n\2\n\3/")
+done <<< $PERM_LIST
 
 # HACK: fix sudoers first to avoid a warning on each subsequent action:
 for QUERY in "overlay/etc/sudoers.d" "-P overlay/ boot/ ! -type l"; do
