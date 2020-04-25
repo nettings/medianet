@@ -2,16 +2,15 @@
 
 . /medianet/lib/mn_includes
 
-echo -e "\033[1;33m"
-echo -n "Hardware: "
+echo -en "${ESC_YLW}Hardware: "
 cat /proc/device-tree/model
 echo
 . /etc/os-release
 echo "System software: $NAME $VERSION_ID ($VERSION_CODENAME)"
 echo -en "medianet overlay: "
 mn_get_version
-echo -e "\033[0m"
-echo -e "\033[1m$CONFIG_PRODUCT\033[0m - $CONFIG_DESCRIPTION"
+echo -e "${ESC_CLR}"
+echo -e "${ESC_BLD}$CONFIG_PRODUCT${ESC_CLR} - $CONFIG_DESCRIPTION"
 echo "Location: $CONFIG_LOCATION"
 echo "Configuration: $CONFIG_VERSION"
 echo
