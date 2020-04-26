@@ -37,7 +37,7 @@ done
 
 scream "Deploying $PREFIX/overlay..."
 # Iterate over all files in overlay
-$FIND -P  * \! -name README \! -name *~ \! -type d | while read SOURCE ; do
+$FIND -P  * \! -name "$IGNORE_FOR_DEPLOYMENT" \! -name *~ \! -type d | while read SOURCE ; do
 	TARGET=/"$SUBTREE""$SOURCE"
 	BACKUP=/"$SUBTREE""$SOURCE".mn_
 	LINK="$PWD/$SOURCE"
