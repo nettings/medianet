@@ -1,0 +1,41 @@
+.icon { font-size: 140%; }
+.active	{ color: #66cc66; }
+.inactive { color: #cc6666; }
+.transition { color: #ffdd00; }
+.unknown { color: #9999aa; }
+span.request { font-weight: bold; }
+form#tunnel {
+  display: table;
+  border-collapse: collapse;
+  width: 36em;
+}
+form#tunnel > fieldset > div  {
+  display: table-row;
+}
+form#tunnel > fieldset > div > label,button {
+  display: table-cell;
+  margin: 0.5ex;
+}
+form#tunnel > fieldset > div > label {
+  min-width: 30em;
+}
+form#tunnel > fieldset > div > button {
+  width: 15em;
+}
+form#tunnel > fieldset > div > div,pre {
+  display: table-cell;
+  color: green;
+}
+form#tunnel > fieldset > fieldset > div {
+  display: table-cell;
+}
+form#tunnel > fieldset > fieldset > div > pre {
+  font-size: 170%;
+}
+form#tunnel > fieldset > div > div > span {
+  display: block;
+  margin: 1em;
+  width: 100%;
+}
+.hfp	{ font-weight: bold }
+.fp 	{ font-size: 90% }
