@@ -12,6 +12,6 @@ function toggle() {
       fp[i].style.display='table-row';
     }
   }
-}	
+}
 
 document.addEventListener("DOMContentLoaded", toggle);

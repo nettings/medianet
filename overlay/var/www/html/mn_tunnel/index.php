@@ -76,7 +76,7 @@ function stop_link() {
 }
 
 // main
-$daemon_status = UNKNOWN . ' Tunnelling service unknown'; 
+$daemon_status = UNKNOWN . ' Tunnelling service unknown';
 $link_status = UNKNOWN . ' Tunnel link status unknown';
 $refresh = 300;
 $req = 'none';
@@ -85,7 +85,7 @@ $start_stop_active = true;
 $start_stop = '';
 $check_active = false;
 $show_active = false;
-$fingerprints = '';  
+$fingerprints = '';
 $config = parse_bash_config();
 
 if (isset($_REQUEST['tunnel'])) {
@@ -154,7 +154,7 @@ $link_status .= " as of $reqtime.";
         <legend>[mn] media<strong>net</strong> maintenance tunnel</legend>
         <div>
           <label for="daemon"><?php print($daemon_status); ?></label>
-          <button 
+          <button
             id="daemon"
             name="tunnel"
             type="submit"
@@ -183,4 +183,3 @@ $link_status .= " as of $reqtime.";
     </form>
   </body>
 </html>
-

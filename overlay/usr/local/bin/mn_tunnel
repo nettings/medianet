@@ -9,7 +9,7 @@ LOCAL_SSH_PORT=22
 
 scream "$PROGNAME [mn] medianet maintenance tunnel"
 
-if [[ -f "$TUNNEL_STATEFILE" ]] ; then 
+if [[ -f "$TUNNEL_STATEFILE" ]] ; then
 
   echo "Starting..."
   $SSH -N \
@@ -21,12 +21,12 @@ if [[ -f "$TUNNEL_STATEFILE" ]] ; then
         -R ${TUNNEL_PORT_ACCESS}:localhost:${LOCAL_SSH_PORT} \
         -L ${TUNNEL_PORT_CHECK}:localhost:${LOCAL_SSH_PORT} \
         ${TUNNEL_HOST}
-        
+
   # SSH should keep blocking here, so if we reach the following,
   # something went wrong. Signal failure with unclean exit code.
   echo "Maintenance tunnel died."
   exit 2
-  
+
 else
 
   echo "Maintenance tunnel deactivated."
