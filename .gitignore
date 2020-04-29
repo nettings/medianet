@@ -1,5 +1,5 @@
 *~
 *.old
+overlay/etc/mn_tunnel/*
 custom_builds/*/*
-!custom_builds/README
 config/this
