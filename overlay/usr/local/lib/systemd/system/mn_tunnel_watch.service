@@ -1,0 +1,12 @@
+[Unit]
+Description=[mn] maintenance tunnel state change helper
+
+After=network-online.target
+After=sshd.service
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/bin/systemctl restart mn_tunnel.service
+
+# no [Install] section, this is pulled in by mn_tunnel_watch.path !

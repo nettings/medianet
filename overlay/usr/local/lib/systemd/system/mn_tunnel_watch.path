@@ -1,0 +1,9 @@
+[Unit]
+Description=[mn] maintenance tunnel state file watcher
+PartOf=mn_tunnel.service
+
+[Path]
+PathModified=/var/lib/mn_tunnel/active
+
+[Install]
+WantedBy=multi-user.target

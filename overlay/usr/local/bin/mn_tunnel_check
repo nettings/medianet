@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# [mn] medianet Maintenance tunnel check tool
+
+. /medianet/lib/mn_includes
+. /etc/mn_tunnel/mn_tunnel.conf
+
+/usr/bin/ssh-keygen -lvf <( \
+	/usr/bin/ssh-keyscan -p ${TUNNEL_PORT_CHECK} localhost 2> /dev/null \
+) 2> /dev/null
+

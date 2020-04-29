@@ -1,0 +1,17 @@
+[Unit]
+Description=[mn] maintenance tunnel
+BindsTo=sshd.service
+Requires=mn_tunnel_watch.path
+After=network-online.target
+After=sshd.service
+After=mn_tunnel_watch.path
+
+[Service]
+Type=exec
+User=medianet
+RestartSec=2
+Restart=on-failure
+ExecStart=/usr/local/bin/mn_tunnel
+
+[Install]
+WantedBy=multi-user.target
