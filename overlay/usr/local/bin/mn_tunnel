@@ -15,6 +15,7 @@ if [[ -f "$TUNNEL_STATEFILE" ]] ; then
   $SSH -N \
         -i "$TUNNEL_HOST_KEY" \
         -o UserKnownHostsFile="$TUNNEL_HOST_FINGERPRINT" \
+	-o StrictHostKeyChecking=yes \
         -o ExitOnForwardFailure=yes \
         -p ${TUNNEL_PORT} \
         -l ${TUNNEL_USER} \
