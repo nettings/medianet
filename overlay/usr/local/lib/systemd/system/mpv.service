@@ -13,7 +13,7 @@ LimitMEMLOCK=700000000
 User=medianet
 # this is a player (source), hence no upstream connections
 #ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
-ExecStart=/usr/bin/mpv --jack-name="${JACKNAME}" --quiet --vo=null --ao=jack --idle=yes --input-ipc-server=/run/mpv/mpv.socket ${OPTIONS}
+ExecStart=/usr/bin/mpv --jack-name="${JACKNAME}" --quiet --vo=null --ao=jack --idle=yes --input-ipc-server=/run/mpv/mpv.socket $OPTIONS
 # mpv will want to handle its connections itself, it does not keep
 # persistent jack ports unfortunately
 #ExecStartPost=-/usr/local/bin/mn_connect %n

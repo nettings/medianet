@@ -10,7 +10,7 @@ After=loadcpufreq.service
 # created by mn_config_update
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/bin/cpufreq-set ${OPTIONS}
+ExecStart=/usr/bin/cpufreq-set $OPTIONS
 ExecStop=/usr/bin/cpufreq-set --min 0 --max 0
 
 [Install]
