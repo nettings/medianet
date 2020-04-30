@@ -66,6 +66,7 @@ while [[ -n ${SEARCH[0]} ]] ; do
 			echo -n " '${SEARCH[$i]}'" >&2
 		done
 		echo "." >&2
+		exit 127
 		break
 	fi
 	sleep 1	
