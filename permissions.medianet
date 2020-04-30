@@ -50,7 +50,7 @@
 'overlay/etc/sudoers.d' root:root 755
 'overlay/etc/sudoers.d/10_medianet-nopasswd' root:root 440
 'overlay/etc/cron.monthly' root:root 755
-'overlay/etc/mn_tunnel' medianet:medianet 750
+'overlay/etc/mn_tunnel' medianet:medianet 755
 'overlay/etc/mn_tunnel/README.md' medianet:medianet 644
 'overlay/etc/mn_tunnel/tunnel_key' medianet:medianet 600
 'overlay/etc/mn_tunnel/mn_tunnel.conf' medianet:medianet 644
