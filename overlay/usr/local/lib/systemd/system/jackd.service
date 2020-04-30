@@ -26,7 +26,7 @@ Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket"
 #This script is broken as of Buster b/c the output of timedatectl was
 #changed. But now, time-sync.target should work.
 #ExecStartPre=/usr/local/bin/mn_wait_time
-ExecStart=/usr/bin/jackd $OPTIONS
+ExecStart=/usr/bin/jackd ${OPTIONS}
 RestartSec=5
 Restart=on-failure
 

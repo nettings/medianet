@@ -10,7 +10,7 @@ After=sound.target
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-ExecStart=/usr/local/bin/gpioctl $OPTIONS
+ExecStart=/usr/local/bin/gpioctl ${OPTIONS}
 RestartSec=5
 Restart=on-failure
 

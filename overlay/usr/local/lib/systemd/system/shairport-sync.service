@@ -10,6 +10,7 @@ After=network.target network-online.target
 
 [Service]
 # we read Environment= from a drop-in file
+# Other settings in
 # /etc/systemd/system/shairport-sync.service.d/shairport-sync.service.conf
 # created by mn_config_update
 LimitRTPRIO=85
