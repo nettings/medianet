@@ -1,15 +1,72 @@
 #!/bin/bash
 
-if [[ $1 == "-h" ]] ; then
-  echo "$0 [JACK PORT SEARCHSTRING]..."
-  echo "blocks until a Jack port to match each of the JACK PORT SEARCHSTRINGs has been found."
-  echo "If the port list is left blank, it effectively checks for the existence of any port (i.e. the existence of the JACK server itself)."
-fi
+. /medianet/lib/mn_includes
 
-while [[ ! "$DONE" ]] ; do
-  while [[ -z "`/usr/bin/jack_lsp 2> /dev/null | /bin/grep "$1"`" ]] ; do 
-    sleep 1
-  done
-  shift
-  if [[ ! "$1" ]] ; then DONE=yes ; fi
+function help {
+	cat << EOF
+$PROGNAME [-t seconds] [jack port search string[ ...]]
+
+blocks until a JACK port to match each of the search strings
+has been found, or until the (optional) timeout has expired.
+
+EOF
+	exit 1;
+}
+
+
+TIMEOUT=-1
+SEARCH=
+NSEARCH=0
+
+while [[ -n "$1" ]] ; do
+	case $1 in 
+	-t)
+		if [[ "$2" =~ [0-9]+ ]] ; then
+			shift 
+			TIMEOUT="$1"
+		else
+			help
+		fi
+		;;		
+	-h)
+		help
+		;;
+	*)
+		# build search term array
+		SEARCH[$NSEARCH]="$1"
+#		echo -e "SEARCH[$NSEARCH]\t= ${SEARCH[$NSEARCH]}."
+		((NSEARCH++))
+		;;
+	esac
+	shift
+done
+
+while [[ -n ${SEARCH[0]} ]] ; do
+	JACKPORTS=`/usr/bin/jack_lsp 2> /dev/null`
+	# check each port in list
+	for (( i=0 ; i < $NSEARCH ; i++ )) ; do
+#		echo "SEARCH[$i] is ${SEARCH[$i]}."
+		if "$GREP" -q ${SEARCH[$i]} <<< "$JACKPORTS"; then
+			# delete from list by overwriting with last item
+			((NSEARCH--))
+#			echo "  Exists. Overwriting with $NSEARCH:${SEARCH[$NSEARCH]}"
+			SEARCH[$i]=${SEARCH[$NSEARCH]}
+			# clear last item
+			SEARCH[$NSEARCH]=
+#			echo "  $NSEARCH items left."
+			((i--))
+		fi
+	done
+	if (($TIMEOUT > 0)) ; then
+#		echo "    Timeout is $TIMEOUT."
+		((TIMEOUT--))
+	elif (($TIMEOUT == 0)) ; then
+		echo -n "$PROGNAME: timeout expired while still waiting for" >&2
+		for (( i=0 ; i < $NSEARCH ; i++ )) ; do
+			echo -n " '${SEARCH[$i]}'" >&2
+		done
+		echo "." >&2
+		break
+	fi
+	sleep 1	
 done
