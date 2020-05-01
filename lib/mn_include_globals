@@ -47,6 +47,7 @@ SYSTEMD_MEDIANET_UNITS="
 	mod-host.service
 	mpv.service
 	shairport-sync.service
+	v4l2rtspserver.service
 	wifi-rx.service
 	wifi-tx.service
 	zita-a2j.service

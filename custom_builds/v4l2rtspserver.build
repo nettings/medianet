@@ -1,4 +1,4 @@
 cmake .
 make
 sudo DESTDIR="$DESTDIR" make install
-
+sudo rm /medianet/overlay/lib/systemd/system/v4l2rtspserver.service
