@@ -12,7 +12,7 @@ if [[ ! -e "$CONF_FILE_MODHOST_STATE" ]] ; then
 	fi
 fi
 STATE=`$WGET -q -O - $MOD_DUMP_URI`
-OLDSTATE=`cat "$CONF_FILE_MODHOST_STATE"`
+OLDSTATE=`cat "$CONF_FILE_MODHOST_STATE" 2> /dev/null`
 
 if [[ "$STATE" != "$OLDSTATE" ]] ; then
 	echo -n "Mod-host state changed. Rotating state files... " 
