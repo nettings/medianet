@@ -29,7 +29,7 @@ for newer releases):
 1. Create a localfs partition spanning the remainder of the disk:  
 `parted *-raspbian-*-lite.img mkpart primary ext4 8388608s 100%`
 1. Create loop devices for the image partitions and find the boot partition:  
-```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p1"````
+```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p1"` ```
 1. Mount the boot partition:  
 `mount $PART /mnt`
 1. Activate SSH login on the image:   
