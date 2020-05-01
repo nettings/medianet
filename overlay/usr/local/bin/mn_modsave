@@ -2,6 +2,8 @@
 
 . /medianet/lib/mn_includes
 
+MOD_DUMP_URI=http://localhost:80/mod-host/lv2rdf.php?dumpPersistenceCommands
+
 if [[ ! -e "$CONF_FILE_MODHOST_STATE" ]] ; then
 	STATEDIR=`$DIRNAME "$CONF_FILE_MODHOST_STATE"`
 	if [[ ! -d "$STATEDIR" ]] ; then
@@ -9,7 +11,7 @@ if [[ ! -e "$CONF_FILE_MODHOST_STATE" ]] ; then
 		$MKDIR -p "$STATEDIR" && success || failure
 	fi
 fi
-STATE=`$WGET -q -O - http://localhost:80/lv2rdf.php?dumpPersistenceCommands`
+STATE=`$WGET -q -O - $MOD_DUMP_URI`
 OLDSTATE=`cat "$CONF_FILE_MODHOST_STATE"`
 
 if [[ "$STATE" != "$OLDSTATE" ]] ; then
