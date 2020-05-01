@@ -36,6 +36,7 @@ SYSTEMD_DEFAULT_ENABLE="
 	mn_config_watch.service
 "
 
+# all units which are governed by medianet.json
 SYSTEMD_MEDIANET_UNITS="
 	cpufreq.service
 	gpioctl.service
