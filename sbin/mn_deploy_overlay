@@ -11,11 +11,19 @@ OLDWD=$PWD
 
 SUBTREE=
 VERBOSE=echo
+
 # optionally restrict to subtree
-if [[ -n "$1" ]] ; then
-	SUBTREE="$1/"
-	VERBOSE="/bin/false"
-fi
+while [[ -n "$1" ]] ; do
+	case $1 in
+	-q)
+		VERBOSE=/bin/false
+		;;
+	*)
+		SUBTREE="$1/"
+		;;
+	esac
+	shift
+done
 
 cd "$PREFIX"/overlay/"$SUBTREE"
 
@@ -35,7 +43,7 @@ $FIND -P * -type d | while read DIR ; do
 	fi
 done
 
-scream "Deploying $PREFIX/overlay..."
+scream "Deploying $PREFIX/overlay/$SUBTREE..."
 # Iterate over all files in overlay
 $FIND -P  * \! -name "$IGNORE_FOR_DEPLOYMENT" \! -name *~ \! -type d | while read SOURCE ; do
 	TARGET=/"$SUBTREE""$SOURCE"
