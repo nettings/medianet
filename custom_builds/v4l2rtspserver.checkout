@@ -1,0 +1,2 @@
+from_git https://github.com/mpromonet/v4l2rtspserver.git v4l2rtspserver
+from_package cmake liblivemedia-dev liblog4cpp5-dev libasound2-dev

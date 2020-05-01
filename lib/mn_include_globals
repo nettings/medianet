@@ -66,6 +66,7 @@ CUSTOM_BUILDS="
 	lv2rdf2html
 	zita-lrx
 	zita-njbridge
+	v4l2rtspserver
 "
 
 SHELLPROMPT='${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\u\[\033[00m\]@\h:\w\[\033[01;34m\] \$\[\033[00m\] '
