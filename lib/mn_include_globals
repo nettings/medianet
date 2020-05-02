@@ -34,6 +34,7 @@ SYSTEMD_DEFAULT_ENABLE="
 	ufw.service
 	systemd-time-wait-sync.service
 	mn_config_watch.service
+	mn_tunnel_watch.path
 "
 
 # all units which are governed by medianet.json
