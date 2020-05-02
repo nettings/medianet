@@ -9,7 +9,7 @@ case $1 in
     ;;
   --parameters)
     # get user parameter settings from persistent storage,
-    CONF="`cat $CONF_FILE_MODHOST_STATE`"
+    CONF="`cat $CONF_FILE_MODHOST_STATE` 2> /dev/null"
     ;;
   --all)
     $0 --base-setup
