@@ -11,7 +11,7 @@ User = medianet
 Group = medianet
 Type = simple
 ExecStart = /usr/bin/kodi --standalone $OPTIONS
-Restart = on-abort
+Restart = always
 RestartSec = 5
 
 [Install]
