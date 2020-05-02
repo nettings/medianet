@@ -15,7 +15,7 @@ fi
 IMG_BASENAME=`basename "$URL"`
 IMG=`echo "$IMG_BASENAME" | sed 's/\.zip/\.img/'`
 FINAL_IMG=`echo "$IMG" | sed 's/raspbian-buster-lite/medianet-base/'`
-IMG_SIZE=7969177600
+IMG_SIZE=5368709120
 
 echo $IMG
 
