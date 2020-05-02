@@ -3,7 +3,7 @@ cpufrequtils joe screen ufw lsof inotify-tools expect rpi-eeprom
 # JSON configuration
 jq
 # basic audio packages
-jackd2 jackmeter jack-capture jconvolver zita-ajbridge
+jackd2 jackmeter jack-capture jconvolver zita-ajbridge libasound2-plugins
 # plugins
 fomp zam-plugins invada-studio-plugins-lv2 calf-plugins mda-lv2 abgate guitarix-lv2 swh-lv2
 # general build dependencies
