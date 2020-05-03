@@ -26,6 +26,7 @@ SYSTEMD_DEFAULT_DISABLE="
 	ModemManager.service
 	phpsessionclean.timer
 	rpi-eeprom-update.service
+	raspi-config.service
 	triggerhappy.service
 	wifi-country.service
 	wpa_supplicant.service
