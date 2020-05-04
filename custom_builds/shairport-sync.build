@@ -5,10 +5,8 @@ autoreconf -i -f
 	--with-alsa \
 	--with-jack \
 	--with-avahi \
-	--with-systemd \
 	--with-soxr \
 	--with-metadata \
-	--with-systemdsystemunitdir=../systemd \
 	--sysconfdir=/etc/medianet
 make -j4
 sudo DESTDIR="/medianet/overlay/" make install
