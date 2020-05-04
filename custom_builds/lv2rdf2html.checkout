@@ -2,7 +2,7 @@ from_git https://github.com/nettings/lv2rdf2html.git lv2rdf2html
 from_package xsltproc raptor-utils
 cat << EOF > lv2rdf2html/lv2rdf.conf
 # medianet deployment settings
-MODHOSTCONF=/etc/mod-host.conf
+MODHOSTCONF=$CONF_FILE_MODHOST
 SAMPLERATE=48000
 WEBGUIROOT=/var/www/html/mod-host
 WEBGUIURI=index.html

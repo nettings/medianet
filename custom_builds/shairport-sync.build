@@ -9,6 +9,6 @@ autoreconf -i -f
 	--with-soxr \
 	--with-metadata \
 	--with-systemdsystemunitdir=../systemd \
-	--sysconfdir=/etc
+	--sysconfdir=/etc/medianet
 make -j4
 sudo DESTDIR="/medianet/overlay/" make install

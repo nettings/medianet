@@ -2,11 +2,14 @@
 USER=medianet
 GROUP=medianet
 
-CONFIG_INCLUDE=/etc/mn_config
-CONF_FILE_MODHOST=/etc/mod-host.conf
+SYSTEM_CONFIG_PATH=/etc/medianet
+SYSTEM_CONFIG="$SYSTEM_CONFIG_PATH"/config.json
+
+CONFIG_INCLUDE="$SYSTEM_CONFIG_PATH"/config.inc
+CONF_FILE_MODHOST="$SYSTEM_CONFIG_PATH"/mod-host.conf
 CONF_FILE_MODHOST_STATE=/local/data/mod-host.state
-CONF_FILE_SHAIRPORT_SYNC=/etc/shairport-sync.conf
-CONF_FILE_ZITALRX=/etc/zita-lrx.conf
+CONF_FILE_SHAIRPORT_SYNC="$SYSTEM_CONFIG_PATH"/shairport-sync.conf
+CONF_FILE_ZITALRX="$SYSTEM_CONFIG_PATH"/zita-lrx.conf
 CONF_FILE_BOOT=/boot/medianet.txt
 CONF_FILE_PACKAGES="$PREFIX"/lib/mn_packages
 CONF_FILE_PACKAGES_EARLY="$PREFIX"/lib/mn_packages_early
@@ -14,7 +17,6 @@ CONF_FILE_PERMISSIONS="$PREFIX"/permissions.medianet
 CONF_FILE_FSTAB=/etc/fstab
 CONF_FILE_FSTAB_DEFAULT="$PREFIX"/overlay/etc/fstab.medianet
 
-SYSTEM_CONFIG="$PREFIX"/config/this/medianet.json
 SYSTEMD_UNIT_DIR=/etc/systemd/system
 
 SYSTEMD_DEFAULT_DISABLE="
