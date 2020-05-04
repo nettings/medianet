@@ -27,9 +27,12 @@ done
 
 cd "$PREFIX"/overlay/"$SUBTREE"
 
+# remove leading slash for find -prune 
+EXCLUDE_SYSTEM_CONFIG=`echo $SYSTEM_CONFIG_PATH | $SED 's/^\///'`
+
 scream "Checking directory tree..."
-# Iterate over all directories in overlay, ignore $SYSTEM_CONFIG_PATH
-$FIND -P * -type d -prune "$SYSTEM_CONFIG_PATH" | while read DIR ; do
+# Iterate over all directories in overlay, ignore $EXCLUDE_SYSTEM_CONFIG
+$FIND -P * \! -path "${EXCLUDE_SYSTEM_CONFIG}*" -type d | while read DIR ; do
 	TARGET=/"$SUBTREE""$DIR"
 	if [[ ! -d "$TARGET" && ! -L "$TARGET" ]] ; then
 		echo -n "$TARGET: creating..."
@@ -44,8 +47,8 @@ $FIND -P * -type d -prune "$SYSTEM_CONFIG_PATH" | while read DIR ; do
 done
 
 scream "Deploying $PREFIX/overlay/$SUBTREE..."
-# Iterate over all files in overlay, ignore $SYSTEM_CONFIG_PATH
-$FIND -P  * \! -name "$IGNORE_FOR_DEPLOYMENT" \! -name *~ \! -type d -prune "$SYSTEM_CONFIG_PATH" | while read SOURCE ; do
+# Iterate over all files in overlay, ignore $EXCLUDE_SYSTEM_CONFIG
+$FIND -P  * \! -path "${EXCLUDE_SYSTEM_CONFIG}*" \! -name "$IGNORE_FOR_DEPLOYMENT" \! -name *~ \! -type d | while read SOURCE ; do
 	TARGET=/"$SUBTREE""$SOURCE"
 	BACKUP=/"$SUBTREE""$SOURCE".mn_
 	LINK="$PWD/$SOURCE"
