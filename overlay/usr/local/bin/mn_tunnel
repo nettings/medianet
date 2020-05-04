@@ -3,7 +3,7 @@
 # [mn] medianet Maintenance tunnel
 
 . /medianet/lib/mn_includes
-. /etc/mn_tunnel/mn_tunnel.conf
+. "$CONF_FILE_MNTUNNEL"
 
 LOCAL_SSH_PORT=22
 

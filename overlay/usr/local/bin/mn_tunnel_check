@@ -3,7 +3,7 @@
 # [mn] medianet Maintenance tunnel check tool
 
 . /medianet/lib/mn_includes
-. /etc/mn_tunnel/mn_tunnel.conf
+. "$CONF_FILE_MNTUNNEL"
 
 /usr/bin/ssh-keygen -lvf <( \
 	/usr/bin/ssh-keyscan -p ${TUNNEL_PORT_CHECK} localhost 2> /dev/null \

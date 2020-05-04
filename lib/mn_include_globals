@@ -16,6 +16,8 @@ CONF_FILE_PACKAGES_EARLY="$PREFIX"/lib/mn_packages_early
 CONF_FILE_PERMISSIONS="$PREFIX"/permissions.medianet
 CONF_FILE_FSTAB=/etc/fstab
 CONF_FILE_FSTAB_DEFAULT="$PREFIX"/overlay/etc/fstab.medianet
+CONF_DIR_MNTUNNEL="$SYSTEM_CONFIG_PATH"/mn_tunnel
+CONF_FILE_MNTUNNEL="$CONF_DIR_MNTUNNEL"/mn_tunnel.conf
 
 SYSTEMD_UNIT_DIR=/etc/systemd/system
 
