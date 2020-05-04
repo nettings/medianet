@@ -43,14 +43,14 @@ function indent {
 
 function needroot {
 	if [ "$EUID" -ne 0 ] ; then
-		echo -e "${ESC_RED}You must be root to run $0.${ESC_CLR}"
+		echo -e "${ESC_RED}You must be root to run $PROGNAME.${ESC_CLR}"
 		exit 2
 	fi
 }
 
 function noroot {
 	if [ "$EUID" -eq 0 ] ; then
-		echo -e "${ESC_RED}For security reasons, you must not run $0 as root!${ESC_CLR}"
+		echo -e "${ESC_RED}For security reasons, you must not run $PROGNAME as root!${ESC_CLR}"
 		exit 2
 	fi
 }
