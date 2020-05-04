@@ -13,7 +13,7 @@ The ports to connect are listed in
 ```/etc/systemd/system/$foo.service.d/$foo.service.connections```.
 
 These files are automatically generated from 
-```/medianet/config/this/medianet.conf``` by
+```/etc/medianet/config.json``` by
 [```mn_config_update```](../overlay/usr/local/bin/mn_config_update). 
 
 
