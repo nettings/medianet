@@ -6,6 +6,6 @@ needroot
 
 scream "Activating default configuration"
 
-echo -n "Installting default configuration file to $SYSTEM_CONFIG_DIR, edit to taste..."
-$CP -fs /medianet/config/BuiltInAudio/* $SYSTEM_CONFIG_DIR/ && success || failure
+echo "Installing default configuration files to $SYSTEM_CONFIG_DIR, edit to taste..."
+$CP -av /medianet/overlay/etc/medianet $SYSTEM_CONFIG_DIR/ && success || failure
 

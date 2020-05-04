@@ -1,20 +1,16 @@
 # [mn] medianet system configuration
 
-This directory contains subdirectories corresponding to standard product
-configurations, to serve as examples. Each directory contains a single
-global configuration file ```medianet.json```, plus configuration-specific
-data files if necessary.
+This directory contains all the configuration information of a medianet
+node, consolidated into the `config.json` file. This file is being watched
+by a systemd service called ```mn_config_watch```, so that any changes
+applied are automatically deployed to the respective system-wide and 
+application-specific configuration files, some of which are also
+consolidated in this directory.
 
 The idea is that the complete state of a particular configuration is 
 contained in here, so that a product can be rolled out and controlled
 without directly touching the rest of the operating system image.
 
-The active configuration directory is called ```this```, and it's best
-practice to make it a symlink.
-
-The file ```/medianet/config/this/medianet.json``` is being watched by a
-systemd service called ```mn_config_watch```, so that any changes applied
-are automatically deployed to the respective system configuration files.
 
 You are advised to check ```sudo journalctl -e``` after editing for any
 error messages. Simply touching the file is not sufficient to apply

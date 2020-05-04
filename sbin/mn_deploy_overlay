@@ -28,8 +28,8 @@ done
 cd "$PREFIX"/overlay/"$SUBTREE"
 
 scream "Checking directory tree..."
-# Iterate over all directories in overlay
-$FIND -P * -type d | while read DIR ; do
+# Iterate over all directories in overlay, ignore $SYSTEM_CONFIG_PATH
+$FIND -P * -type d -prune "$SYSTEM_CONFIG_PATH" | while read DIR ; do
 	TARGET=/"$SUBTREE""$DIR"
 	if [[ ! -d "$TARGET" && ! -L "$TARGET" ]] ; then
 		echo -n "$TARGET: creating..."
@@ -44,8 +44,8 @@ $FIND -P * -type d | while read DIR ; do
 done
 
 scream "Deploying $PREFIX/overlay/$SUBTREE..."
-# Iterate over all files in overlay
-$FIND -P  * \! -name "$IGNORE_FOR_DEPLOYMENT" \! -name *~ \! -type d | while read SOURCE ; do
+# Iterate over all files in overlay, ignore $SYSTEM_CONFIG_PATH
+$FIND -P  * \! -name "$IGNORE_FOR_DEPLOYMENT" \! -name *~ \! -type d -prune "$SYSTEM_CONFIG_PATH" | while read SOURCE ; do
 	TARGET=/"$SUBTREE""$SOURCE"
 	BACKUP=/"$SUBTREE""$SOURCE".mn_
 	LINK="$PWD/$SOURCE"
