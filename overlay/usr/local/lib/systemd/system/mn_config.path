@@ -1,0 +1,9 @@
+[Unit]
+Description=[mn] configuration file update watcher
+PartOf=mn_config.service
+
+[Path]
+PathModified=/etc/medianet/config.json
+
+[Install]
+WantedBy=multi-user.target

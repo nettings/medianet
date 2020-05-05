@@ -38,7 +38,7 @@ SYSTEMD_DEFAULT_DISABLE="
 SYSTEMD_DEFAULT_ENABLE="
 	ufw.service
 	systemd-time-wait-sync.service
-	mn_config_watch.service
+	mn_config.path
 	mn_tunnel_watch.path
 "
 

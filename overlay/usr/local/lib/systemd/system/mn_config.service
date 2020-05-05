@@ -1,0 +1,12 @@
+[Unit]
+Description=[mn] configuration updater
+Requires=mn_config.path
+After=mn_config.path
+
+[Service]
+Type=exec
+User=root
+Restart=no
+ExecStart=/usr/local/bin/mn_config_update
+
+# no [Install] section, this is pulled in by mn_config.path
