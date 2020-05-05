@@ -9,7 +9,7 @@ image creation process is all BASH code, you can check out this repo to any
 modern Linux on any architecture, and it will work (i.e. you don't need to run
 this on a Pi even though it's part of the medianet repository).
 
-Make sure you have at least 9 GB free space in the directory where you invoke it.
+Make sure you have at least 6 GB free space in the directory where you invoke it.
 This is the currently tested base image, although more recent ones should
 work as well:
 ```
