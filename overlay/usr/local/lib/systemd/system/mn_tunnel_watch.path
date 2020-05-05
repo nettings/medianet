@@ -4,6 +4,11 @@ PartOf=mn_tunnel.service
 
 [Path]
 PathModified=/var/lib/mn_tunnel/active
-
+# Setting PathExists would ensure the tunnel gets restarted after rebooting.
+# However, it will also cause a needless restart of the tunnel each time the
+# use issues "systemctl daemon-reload", which might interrupt maintenance
+# sessions. We work around this by also starting mn_tunnel.service on boot,
+# so that the tunnel is restored if required.
+#PathExists=/var/lib/mn_tunnel/active
 [Install]
 WantedBy=multi-user.target
