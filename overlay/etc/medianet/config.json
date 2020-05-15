@@ -1,9 +1,9 @@
 {
-	"product": "AnalogIO",
+	"product": "VPbasic",
 	"description": "[mn] medianet example setup using built-in audio",
 	"hostname": "mn-basic",
 	"location": "Frankenlab",
-	"version": "2020-01-20",
+	"version": "2020-05-15",
 	"bootConfig": {
 		"#arm_freq" : 1500,
 		"#arm_freq_min" : 600,
@@ -43,7 +43,7 @@
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "system",
-			"options" : "-R -t 4500 -P 70 -dalsa -dhw:0 -P -r44100 -p512 -n2 -zs",
+			"options" : "-R -t 4500 -P 40 -dalsa -dhw:0 -P -r48000 -p512 -n2 -zs",
 			"inPorts": [
 				{
 					"portName"   : "playback_1"
@@ -54,11 +54,6 @@
 			],
 			"outPorts": [
 			]
-		},
-		{
-			"unit"    : "mn_config_watch",
-			"type"    : "service",
-			"enabled" : 1
 		},
 		{
 			"unit"    : "mod-host",
@@ -136,16 +131,11 @@
 			]
 		},
 		{
-			"unit"    : "ufw",
-			"type"    : "service",
-			"enabled" : 1
-		},
-		{
 			"unit"    : "zita-n2j",
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "zita-n2j",
-			"options" : "--jname %jackName% --chan 1,2 --buff 20 239.0.0.1 3000 medianet0",
+			"options" : "--chan 1,2 --buff 20 239.0.0.1 3000 medianet0",
 			"inPorts" : [],
 			"outPorts": [
 				{
@@ -165,7 +155,7 @@
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-j2n",
-			"options" : "--jname %jackName% --chan 2 239.0.0.1 3000 medianet0",
+			"options" : "--chan 2 239.0.0.1 3000 medianet0",
 			"inPorts": [
 				{
 					"portName" : "in_1"
@@ -180,7 +170,7 @@
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-a2j",
-			"options" : "-j %jackName% -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"options" : "-d hw:0 -c 2 -r 44100 -p 256 -n 3",
 			"outPorts": [
 				{
 					"portName" : "capture_1"
@@ -195,7 +185,7 @@
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-j2a",
-			"options" : "-j %jackName% -d hw:0 -c 2 -r 44100 -p 256 -n 3",
+			"options" : "-d hw:0 -c 2 -r 44100 -p 256 -n 3",
 			"inPorts" : [
 				{
 					"portName" : "playback_1"
@@ -203,60 +193,6 @@
 				{
 					"portName" : "playback_2"
 				}
-			]
-		},
-		{
-			"unit"    : "zita-lrx",
-			"type"    : "service",
-			"enabled" : 0,
-			"options" : "",
-			"jackName": "zita-lrx",
-			"inPorts" : [
-				{
-					"portName" : "inp-L"
-				},
-				{
-					"portName" : "inp-R"
-				}
-			],
-			"outPorts": [
-				{
-					"portName" : "out-L.sub"
-				},
-				{
-					"portName" : "out-L.mid"
-				},
-				{
-					"portName" : "out-L.high."
-				},
-				{
-					"portName" : "out-R.sub"
-				},
-				{
-					"portName" : "out-R.mid"
-				},
-				{
-					"portName" : "out-R.high"
-				}
-			],
-			"config": [
-				"# Two channels, three frequency bands.",
-				"/zita-lrx       2  3",
-				"# Channel names.",
-				"/chann/label    1  L",
-				"/chann/label    2  R",
-				"# Output port suffixes.",
-				"/fband/suffix   1  sub",
-				"/fband/suffix   2  mid",
-				"/fband/suffix   3  high",
-				"# Xover filters, first is Linkwitz-Riley, second is modified.",
-				"/xover/freq     1  80",
-				"/xover/freq     2  3000",
-				"/xover/shape    2  -4.0",
-				"# Subwoofer signals are summed on first output.",
-				"# MF amplifier on outputs 3 and 4, 2 dB gain, 0.4 ms delay.",
-				"/fband/gain     2  2.0",
-				"/fband/delay    2  0.4"
 			]
 		}
 	]
