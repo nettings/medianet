@@ -24,3 +24,7 @@ fbi omxplayer
 gpiod 
 # exfat file system support
 exfat-fuse exfat-utils
+# kodi
+kodi libasound2-plugins kodi-audioencoder-vorbis kodi-audioencoder-flac kodi-audioencoder-lame kodi-repository-kodi libaudio2 glew-utils
+# lirc (disabled for now)
+# lirc

@@ -9,7 +9,7 @@ echo -n "Creating group medianet..."
 echo -n "Creating home directory..."
 "$MKDIR" /home/medianet && success || failure
 echo -n "Creating user medianet..."
-"$USERADD" -c "medianet Maintenance account" -g medianet -G users,audio,video,gpio -d /home/medianet medianet && success || failure
+"$USERADD" -c "medianet Maintenance account" -g medianet -G users,audio,video,gpio,input -d /home/medianet medianet && success || failure
 echo -n "Changing login shell to /bin/bash..."
 "$CHSH" -s /bin/bash medianet && success || failure
 echo -n "Creating .ssh dir..."

@@ -1,0 +1,18 @@
+[Unit]
+Description = Kodi Media Center
+After = remote-fs.target network-online.target jackd.target
+Wants = network-online.target
+Requires = jackd.target
+
+[Service]
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User = medianet
+Group = medianet
+Type = simple
+ExecStart = /usr/bin/kodi --standalone $OPTIONS
+Restart = always
+RestartSec = 5
+
+[Install]
+WantedBy = multi-user.target
