@@ -3,7 +3,14 @@
 .inactive { color: #cc6666; }
 .transition { color: #ffdd00; }
 .unknown { color: #9999aa; }
+body { padding: 1em; }
 span.request { font-weight: bold; }
+span.endpoints, form#tunnel fieldset {
+  border: 1px solid #776666;
+  padding: 1ex;
+  border-radius: 0.5ex;
+  background-color: #cccccc;
+}
 form#tunnel {
   display: table;
   border-collapse: collapse;
