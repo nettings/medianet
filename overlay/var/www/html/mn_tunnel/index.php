@@ -149,7 +149,7 @@ $link_status .= " as of $reqtime.";
     <script src="mn_tunnel.js" type="text/javascript"></script>
   </head>
   <body>
-    <form id="tunnel" action="<?php print(basename(__FILE__)); ?>" method="post">
+    <form id="tunnel" method="post">
       <fieldset>
         <legend>[mn] media<strong>net</strong> maintenance tunnel</legend>
         <div>
