@@ -34,13 +34,13 @@
 
     <authentication>
         <!-- Sources log in with username 'source' -->
-        <source-password></source-password>
+        <source-password>$1$cP.SV.Kr$1sNVU.u6glXfSatY8IjcR.</source-password>
         <!-- Relays log in with username 'relay' -->
         <relay-password></relay-password>
 
         <!-- Admin logs in with the username given below -->
         <admin-user>admin</admin-user>
-        <admin-password></admin-password>
+        <admin-password>foo</admin-password>
     </authentication>
 
     <!-- This is the hostname other people will use to connect to your server.
