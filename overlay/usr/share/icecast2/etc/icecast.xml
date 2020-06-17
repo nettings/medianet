@@ -2,7 +2,7 @@
     <!-- location and admin are two arbitrary strings that are e.g. visible
          on the server info page of the icecast web interface
          (server_version.xsl). -->
-    <location>medianet SCLAN playback node</location>
+    <location>[mn] medianet local playback</location>
     <admin></admin>
 
     <!-- IMPORTANT!
@@ -34,13 +34,13 @@
 
     <authentication>
         <!-- Sources log in with username 'source' -->
-        <source-password>$1$cP.SV.Kr$1sNVU.u6glXfSatY8IjcR.</source-password>
+        <source-password></source-password>
         <!-- Relays log in with username 'relay' -->
-        <relay-password>$1$cP.SV.Kr$1sNVU.u6glXfSatY8IjdfghdfR.$1$cP.SV.Kr$1sNVU.u6glXfSatY8IjcR.</relay-password>
+        <relay-password></relay-password>
 
         <!-- Admin logs in with the username given below -->
         <admin-user>admin</admin-user>
-        <admin-password>$1$cP.SV.Kr$1sNVU.u6glXfSatY8IjcR.$1$cP.SV.Kr$sdfgasNVU.u6glXfSatY8IjcR.</admin-password>
+        <admin-password></admin-password>
     </authentication>
 
     <!-- This is the hostname other people will use to connect to your server.
@@ -52,7 +52,8 @@
     <!-- You may have multiple <listener> elements -->
     <listen-socket>
         <port>8000</port>
-        <!-- <bind-address>127.0.0.1</bind-address> -->
+        <bind-address>127.0.0.1</bind-address>
+        <bind-address>::1</bind-address>
         <!-- <shoutcast-mount>/stream</shoutcast-mount> -->
     </listen-socket>
 
@@ -70,7 +71,7 @@
 
     <paths>
         <!-- basedir is only used if chroot is enabled -->
-        <basedir>/etc/icecast2</basedir>
+        <basedir>/medianet/overlay/usr/share/icecast2</basedir>
 
         <!-- Note that if <chroot> is turned on below, these paths must both
              be relative to the new root, not the original root -->
