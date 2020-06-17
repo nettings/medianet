@@ -151,8 +151,13 @@ $link_status .= " as of $reqtime.";
   <body>
     <form id="tunnel" method="post">
       <fieldset>
-        <legend>[mn] media<strong>net</strong> maintenance tunnel</legend>
+        <legend>
+          [mn] media<strong>net</strong> maintenance tunnel 
+          <strong><?php print(gethostname()); ?></strong>
+          &#x21c4; <strong><?php print($config['TUNNEL_HOST'] . ":" . $config['TUNNEL_PORT_ACCESS'])?></strong>
+        </legend>
         <div>
+
           <label for="daemon"><?php print($daemon_status); ?></label>
           <button
             id="daemon"
