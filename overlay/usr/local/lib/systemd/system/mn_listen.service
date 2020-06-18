@@ -2,8 +2,8 @@
 Description=[mn] JACK to Icecast2 encoder
 BindsTo=jackd.target
 After=jackd.target
-BindsTo=icecast2.service
-After=icecast2.service
+BindsTo=mn_icecast2.service
+After=mn_icecast2.service
 
 [Service]
 # we read Environment= from a drop-in file
