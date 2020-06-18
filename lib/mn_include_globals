@@ -51,6 +51,8 @@ SYSTEMD_MEDIANET_UNITS="
 	jackminimix.service
 	jconvolver.service
 	kodi.service
+	mn_icecast2.service
+	mn_listen.service
 	mod-host.service
 	mpv.service
 	shairport-sync.service
