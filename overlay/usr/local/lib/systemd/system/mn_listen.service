@@ -1,0 +1,22 @@
+[Unit]
+Description=[mn] JACK to Icecast2 encoder
+BindsTo=jackd.target
+After=jackd.target
+BindsTo=icecast2.service
+After=icecast2.service
+
+[Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/mn_listen.service.d/mn_listen.service.conf
+# created by mn_config_update
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
+ExecStart=/usr/bin/ffmpeg -hide_banner -nostats -loglevel warning -f jack -i $JACKNAME -acodec libopus -b:a 192000 -vbr off -frame_duration 60 -packet_loss 5 -application audio -content_type application/ogg -f opus 'icecast://source:$1$cP.SV.Kr$1sNVU.u6glXfSatY8IjcR.@localhost:8000/ffmpeg.opus'
+ExecStartPost=-/usr/local/bin/mn_connect %n
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
