@@ -25,6 +25,7 @@ SYSTEMD_DEFAULT_DISABLE="
 	apt-daily.timer
 	apt-daily-upgrade.timer
 	cpufrequtils.service
+	dphys-swapfile.service 
 	hciuart.service
 	man-db.timer
 	ModemManager.service
