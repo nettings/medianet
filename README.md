@@ -68,3 +68,16 @@ For system maintenance, the scripts `mn_make_writable` and
 in a directory that is currently writable. After the next reboot, the system
 will again be read-only.
 
+### Web interfaces
+
+By default, you can reach an automatically generated web UI to control all
+plugins running in `mod-host` under `http://localhost:10080/mod-host`, 
+assuming you have forwarded the http port through your ssh connection, like
+this:
+```
+user@your-bigbox:~ $ ssh -L 10080:localhost:80 medianet@your-pi
+```
+If you have configured an external jump server for remote maintenance that
+your deployed medianet Pi can "phone home to" in `/etc/medianet/mn_tunnel`,
+you can start/stop your maintenance tunnel and check its state at
+`http://localhost:10080/mn_tunnel`
