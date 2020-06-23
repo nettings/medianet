@@ -126,3 +126,33 @@ means as soon as your system is running and actually doing its job, they are out
 of the way and cannot affect system stability or efficiency.
 
 The Bad things are listed in the [issue tracker](https://github.com/nettings/medianet/issues).
+
+## Updating your system
+
+The base system is kept up to date with the standard Debian invocation:
+```
+$ sudo apt update
+$ sudo apt upgrade
+```
+Between major Debian releases, it's also usually safe to run `apt dist-upgrade`.
+
+There is no formalized and systematic way to update the medianet stuff yet.
+What you can do is pull from git, although since git cannot deal with file
+ownership and groups, you will first have to own everything and then restore the
+correct file modes:
+```
+$ cd /medianet
+$ sudo chown -R medianet:medianet
+$ git pull
+$ sudo sbin/mn_set_permissions
+$ sudo sbin/mn_deploy_overlay
+```
+Depending on what has changed, you might have to do other mysterious things :(
+When the custom-built software has been upgraded, you will need to 
+```
+$ sbin/mn_checkout
+$ sbin/mn_build
+```
+
+A better-documented updating process is under consideration. Starting with the 
+first official release, additional update steps will be documented here.
