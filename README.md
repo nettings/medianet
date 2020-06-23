@@ -81,3 +81,48 @@ If you have configured an external jump server for remote maintenance that
 your deployed medianet Pi can "phone home to" in `/etc/medianet/mn_tunnel`,
 you can start/stop your maintenance tunnel and check its state at
 `http://localhost:10080/mn_tunnel`
+
+### Features
+
+As of June 2020, the medianet distribution integrates the following
+applications ready-to-use:
+
+#### Audio
+* the JACK audio connection kit
+* gpioctl, a quick and very dirty tool to use buttons and rotary encoders to
+affect ALSA mixer settings or generate JACK MIDI, can be multicast to several
+medianet nodes
+* mod-host (to run LV2 plugins for signal processing)
+* a large collection of LV2 plugins, among them the latest x42 plugin set
+automatically built from source.
+* Icecast2 and an ffmpeg-based encoder to stream Opus-encoded audio over http
+from JACK
+* the jconvolver convolution engine, to apply FIR filters to loudspeakers
+* shairport-sync, an Apple AirPlay(tm) receiver
+* zita-ajbridge (to access a second sound card with an unsynchronized clock)
+* zita-njbridge (to stream multichannel uncompressed audio on a local Ethernet
+with 20ms latency either point-to-point or multicast)
+* zita-lrx, a Linkwitz-Riley multiband loudspeaker crossover
+
+#### Video
+* v4l2rtspserver to stream the Pi camera and mux in JACK audio with quite low
+latency (< .5 s)
+
+#### System tools
+* cpufreq to set min and max core frequencies and governor (great to save power)
+* lv2rdf2html to generate a simple but useful web UI for all the plugins you
+configured to run in mod-host
+
+Other services can be added easily if you don't mind dealing with a JSON parser
+written in BASH (but using JQ, so it's not that bad).
+
+## The Good, the Bad, and the Ugly
+
+This system has many very very ugly things going on. Shitloads of BASH scripting,
+horrible JSON parsing, and (gasp!) even XSL transformations from RDF/XML to HTML.
+
+The good thing is that all these atrocities only serve to generate shit, that
+means as soon as your system is running and actually doing its job, they are out
+of the way and cannot affect system stability or efficiency.
+
+The Bad things are listed in the [issue tracker](https://github.com/nettings/medianet/issues).
