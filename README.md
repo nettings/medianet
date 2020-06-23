@@ -46,7 +46,7 @@ system.
 
 This file is currently very badly documented, and the only hints as to its
 syntax are to be found in [the configuration updater script
-mn_config_update](/medianet/overlay/usr/local/bin/mn_config_update). Example
+mn_config_update](overlay/usr/local/bin/mn_config_update). Example
 config snippets will be added in due time, and the default configuration
 will be extended to showcase more of the available services and features.
 
