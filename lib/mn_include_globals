@@ -70,6 +70,7 @@ CUSTOM_BUILDS="
 	gpioctl
 	sm.lv2
 	mod-host
+	alac
 	shairport-sync
 	x42-plugins
 	lv2rdf2html
