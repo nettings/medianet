@@ -1,0 +1,4 @@
+[mn_shairport-sync]
+title=[mn] shairport-sync
+description=Apple AirPlay™-compatible stream receiver service
+ports=3689/tcp|5353|500:5005/tcp|600:6005/udp|35000:65535/udp

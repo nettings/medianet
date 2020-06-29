@@ -1,0 +1,3 @@
+title=[mn] v4l2rtspserver
+description=RTSP audio/video streaming server
+ports=8554
