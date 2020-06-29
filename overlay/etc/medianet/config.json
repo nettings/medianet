@@ -67,11 +67,11 @@
 			"outPorts": [
 				{
 					"portName"   : "effect_9:outL",
-					"targetUnit"     : "jackd",
+					"targetUnit"     : "mn_jackd",
 					"targetPort" : 0
 				},{
 					"portName"   : "effect_9:outR",
-					"targetUnit"     : "jackd",
+					"targetUnit"     : "mn_jackd",
 					"targetPort" : 1
 				}
 			],
@@ -106,12 +106,12 @@
 			"outPorts": [
 				{
 					"portName"   : "out_L",
-					"targetUnit" : "mod-host",
+					"targetUnit" : "mn_mod-host",
 					"targetPort" : 0
 				},
 				{
 					"portName"   : "out_R",
-					"targetUnit" : "mod-host",
+					"targetUnit" : "mn_mod-host",
 					"targetPort" : 1
 				}
 			]
@@ -126,12 +126,12 @@
 			"outPorts": [
 				{
 					"portName"   : "out_1",
-					"targetUnit" : "mod-host",
+					"targetUnit" : "mn_mod-host",
 					"targetPort" : 0
 				},
 				{
 					"portName"   : "out_2",
-					"targetUnit" : "mod-host",
+					"targetUnit" : "mn_mod-host",
 					"targetPort" : 1
 				}
 			]
