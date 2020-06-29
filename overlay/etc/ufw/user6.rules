@@ -21,22 +21,6 @@
 -A ufw6-user-input -p tcp --dport 22 -j ACCEPT
 -A ufw6-user-input -p udp --dport 22 -j ACCEPT
 
-### tuple ### allow tcp 3689 ::/0 any ::/0 in
--A ufw6-user-input -p tcp --dport 3689 -j ACCEPT
-
-### tuple ### allow any 5353 ::/0 any ::/0 in
--A ufw6-user-input -p tcp --dport 5353 -j ACCEPT
--A ufw6-user-input -p udp --dport 5353 -j ACCEPT
-
-### tuple ### allow tcp 5000:5005 ::/0 any ::/0 in
--A ufw6-user-input -p tcp -m multiport --dports 5000:5005 -j ACCEPT
-
-### tuple ### allow udp 6000:6005 ::/0 any ::/0 in
--A ufw6-user-input -p udp -m multiport --dports 6000:6005 -j ACCEPT
-
-### tuple ### allow udp 35000:65535 ::/0 any ::/0 in
--A ufw6-user-input -p udp -m multiport --dports 35000:65535 -j ACCEPT
-
 ### END RULES ###
 
 ### LOGGING ###
