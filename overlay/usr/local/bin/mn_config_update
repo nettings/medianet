@@ -232,7 +232,7 @@ $SYSTEMCTL daemon-reload && success || failure
 
 # mod-host
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mod-host") | .config[]?'`
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_mod-host") | .config[]?'`
 if [[ -n "$DATA" ]] ; then
 	scream "Update mod-host configuration:"
 	while read COMMAND ; do
@@ -246,7 +246,7 @@ fi
 
 # shairport-sync
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "shairport-sync") | .config[]?'`
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_shairport-sync") | .config[]?'`
 if [[ -n "$DATA" ]] ; then
 	scream "Update shairport-sync configuration:"
 	while read COMMAND ; do
@@ -260,7 +260,7 @@ fi
 
 # zita-lrx
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "zita-lrx") | .config[]?'`
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_zita-lrx") | .config[]?'`
 if [[ -n "$DATA" ]] ; then
 	scream "Update zita-lrx configuration:"
 	while read COMMAND ; do
