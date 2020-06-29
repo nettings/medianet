@@ -1,0 +1,4 @@
+[Unit]
+Description=jackd sound server target
+After=mn_jackd.service 
+BindsTo=mn_jackd.service

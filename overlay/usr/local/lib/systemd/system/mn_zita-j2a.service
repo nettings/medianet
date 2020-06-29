@@ -1,21 +1,23 @@
 [Unit]
-Description=[mn] FIR Convolution Engine
+Description=[mn] resampling JACK-to-ALSA bridge
+BindsTo=mn_jackd.target
+After=mn_jackd.target
+BindsTo=sound.target
 After=sound.target
-After=jackd.target
-BindsTo=jackd.target
 
 [Service]
 # we read Environment= from a drop-in file
-# /etc/systemd/system/jconvolver.service.d/jconvolver.service.conf
+# /etc/systemd/system/zita-j2a.service.d/zita-j2a.service.conf
 # created by mn_config_update
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
 ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
-ExecStart=/usr/bin/jconvolver -N "${JACKNAME}" $OPTIONS /etc/medianet/jconvolver.conf
+ExecStart=/usr/local/bin/mn_silencer "Starting synchronisation." /usr/bin/zita-j2a -j "${JACKNAME}" $OPTIONS
 ExecStartPost=-/usr/local/bin/mn_connect %n
-RestartSec=15
+RestartSec=5
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
+

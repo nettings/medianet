@@ -1,21 +1,20 @@
 [Unit]
-Description=[mn] JACK-to-Network bridge
-BindsTo=jackd.target
-After=jackd.target
-BindsTo=network-online.target
-After=network-online.target
+Description=[mn] FIR Convolution Engine
+After=sound.target
+After=mn_jackd.target
+BindsTo=mn_jackd.target
 
 [Service]
 # we read Environment= from a drop-in file
-# /etc/systemd/system/zita-j2n.service.d/zita-j2n.service.conf
+# /etc/systemd/system/jconvolver.service.d/jconvolver.service.conf
 # created by mn_config_update
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
 ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
-ExecStart=/usr/local/bin/zita-j2n --jname "${JACKNAME}" $OPTIONS
+ExecStart=/usr/bin/jconvolver -N "${JACKNAME}" $OPTIONS /etc/medianet/jconvolver.conf
 ExecStartPost=-/usr/local/bin/mn_connect %n
-RestartSec=5
+RestartSec=15
 Restart=always
 
 [Install]

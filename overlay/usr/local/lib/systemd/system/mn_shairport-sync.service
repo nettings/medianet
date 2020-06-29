@@ -1,8 +1,8 @@
 [Unit]
 Description=[mn] AirPlay Audio Receiver
 After=sound.target
-After=jackd.target
-BindsTo=jackd.target
+After=mn_jackd.target
+BindsTo=mn_jackd.target
 Requires=avahi-daemon.service
 After=avahi-daemon.service
 Wants=network-online.target

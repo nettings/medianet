@@ -2,11 +2,11 @@
 Description=[mn] JACK Audio Connection Kit
 
 # "pull in" jackd.target since we're the provider of that target:
-Requires=jackd.target
-Before=jackd.target
+Requires=mn_jackd.target
+Before=mn_jackd.target
 
 # make sure we have a well defined cpu core frequency:
-After=cpufreq.service
+After=mn_cpufreq.service
 
 # if we're running on actual hardware, make sure we're after:
 After=sound.target
