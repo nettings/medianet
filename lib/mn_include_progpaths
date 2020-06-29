@@ -42,6 +42,7 @@ SUDO=/usr/bin/sudo
 TAR=/bin/tar
 TEST=/usr/bin/test
 TR=/usr/bin/tr
+UFW=/usr/sbin/ufw
 UPDATELOCALE=/usr/sbin/update-locale
 USERADD=/usr/sbin/useradd
 USERDEL=/usr/sbin/userdel
