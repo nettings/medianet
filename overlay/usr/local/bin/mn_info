@@ -4,6 +4,8 @@
 
 echo -en "${ESC_YLW}Hardware: "
 cat /proc/device-tree/model
+echo -n " "
+"$FREE" --giga | "$SED" -n  -e 's/^Mem:[[:space:]]*\([0-9]*\).*/(\1 GB RAM)/p'
 echo
 . /etc/os-release
 echo "System software: $NAME $VERSION_ID ($VERSION_CODENAME)"

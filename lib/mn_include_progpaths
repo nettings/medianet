@@ -12,6 +12,7 @@ DD=/bin/dd
 DIRNAME=/usr/bin/dirname
 DPHYSSWAPFILE=/sbin/dphys-swapfile
 DPKGRECONFIGURE=/usr/sbin/dpkg-reconfigure
+FREE=/usr/bin/free
 FIND=/usr/bin/find
 GIT=/usr/bin/git
 GREP=/bin/grep
