@@ -1,0 +1,4 @@
+autoreconf -i -f
+./configure
+make -j4
+sudo DESTDIR="/medianet/overlay/" make install

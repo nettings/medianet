@@ -2,8 +2,8 @@
 Description=[mn] save mod-host settings
 Requires=lighttpd.service
 After=lighttpd.service
-BindsTo=mod-host.service
-After=mod-host.service
+BindsTo=mn_mod-host.service
+After=mn_mod-host.service
 
 [Service]
 Type=exec

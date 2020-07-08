@@ -18,6 +18,7 @@ CONF_FILE_FSTAB=/etc/fstab
 CONF_FILE_FSTAB_DEFAULT="$PREFIX"/overlay/etc/fstab.medianet
 CONF_DIR_MNTUNNEL="$SYSTEM_CONFIG_PATH"/mn_tunnel
 CONF_FILE_MNTUNNEL="$CONF_DIR_MNTUNNEL"/mn_tunnel.conf
+CONF_DIR_UFW_MNAPPS=/etc/ufw/applications.d
 
 SYSTEMD_UNIT_DIR=/etc/systemd/system
 
@@ -25,6 +26,7 @@ SYSTEMD_DEFAULT_DISABLE="
 	apt-daily.timer
 	apt-daily-upgrade.timer
 	cpufrequtils.service
+	dphys-swapfile.service 
 	hciuart.service
 	man-db.timer
 	ModemManager.service
@@ -45,23 +47,23 @@ SYSTEMD_DEFAULT_ENABLE="
 
 # all units which are governed by medianet.json
 SYSTEMD_MEDIANET_UNITS="
-	cpufreq.service
-	gpioctl.service
-	jackd.service
-	jackminimix.service
-	jconvolver.service
-	kodi.service
-	mod-host.service
-	mpv.service
-	shairport-sync.service
-	v4l2rtspserver.service
-	wifi-rx.service
-	wifi-tx.service
-	zita-a2j.service
-	zita-j2a.service
-	zita-j2n.service
-	zita-lrx.service
-	zita-n2j.service
+	mn_cpufreq.service
+	mn_gpioctl.service
+	mn_jackd.service
+	mn_jackminimix.service
+	mn_jconvolver.service
+	mn_icecast2.service
+	mn_listen.service
+	mn_mod-host.service
+	mn_shairport-sync.service
+	mn_v4l2rtspserver.service
+	mn_wifi-rx.service
+	mn_wifi-tx.service
+	mn_zita-a2j.service
+	mn_zita-j2a.service
+	mn_zita-j2n.service
+	mn_zita-lrx.service
+	mn_zita-n2j.service
 "
 
 # be sure to order them to resolve dependencies!
@@ -69,6 +71,7 @@ CUSTOM_BUILDS="
 	gpioctl
 	sm.lv2
 	mod-host
+	alac
 	shairport-sync
 	x42-plugins
 	lv2rdf2html

@@ -124,10 +124,12 @@ echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
 # systemd unit status
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | "\(.unit).\(.type)"'`
 if [[ -n "$DATA" ]] ; then
-	scream "Update systemd unit status:"
+	scream "Update systemd unit status and firewall rules"
 	# we iterate over known list of services, so we can disable anything not enabled in the config file
 	for i in $SYSTEMD_MEDIANET_UNITS ; do
 		UNIT=`"$BASENAME" "$i"`
+		# greedy match gets rid of last ".foo":
+		UFWAPP=`echo $UNIT | "$SED" 's/\(.*\)\..*/\1/'`
 		"$GREP" --quiet "^${UNIT}$" <<< "$DATA" && {
 			# service should be enabled
 			echo -n "Enabling $UNIT..."
@@ -136,12 +138,20 @@ if [[ -n "$DATA" ]] ; then
 			} || {
 				"$SYSTEMCTL" --quiet enable "$i" && success || failure
 			}
+			if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UFWAPP}" ]] ; then
+				echo -n "Found matching firewall service '$UFWAPP'. Enabling..."
+				"$UFW" allow "$UFWAPP" && success || failure
+			fi
 		} || {
 			# service should be disabled
 			echo -n "Disabling $UNIT..."
 			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
 				"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
 			} || echo " already disabled."
+			if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UFWAPP}" ]] ; then
+				echo -n "Found matching firewall service '$UFWAPP'. Disabling..."
+				"$UFW" delete allow "$UFWAPP" && success || failure
+			fi
 		}
 	done
 fi
@@ -222,7 +232,7 @@ $SYSTEMCTL daemon-reload && success || failure
 
 # mod-host
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mod-host") | .config[]?'`
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_mod-host") | .config[]?'`
 if [[ -n "$DATA" ]] ; then
 	scream "Update mod-host configuration:"
 	while read COMMAND ; do
@@ -236,7 +246,7 @@ fi
 
 # shairport-sync
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "shairport-sync") | .config[]?'`
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_shairport-sync") | .config[]?'`
 if [[ -n "$DATA" ]] ; then
 	scream "Update shairport-sync configuration:"
 	while read COMMAND ; do
@@ -250,7 +260,7 @@ fi
 
 # zita-lrx
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "zita-lrx") | .config[]?'`
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_zita-lrx") | .config[]?'`
 if [[ -n "$DATA" ]] ; then
 	scream "Update zita-lrx configuration:"
 	while read COMMAND ; do

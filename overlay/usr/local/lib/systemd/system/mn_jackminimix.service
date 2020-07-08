@@ -1,7 +1,7 @@
 [Unit]
 Description=[mn] JACK mixer
-BindsTo=jackd.target
-After=jackd.target 
+BindsTo=mn_jackd.target
+After=mn_jackd.target 
 After=network-online.target
 
 [Service]

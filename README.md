@@ -1,116 +1,158 @@
-# [mn] medianet system roll-out
+# [mn] medianet
 
-The `sbin/` directory contains scripts used to convert an almost-vanilla
-Raspbian Buster image into a medianet distribution. The process is as follows:
+The medianet distribution is a derivative of Debian Linux/Raspberry Pi OS.
+It was created to turn Raspberry Pis into reliable embedded audio nodes,
+signal processors, and streaming endpoints.
 
-## Automatically create a Raspbian base image
-You can use the experimental script `mn_make_image` in `sbin/`. Since the
-image creation process is all BASH code, you can check out this repo to any
-modern Linux on any architecture, and it will work (i.e. you don't need to run
-this on a Pi even though it's part of the medianet repository).
+The audio system is built around the JACK Audio Connection Kit, complemented
+with the mod-host to run LV2 plugins, the zita-njbridge to provide clock
+decoupled uncompressed network audio streaming, and many other open-source
+audio tools.
 
-Make sure you have at least 6 GB free space in the directory where you invoke it.
-This is the currently tested base image, although more recent ones should
-work as well:
+The system is meant to run headless and unattended. All parts of the audio
+signal chain are run as systemd services, and in the unlikely event that one
+process crashes, it will be restarted automatically and its connections
+re-established.
+
+## Installation
+
+This distribution provides a set of scripts and a file system overlay to turn
+a vanilla Raspbian OS Lite image into a medianet system. That means you can
+always easily see what has been changed and how, and the system lends itself
+well to continuous integration with upstream.
+
+Please see [the installation documentation INSTALL.md](INSTALL.md) in this
+directory for details.
+
+## Usage
+
+### User account and access
+
+The default user account is `medianet`. Its password is locked, so you must
+drop a suitable ssh key into `~medianet/.ssh/authorized_keys` while you are
+bootstrapping the distribution!
+All audio-related services run as user medianet.
+This user currently has full sudo rights, as it is also the maintenance
+account. This will be split in the near future to improve operational
+security.
+
+### Configuration and system state
+
+The system configuration is collected in a single file,
+`/etc/medianet/config.json`, from which all necessary application config
+files are generated whenever it changes, by means of a systemd.path watcher
+(using inotify). Ideally, this file comprises the entire state of the
+system.
+
+This file is currently very badly documented, and the only hints as to its
+syntax are to be found in [the configuration updater script
+mn_config_update](overlay/usr/local/bin/mn_config_update). Example
+config snippets will be added in due time, and the default configuration
+will be extended to showcase more of the available services and features.
+
+### File systems are read-only
+
+In order to make the system robust against cold shutdowns, the `/boot` and
+`/` partitions are mounted read-only. All files or folders that must be
+written to during operation but needn't be persistent across reboots have
+been symlinked into ram disks. For persistent system states and user data,
+there is the `/local` partition, which is mounted read-write and
+automatically extended to span the remainder of the flash medium.
+
+The goal is that even if `/local` is unclean or even corrupted, the system
+will still boot up with ssh and a sufficient system environment to allow for
+remote repairs.
+
+For system maintenance, the scripts `mn_make_writable` and
+`mn_make_readonly` can be used. The shell prompt will inform you if you are
+in a directory that is currently writable. After the next reboot, the system
+will again be read-only.
+
+### Web interfaces
+
+By default, you can reach an automatically generated web UI to control all
+plugins running in `mod-host` under `http://localhost:10080/mod-host`, 
+assuming you have forwarded the http port through your ssh connection, like
+this:
 ```
-medianet/sbin/mn_make_image http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip
+user@your-bigbox:~ $ ssh -L 10080:localhost:80 medianet@your-pi
+```
+If you have configured an external jump server for remote maintenance that
+your deployed medianet Pi can "phone home to" in `/etc/medianet/mn_tunnel`,
+you can start/stop your maintenance tunnel and check its state at
+`http://localhost:10080/mn_tunnel`
+
+### Features
+
+As of June 2020, the medianet distribution integrates the following
+applications ready-to-use:
+
+#### Audio
+* the JACK audio connection kit
+* gpioctl, a quick and very dirty tool to use buttons and rotary encoders to
+affect ALSA mixer settings or generate JACK MIDI, can be multicast to several
+medianet nodes
+* mod-host (to run LV2 plugins for signal processing)
+* a large collection of LV2 plugins, among them the latest x42 plugin set
+automatically built from source.
+* Icecast2 and an ffmpeg-based encoder to stream Opus-encoded audio over http
+from JACK
+* the jconvolver convolution engine, to apply FIR filters to loudspeakers
+* shairport-sync, an Apple AirPlay(tm) receiver
+* zita-ajbridge (to access a second sound card with an unsynchronized clock)
+* zita-njbridge (to stream multichannel uncompressed audio on a local Ethernet
+with 20ms latency either point-to-point or multicast)
+* zita-lrx, a Linkwitz-Riley multiband loudspeaker crossover
+
+#### Video
+* v4l2rtspserver to stream the Pi camera and mux in JACK audio with quite low
+latency (< .5 s)
+
+#### System tools
+* cpufreq to set min and max core frequencies and governor (great to save power)
+* lv2rdf2html to generate a simple but useful web UI for all the plugins you
+configured to run in mod-host
+
+Other services can be added easily if you don't mind dealing with a JSON parser
+written in BASH (but using JQ, so it's not that bad).
+
+## The Good, the Bad, and the Ugly
+
+This system has many very very ugly things going on. Shitloads of BASH scripting,
+horrible JSON parsing, and (gasp!) even XSL transformations from RDF/XML to HTML.
+
+The good thing is that all these atrocities only serve to generate shit, that
+means as soon as your system is running and actually doing its job, they are out
+of the way and cannot affect system stability or efficiency.
+
+The Bad things are listed in the [issue tracker](https://github.com/nettings/medianet/issues).
+
+## Updating your system
+
+The base system is kept up to date with the standard Debian invocation:
+```
+$ sudo apt update
+$ sudo apt upgrade
+```
+Between major Debian releases, it's also usually safe to run `apt dist-upgrade`.
+
+There is no formalized and systematic way to update the medianet stuff yet.
+What you can do is pull from git, although since git cannot deal with file
+ownership and groups, you will first have to own everything and then restore the
+correct file modes:
+```
+$ cd /medianet
+$ sudo chown -R medianet:medianet
+$ git pull
+$ sudo sbin/mn_set_permissions
+$ sudo sbin/mn_deploy_overlay
+```
+Depending on what has changed, you might have to do other mysterious things :(
+When the custom-built software has been upgraded, you will need to 
+```
+$ sbin/mn_checkout
+$ sbin/mn_build
 ```
 
-## Alternative: Manually create a Raspbian base image
-1. Download the latest **Raspbian lite** image (tested with Buster, requalify
-for newer releases):  
-`wget http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip`
-1. Unzip image:  
-`unzip *-raspbian-*-lite.zip`
-1. Pad the image file with zeros up to 8 GB:  
-`truncate -s 7969177600 *-raspbian-*-lite.img`
-1. Resize the rootfs partition to 4G, using sectors for proper alignment:  
-`parted *-raspbian-*-lite.img resizepart 2 8388607s`
-1. Create a localfs partition spanning the remainder of the disk:  
-`parted *-raspbian-*-lite.img mkpart primary ext4 8388608s 100%`
-1. Create loop devices for the image partitions and find the boot partition:  
-```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p1"` ```
-1. Mount the boot partition:  
-`mount $PART /mnt`
-1. Activate SSH login on the image:   
-`touch /mnt/ssh`
-1. Disable automatic resizing of root partition in Raspbian:  
-`sed -i 's/init=[^[:space:]]*//' /mnt/cmdline.txt`
-1. Fix kernel commandline link to root fs (the PARTUUID has changed after
-editing the partition table):  
-`sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' /mnt/cmdline.txt`
-1. Unmount the boot partition:  
-`umount /mnt`
-1. Find the new localfs partition:  
-```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p3"````
-1. Create an ext4 file system:  
-`mkfs.ext4 -L localfs $PART`
-1. Remove the loop devices:  
-`kpartx -d *-raspbian-*-lite.img`
-1. At this point, it makes sense to rename the image to reflect the
-customisations:  
-`mv *-raspbian-*-lite.img medianet-base.img`
-
-## Create an SD card
-Now the image is ready to be written to a µ-SD card using the tool of your
-choice, which is dd:
-```
-dd if=medianet-base.img of=/dev/$CARDREADER bs=4M status=progress
-```
-
-## Bootstrap the system
-After booting the system image created above in a Raspberry Pi, it will have
-to be turned into a medianet system, which requires two remote logins each
-followed by a reboot.
-
-1. Log into the system as user *pi* with default password *raspberry* (this
-opens a window of vulnerability and should only be done on a trusted private
-network).  
-`ssh pi@raspberrypi`
-1. Check out medianet environment
-   1. `sudo apt-get update`
-   1. `sudo apt-get install git`
-   1. `sudo git clone https://github.com/nettings/medianet.git /medianet`
-   1. `cd /medianet`
-1. Basic setup
-   1. Change into `sbin/10-basics-as_user_pi/` and execute the symlinks in
-numerical order using ```sudo```, carefully noting any error messages in the
-output. Do not run the final one (reboot) just yet.
-   1. Drop your own public key into `/home/medianet/.ssh/authorized_keys`,
-since the one installed by default is ours and the private key is not part of
-this repository.
-   1. Reboot
-1. Customization
-   1. Log into the system as user *medianet* with the appropriate public key.
-The host name is now "mn-basic":  
-   `ssh -i $PATH_TO_YOURKEY medianet@mn-basic`
-   1. Change into `sbin/50-customize-as_user_medianet/` and again execute the
-symlinks in numerical order using `sudo`, except for the checkout and build
-steps of custom software, those are done with user rights for security reasons.  
-   During package installation, you will be asked whether to configure
-Icecast2. Answer `no`.  
-   Then you will be asked whether to enable realtime privileges for JACK.
-Answer `yes`.
-
-   The next steps in this directory will guide you to create a medianet image
-file and copy it to a remote machine, which you can use to deploy different
-medianet systems. Make sure you have 8G free on the target machine.
-
-Now is a good time to fetch a coffee.
-
-## Deploy the system
-Whether you just continue on your first system which you used for the native
-bootstrap process, or you cloned several memory cards from the medianet
-image created above, you will now have to "individualize" each host to
-prevent odd things from happening:
-
-   1. If not already there, log back into the system (still called
-`mn-basic`) as user `medianet`.
-   1. Change into `/medianet/sbin/80-deploy-as_user_medianet` and execute the
-symlinks in numerical order using `sudo`.
-   1. If it's been a while, you might throw in an extra  
-      ```
-      sudo apt update
-      sudo apt upgrade
-      ```
-      before rebooting.
+A better-documented updating process is under consideration. Starting with the 
+first official release, additional update steps will be documented here.

@@ -143,16 +143,23 @@ $link_status .= " as of $reqtime.";
 <!DOCTYPE html>
 <html>
   <head>
-    <title>[mn] Medianet maintenance tunnel</title>
+    <title>[mn] <?php print(gethostname()); ?> maintenance tunnel</title>
     <meta http-equiv="refresh" content="<?php print($refresh); ?>"/>
     <link rel="stylesheet" href="mn_tunnel.css" type="text/css"/>
     <script src="mn_tunnel.js" type="text/javascript"></script>
   </head>
   <body>
-    <form id="tunnel" action="<?php print(basename(__FILE__)); ?>" method="post">
+    <form id="tunnel" method="post">
       <fieldset>
-        <legend>[mn] media<strong>net</strong> maintenance tunnel</legend>
+        <legend>
+          [mn] media<strong>net</strong> maintenance tunnel
+          <span class="endpoints">
+            <?php print(gethostname()); ?>
+            &#x21c4; <?php print($config['TUNNEL_HOST'] . ":" . $config['TUNNEL_PORT_ACCESS'])?>
+          </span>
+        </legend>
         <div>
+
           <label for="daemon"><?php print($daemon_status); ?></label>
           <button
             id="daemon"

@@ -7,6 +7,8 @@ autoreconf -i -f
 	--with-avahi \
 	--with-soxr \
 	--with-metadata \
+	--with-apple-alac \
 	--sysconfdir=/etc/medianet
 make -j4
+sudo ldconfig
 sudo DESTDIR="/medianet/overlay/" make install

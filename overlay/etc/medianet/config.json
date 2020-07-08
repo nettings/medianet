@@ -20,26 +20,21 @@
 			"pi3-disable-bt"
 		]
 	},
-	"alsaOptions": {
-		"master": [
-			"Digital"
-		],
-		"masterDefault": "-3dB"
-	},
 	"systemdUnits": [
 		{
-			"unit"    : "cpufrequtils",
+			"unit"    : "mn_cpufreq",
 			"type"    : "service",
-			"enabled" : 0
+			"enabled" : 1,
+			"options" : "-g performance --min 600 --max 1000"
 		},
 		{
-			"unit"    : "gpioctl",
+			"unit"    : "mn_gpioctl",
 			"type"    : "service",
-			"enabled" : 0,
+			"enabled" : 1,
 			"options" : "-U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
 		},
 		{
-			"unit"    : "jackd", 
+			"unit"    : "mn_jackd", 
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "system",
@@ -56,7 +51,7 @@
 			]
 		},
 		{
-			"unit"    : "mod-host",
+			"unit"    : "mn_mod-host",
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "mod-host",
@@ -72,11 +67,11 @@
 			"outPorts": [
 				{
 					"portName"   : "effect_9:outL",
-					"targetUnit"     : "jackd",
+					"targetUnit"     : "mn_jackd",
 					"targetPort" : 0
 				},{
 					"portName"   : "effect_9:outR",
-					"targetUnit"     : "jackd",
+					"targetUnit"     : "mn_jackd",
 					"targetPort" : 1
 				}
 			],
@@ -102,17 +97,8 @@
 				"param_set 9 threshold -2"
 			]
 		},
-                {
-                        "unit"    : "mpv",
-                        "type"    : "service",
-                        "enabled" : 0,
-                        "jackName": "mpv",
-                        "options" : "",
-                        "inPorts" : [],
-                        "outPorts": []
-                },
  		{
-			"unit"    : "shairport-sync",
+			"unit"    : "mn_shairport-sync",
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "shairport-sync",
@@ -120,18 +106,18 @@
 			"outPorts": [
 				{
 					"portName"   : "out_L",
-					"targetUnit" : "mod-host",
+					"targetUnit" : "mn_mod-host",
 					"targetPort" : 0
 				},
 				{
 					"portName"   : "out_R",
-					"targetUnit" : "mod-host",
+					"targetUnit" : "mn_mod-host",
 					"targetPort" : 1
 				}
 			]
 		},
 		{
-			"unit"    : "zita-n2j",
+			"unit"    : "mn_zita-n2j",
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "zita-n2j",
@@ -140,18 +126,18 @@
 			"outPorts": [
 				{
 					"portName"   : "out_1",
-					"targetUnit" : "mod-host",
+					"targetUnit" : "mn_mod-host",
 					"targetPort" : 0
 				},
 				{
 					"portName"   : "out_2",
-					"targetUnit" : "mod-host",
+					"targetUnit" : "mn_mod-host",
 					"targetPort" : 1
 				}
 			]
 		},
 		{
-			"unit"    : "zita-j2n",
+			"unit"    : "mn_zita-j2n",
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-j2n",
@@ -166,7 +152,7 @@
 			]
 		},
 		{
-			"unit"    : "zita-a2j",
+			"unit"    : "mn_zita-a2j",
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-a2j",
@@ -181,7 +167,7 @@
 			]
 		},
 		{
-			"unit"    : "zita-j2a",
+			"unit"    : "mn_zita-j2a",
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-j2a",

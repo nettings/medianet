@@ -11,7 +11,7 @@ After=loadcpufreq.service
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/bin/cpufreq-set $OPTIONS
-ExecStop=/usr/bin/cpufreq-set --min 0 --max 0
+ExecStop=/usr/bin/cpufreq-set --min 0 --max 0 -g powersave
 
 [Install]
 WantedBy=multi-user.target

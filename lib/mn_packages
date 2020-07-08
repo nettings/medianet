@@ -15,7 +15,7 @@ lighttpd php php-cgi php-fpm
 # local mpv and remote control
 mpv socat
 # local monitoring
-icecast2 darkice
+icecast2 ffmpeg
 # i2c tools for peripheral devices such as SenseHat or HifiBerries
 i2c-tools
 # some graphics tools in case we want to use the hdmi output

@@ -1,0 +1,21 @@
+[Unit]
+Description=[mn] stream server
+After=sound.target
+After=mn_jackd.target
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+# icecast2 is configured to chown to icecast2:icecast in a chroot
+User=root
+# chroot, so we cannot use the usual symlinks in the system file hierarchy
+ExecStartPre=/bin/mount --bind /local/log/icecast2 /medianet/overlay/usr/share/icecast2/log
+ExecStart=/usr/bin/icecast2 -c /medianet/overlay/usr/share/icecast2/etc/icecast.xml
+ExecStopPost=/bin/umount /medianet/overlay/usr/share/icecast2/log
+RestartSec=15
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

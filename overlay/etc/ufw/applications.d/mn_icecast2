@@ -1,0 +1,4 @@
+[mn_icecast2]
+title=[mn] icecast2
+description=Shoutcast-compatible audio/video stream relay server
+ports=8000/tcp

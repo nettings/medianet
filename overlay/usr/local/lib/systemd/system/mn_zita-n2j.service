@@ -1,7 +1,7 @@
 [Unit]
 Description=[mn] resampling Network-to-JACK bridge
-BindsTo=jackd.target
-After=jackd.target
+BindsTo=mn_jackd.target
+After=mn_jackd.target
 Requires=network-online.target
 After=network-online.target
 

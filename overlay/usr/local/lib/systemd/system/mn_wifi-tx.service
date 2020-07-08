@@ -1,8 +1,8 @@
 [Unit]
 Description=[mn] Wifi RTP stream sender
 After=sound.target
-After=jackd.target
-BindsTo=jackd.target
+After=mn_jackd.target
+BindsTo=mn_jackd.target
 BindsTo=network-online.target
 
 [Service]
