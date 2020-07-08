@@ -1,8 +1,8 @@
 [Unit]
 Description = Kodi Media Center
-After = remote-fs.target network-online.target jackd.target
+After = remote-fs.target network-online.target mn_jackd.target
 Wants = network-online.target
-Requires = jackd.target
+Requires = mn_jackd.target
 
 [Service]
 LimitRTPRIO=85

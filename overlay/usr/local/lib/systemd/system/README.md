@@ -19,6 +19,8 @@ These files are automatically generated from
 
 ## systemd ordering issues
 
+**NOTE:** This chapter is mostly obsolete as of Debian Buster.
+
 Unfortunately, some systemd ordering functions do not work as advertised in the
 version that is available in Debian Stretch and have had to be replaced by
 ad-hoc hacks. These are:
