@@ -4,11 +4,8 @@
 
 needroot
 
-scream "Updating/upgrading base system:"
-"$APTGET" update
-"$APTGET" -y upgrade
+scream "Adding packages from $CONF_FILE_PACKAGES:"
 
-scream "Adding packages from $CONF_FILE_PACKAGES"
 cat "$CONF_FILE_PACKAGES" | while read line ; do
 	for package in $line; do
 		if [[ $package == \#* ]] ; then
@@ -18,4 +15,4 @@ cat "$CONF_FILE_PACKAGES" | while read line ; do
 			echo -n "$package "
 		fi
 	done
-done | "$XARGS" -n 32 "$APTGET" -y install
+done | "$XARGS" -n 32 "$APT" -y install

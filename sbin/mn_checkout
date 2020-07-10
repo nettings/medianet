@@ -43,7 +43,7 @@ from_tar() {
 from_package()
 {
 	echo -ne "Installing packages ..."
-  	sudo "$APTGET" -qqy install --no-install-recommends "$@" || failure && success
+  	sudo "$APT" -qqy install --no-install-recommends "$@" || failure && success
 }
 
 

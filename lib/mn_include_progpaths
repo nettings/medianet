@@ -1,5 +1,5 @@
 # program paths
-APTGET=/usr/bin/apt-get
+APT=/usr/bin/apt
 BASENAME=/usr/bin/basename
 CAT=/bin/cat
 CHOWN=/bin/chown
