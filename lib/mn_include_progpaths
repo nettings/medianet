@@ -26,6 +26,7 @@ MN_CONFIG_UPDATE=/usr/local/bin/mn_config_update
 MN_DEPLOY_OVERLAY="$BASEDIR"/sbin/mn_deploy_overlay
 MKDIR=/bin/mkdir
 MOUNT=/bin/mount
+MOUNTPOINT=/bin/mountpoint
 MV=/bin/mv
 PARTED=/sbin/parted
 PASSWD=/usr/bin/passwd
