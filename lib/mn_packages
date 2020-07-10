@@ -1,5 +1,6 @@
 # basic system packages
-cpufrequtils joe screen ufw lsof inotify-tools expect rpi-eeprom
+cpufrequtils joe screen lsof inotify-tools expect rpi-eeprom
+# moved to mn_packages_early: ufw
 # JSON configuration
 jq
 # basic audio packages
@@ -15,7 +16,8 @@ lighttpd php php-cgi php-fpm
 # local mpv and remote control
 mpv socat
 # local monitoring
-icecast2 ffmpeg
+# moved to mn_packages_early: icecast2 
+ffmpeg
 # i2c tools for peripheral devices such as SenseHat or HifiBerries
 i2c-tools
 # some graphics tools in case we want to use the hdmi output
