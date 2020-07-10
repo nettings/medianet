@@ -1,7 +1,9 @@
 [Unit]
 Description=[mn] save mod-host settings
-Requires=lighttpd.service
+# Fixme: it would be nice to still use Requires=any_webserver rather than
+# apache2 or lighttpd
 After=lighttpd.service
+After=apache2.service
 BindsTo=mn_mod-host.service
 After=mn_mod-host.service
 
