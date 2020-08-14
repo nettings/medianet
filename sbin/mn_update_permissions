@@ -6,5 +6,5 @@ OLDPWD=`pwd`
 scream "Updating $CONF_FILE_PERMISSIONS:"
 cd "$PREFIX"
 mv "$CONF_FILE_PERMISSIONS" "$CONF_FILE_PERMISSIONS".old
-"$FIND" overlay boot ! -type l ! -name "*~" ! -name ".gitkeep" -exec "$STAT" -c "%N %U:%G %a" {} \; >> "$CONF_FILE_PERMISSIONS"
+"$FIND" overlay ! -type l ! -name "*~" ! -name ".gitkeep" -exec "$STAT" -c "%N %U:%G %a" {} \; >> "$CONF_FILE_PERMISSIONS"
 cd "$OLDPWD"
