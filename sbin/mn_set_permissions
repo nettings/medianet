@@ -30,7 +30,7 @@ while read FILE ; do
 done <<< $PERM_LIST
 
 # HACK: fix sudoers first to avoid a warning on each subsequent action:
-for QUERY in "overlay/etc/sudoers.d" "-P overlay/ boot/ ! -type l"; do
+for QUERY in "overlay/etc/sudoers.d" "-P overlay/ ! -type l"; do
 
   while read FILE ; do
   
