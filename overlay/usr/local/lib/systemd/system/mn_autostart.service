@@ -1,0 +1,16 @@
+[Unit]
+Description=[mn] execute shell command at startup
+
+[Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/mn_autostart.service.d/mn_autostart.service.conf
+# created by mn_config_update
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+ExecStart=/bin/bash -c ${OPTIONS}
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
