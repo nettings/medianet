@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+echo -n "Checking if `basename $CONF_FILE_BOOT` is included from config.txt..."
+LINE="include `basename $CONF_FILE_BOOT`"
+
+if ! "$GREP" "$LINE" /boot/config.txt > /dev/null ; then
+  echo -n " no. Including..."
+  echo "$LINE" >> /boot/config.txt || failure && success
+else
+  echo " yes. Nothing to do!"
+fi
