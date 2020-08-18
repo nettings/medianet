@@ -121,17 +121,14 @@ echo -n "Writing $CONF_FILE_FSTAB..."
 echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
 
 
-# systemd unit status
+# systemd unit status and firewall rules
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | "\(.unit).\(.type)"'`
-echo $DATA
 if [[ -n "$DATA" ]] ; then
 	scream "Update systemd unit status and firewall rules"
-	# we iterate over known list of services, so we can disable anything not enabled in the config file
+	# we iterate over list of known services, so we can disable anything not enabled in the config file
 	for UNIT in $SYSTEMD_MEDIANET_UNITS ; do
-		# look for UFW application rule file, greedy match gets rid of last ".foo":
-		# UFWAPP=`echo $UNIT | "$SED" 's/\(.*\)\..*/\1/'`
-		# split unit into basename and type:
-		UNIT_BASENAME=`echo "$UNIT" | "$SED" 's/\(.*\)\..*/\1/'`
+		# split unit into basename and type (greedy match will eat all but the last '.'):
+		UNIT_BASENAME=`echo "$UNIT" | "$SED" 's/\([^@\.]*\).*\..*/\1/'`
 		UNIT_TYPE=`echo "$UNIT" | "$SED" 's/.*\.\(.*\)/\1/'`
 		# UNIT may be a template@.service. We operate on the actual instance from our config,
 		# which could be template@FOO.service
@@ -144,13 +141,17 @@ if [[ -n "$DATA" ]] ; then
 				# service should be enabled
 				echo -n "Enabling $INSTANCE..."
 				"$SYSTEMCTL" --quiet is-enabled "$INSTANCE" 2> /dev/null && {
-					echo " is already enabled."
+					echo " already enabled."
 				} || {
 					"$SYSTEMCTL" --quiet enable "$INSTANCE" && success || failure
 				}
 				if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UNIT_BASENAME}" ]] ; then
-					echo "Found matching firewall ruleset. Enabling..." | indent
-					"$UFW" allow "${UNIT_BASENAME}" | indent && success || failure
+					echo -n "Found matching firewall ruleset ${CONF_DIR_UFW_MNAPPS}/${UNIT_BASENAME}. Enabling..." | indent
+					if "$UFW" status | "$GREP" --quiet "$UNIT_BASENAME" ; then
+						echo " already active."
+					else
+						"$UFW" allow "${UNIT_BASENAME}" | indent && success || failure
+					fi
 				fi
 			}
 		done
@@ -161,8 +162,12 @@ if [[ -n "$DATA" ]] ; then
 				"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
 			} || echo " already disabled."
 			if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UNIT_BASENAME}" ]] ; then
-				echo  "Found matching firewall ruleset. Disabling..." | indent
-				"$UFW" delete allow "${UNIT_BASENAME}" | indent && success || failure
+				echo -n "Found matching firewall ruleset ${CONF_DIR_UFW_MNAPPS}/${UNIT_BASENAME}. Disabling..." | indent
+				if "$UFW" status | "$GREP" --quiet "$UNIT_BASENAME" ; then 
+					"$UFW" delete allow "${UNIT_BASENAME}" | indent && success || failure
+				else
+					echo " not active".
+				fi
 			fi
 		fi
 	done
@@ -198,10 +203,9 @@ if [[ -n "$DATA" ]] ; then
 			CONFIG+=`echo "$OPTIONS" | sed "s/%jackName%/\'$JACKNAME\'/g"`
 			CONFIG+="\"\n"
 		fi
-		echo "$UNIT options:"
+		echo "Writing $UNIT options to $DROPIN_DIR"/"$DROPIN_FILE ..."
 		echo -en "${CONFIG:-${NONE}}" | indent
 		CONFIG="$NOEDIT\n\n\n[Service]\n\n$CONFIG"
-		echo -n "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
 		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
 	done <<< "$DATA"
 fi
@@ -228,10 +232,9 @@ if [[ -n "$DATA" ]] ; then
 		if [[ "$CIN" ]] ; then
 			CONFIG+="CONNECTIONS_IN=\"$CIN\n\"\n"
 		fi
-		echo "$UNIT connections:"
+		echo "Writing $UNIT connections to $DROPIN_DIR/$DROPIN_FILE ..."
 		echo -en "${CONFIG:-${NONE}}" | indent
 		CONFIG="$NOEDIT\n\n$CONFIG"
-		echo -n "Writing to $DROPIN_DIR/$DROPIN_FILE ..."
 		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
 	done <<< "$DATA"
 fi
