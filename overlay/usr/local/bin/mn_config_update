@@ -126,8 +126,7 @@ DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | 
 if [[ -n "$DATA" ]] ; then
 	scream "Update systemd unit status and firewall rules"
 	# we iterate over known list of services, so we can disable anything not enabled in the config file
-	for i in $SYSTEMD_MEDIANET_UNITS ; do
-		UNIT=`"$BASENAME" "$i"`
+	for UNIT in $SYSTEMD_MEDIANET_UNITS ; do
 		# greedy match gets rid of last ".foo":
 		UFWAPP=`echo $UNIT | "$SED" 's/\(.*\)\..*/\1/'`
 		"$GREP" --quiet "^${UNIT}$" <<< "$DATA" && {
