@@ -24,7 +24,8 @@
 	| .systemdUnits[]?
 # only look at those which are jack clients and enabled
  	| select(.enabled == 1 and .jackName != null) as $u
-# iterate over their output ports and take those which point to this unit
+# iterate over their output ports and take those which point to this $unit
+# (we get $unit as a command line parameter from mn_config_update)
 	| (.outPorts[]? | select(.targetUnit == $unit)) as $o
 # check for fully-qualified port names (containing a ":")
 	| if ($o.portName | contains(":"))

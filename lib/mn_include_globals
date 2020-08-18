@@ -52,7 +52,7 @@ SYSTEMD_MEDIANET_UNITS="
 	mn_jackminimix.service
 	mn_jconvolver.service
 	mn_icecast2.service
-	mn_listen.service
+	mn_listen@.service
 	mn_mod-host.service
 	mn_mpv@.service
 	mn_shairport-sync.service
