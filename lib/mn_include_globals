@@ -54,7 +54,7 @@ SYSTEMD_MEDIANET_UNITS="
 	mn_icecast2.service
 	mn_listen.service
 	mn_mod-host.service
-	mn_mpv.service
+	mn_mpv@.service
 	mn_shairport-sync.service
 	mn_v4l2rtspserver.service
 	mn_wifi-rx.service

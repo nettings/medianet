@@ -123,35 +123,48 @@ echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
 
 # systemd unit status
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | "\(.unit).\(.type)"'`
+echo $DATA
 if [[ -n "$DATA" ]] ; then
 	scream "Update systemd unit status and firewall rules"
 	# we iterate over known list of services, so we can disable anything not enabled in the config file
 	for UNIT in $SYSTEMD_MEDIANET_UNITS ; do
-		# greedy match gets rid of last ".foo":
-		UFWAPP=`echo $UNIT | "$SED" 's/\(.*\)\..*/\1/'`
-		"$GREP" --quiet "^${UNIT}$" <<< "$DATA" && {
-			# service should be enabled
-			echo -n "Enabling $UNIT..."
-			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
-				echo " is already enabled."
-			} || {
-				"$SYSTEMCTL" --quiet enable "$i" && success || failure
+		# look for UFW application rule file, greedy match gets rid of last ".foo":
+		# UFWAPP=`echo $UNIT | "$SED" 's/\(.*\)\..*/\1/'`
+		# split unit into basename and type:
+		UNIT_BASENAME=`echo "$UNIT" | "$SED" 's/\(.*\)\..*/\1/'`
+		UNIT_TYPE=`echo "$UNIT" | "$SED" 's/.*\.\(.*\)/\1/'`
+		# UNIT may be a template@.service. We operate on the actual instance from our config,
+		# which could be template@FOO.service
+		FOUND=""
+		for INSTANCE in $DATA ; do
+			echo "$INSTANCE" | "$GREP" --quiet "^${UNIT_BASENAME}.*\.${UNIT_TYPE}" || {
+				continue
+			} && {
+				FOUND=yes
+				# service should be enabled
+				echo -n "Enabling $INSTANCE..."
+				"$SYSTEMCTL" --quiet is-enabled "$INSTANCE" 2> /dev/null && {
+					echo " is already enabled."
+				} || {
+					"$SYSTEMCTL" --quiet enable "$INSTANCE" && success || failure
+				}
+				if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UNIT_BASENAME}" ]] ; then
+					echo "Found matching firewall ruleset. Enabling..." | indent
+					"$UFW" allow "${UNIT_BASENAME}" | indent && success || failure
+				fi
 			}
-			if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UFWAPP}" ]] ; then
-				echo -n "Found matching firewall service '$UFWAPP'. Enabling..."
-				"$UFW" allow "$UFWAPP" && success || failure
-			fi
-		} || {
+		done
+		if [[ -z "$FOUND" ]] ; then
 			# service should be disabled
 			echo -n "Disabling $UNIT..."
 			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
 				"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
 			} || echo " already disabled."
-			if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UFWAPP}" ]] ; then
-				echo -n "Found matching firewall service '$UFWAPP'. Disabling..."
-				"$UFW" delete allow "$UFWAPP" && success || failure
+			if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UNIT_BASENAME}" ]] ; then
+				echo  "Found matching firewall ruleset. Disabling..." | indent
+				"$UFW" delete allow "${UNIT_BASENAME}" | indent && success || failure
 			fi
-		}
+		fi
 	done
 fi
 
