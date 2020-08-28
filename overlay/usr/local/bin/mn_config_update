@@ -135,7 +135,7 @@ if [[ -n "$DATA" ]] ; then
 			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
 				echo " is already enabled."
 			} || {
-				"$SYSTEMCTL" --quiet enable "$i" && success || failure
+				"$SYSTEMCTL" --quiet enable "$UNIT" && success || failure
 			}
 			if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UFWAPP}" ]] ; then
 				echo -n "Found matching firewall service '$UFWAPP'. Enabling..."
