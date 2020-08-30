@@ -13,7 +13,7 @@ Make sure you have at least 6 GB free space in the directory where you invoke it
 This is the currently tested base image, although more recent ones should
 work as well:
 ```
-medianet/sbin/mn_make_image http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip
+medianet/sbin/mn_make_image http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-08-24/2020-08-20-raspios-buster-armhf-lite.zip
 ```
 
 ## Alternative: Manually create a Raspbian base image
