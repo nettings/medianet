@@ -16,20 +16,20 @@ work as well:
 medianet/sbin/mn_make_image http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-08-24/2020-08-20-raspios-buster-armhf-lite.zip
 ```
 
-## Alternative: Manually create a Raspbian base image
-1. Download the latest **Raspbian lite** image (tested with Buster, requalify
+## Alternative: Manually create a Raspberry Pi OS base image
+1. Download the latest **raspios lite** image (tested with Buster, requalify
 for newer releases):  
-`wget http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip`
+`wget http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-08-24/2020-08-20-raspios-buster-armhf-lite.zip
 1. Unzip image:  
-`unzip *-raspbian-*-lite.zip`
+`unzip *-raspios-*-lite.zip`
 1. Pad the image file with zeros up to 8 GB:  
-`truncate -s 7969177600 *-raspbian-*-lite.img`
+`truncate -s 7969177600 *-raspios-*-lite.img`
 1. Resize the rootfs partition to 4G, using sectors for proper alignment:  
-`parted *-raspbian-*-lite.img resizepart 2 8388607s`
+`parted *-raspios-*-lite.img resizepart 2 8388607s`
 1. Create a localfs partition spanning the remainder of the disk:  
-`parted *-raspbian-*-lite.img mkpart primary ext4 8388608s 100%`
+`parted *-raspios-*-lite.img mkpart primary ext4 8388608s 100%`
 1. Create loop devices for the image partitions and find the boot partition:  
-```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p1"` ```
+```PART=/dev/mapper/`kpartx -av *-raspios-*-lite.img | grep -o "loop.p1"` ```
 1. Mount the boot partition:  
 `mount $PART /mnt`
 1. Activate SSH login on the image:   
@@ -46,10 +46,10 @@ editing the partition table):
 1. Create an ext4 file system:  
 `mkfs.ext4 -L localfs $PART`
 1. Remove the loop devices:  
-`kpartx -d *-raspbian-*-lite.img`
+`kpartx -d *-raspios-*-lite.img`
 1. At this point, it makes sense to rename the image to reflect the
 customisations:  
-`mv *-raspbian-*-lite.img medianet-base.img`
+`mv *-raspios-*-lite.img medianet-base.img`
 
 ## Create an SD card
 Now the image is ready to be written to a µ-SD card using the tool of your
