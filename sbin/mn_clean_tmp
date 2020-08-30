@@ -10,5 +10,5 @@ echo -n "Trying to clean out /tmp before mounting over it..."
 $MOUNTPOINT -q "$TARGET" && {
 	failure "Something is already mounted here!"
 } || {
-	rm -rf "$TARGET" && success || failure
+	rm -rf "$TARGET"/* "$TARGET"/.??* && success || failure
 }
