@@ -7,14 +7,14 @@ if [[ -z "$1" ]] ; then
 	echo Usage: $THIS [image URL]
 	echo $THIS creates a [mn] medianet base image from a Raspbian lite release.
 	echo You must provide the full URL.
-	echo For available releases, see http://downloads.raspberrypi.org/raspbian_lite/images
+	echo For available releases, see http://downloads.raspberrypi.org/raspios_lite_armhf/images/
 	exit 2
 fi
 
 
 IMG_BASENAME=`basename "$URL"`
 IMG=`echo "$IMG_BASENAME" | sed 's/\.zip/\.img/'`
-FINAL_IMG=`echo "$IMG" | sed 's/raspbian-buster-lite/medianet-base/'`
+FINAL_IMG=`echo "$IMG" | sed 's/raspios.*\./medianet-base\./'`
 IMG_SIZE=5368709120
 
 echo $IMG
@@ -54,13 +54,13 @@ echo "Downloading image $IMG..."
 wget -q --show-progress  "$URL" | tr '\n' ' ' && success || bail
 echo -n "Unzipping image..."
 unzip -q "${IMG_BASENAME}" && success || bail
-echo "Padding the image to $IMG_SIZE..."
+echo -n "Padding the image to $IMG_SIZE bytes..."
 truncate -s $IMG_SIZE "$IMG" && success || bail
 echo -n "Resizing the rootfs partition to 4G, aligning to sectors assumed 512K..."
 sudo bash -c "parted \"$IMG\" resizepart 2 8388607s" && success || bail 
 echo -n "Creating a localfs partition spanning the remainder of the disk..."
 sudo bash -c "parted \"$IMG\" mkpart primary ext4 8388608s 100%" && success || bail
-echo "Creating loop devices for the image..."
+echo -n "Creating loop devices for the image..."
 PARTITIONS=`sudo kpartx -av "$IMG"`
 PART1=/dev/mapper/`echo $PARTITIONS | grep -o loop.p1`
 PART2=/dev/mapper/`echo $PARTITIONS | grep -o loop.p2`
@@ -78,7 +78,10 @@ sudo bash -c "umount /mnt" && success || bail
 echo "Creating new ext4 file system on $PART3..."
 sudo bash -c "mkfs.ext4 -L localfs \"${PART3}\"" && success || bail
 echo "Removing loop devices..."
-sudo bash -c "kpartx -d \"$IMG\"" && success || bail
+# as of 2020-08, current versions of kpartx sometimes fail to clean up completely.
+# see https://www.linuxquestions.org/questions/suse-opensuse-60/kpartx-not-removing-loop-devices-while-deleting-an-image-in-suse-linux-12-4-and-greater-version-4175671611/
+# don't bail on unclean return code:
+sudo bash -c "kpartx -d \"$IMG\"" && success || failure
 echo -n "Renaming image to $FINAL_IMG..."
 mv "$IMG" "$FINAL_IMG" && success || bail
 
