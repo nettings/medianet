@@ -114,6 +114,26 @@
 					"targetUnit" : "mn_mod-host",
 					"targetPort" : 1
 				}
+			],
+			"config"  : [
+                                "general = {",
+                                "  name = \"[mn] %h\";",
+                                "  interpolation = \"soxr\";",
+                                "  output_backend = \"jack\";",
+                                "  drift_tolerance_in_seconds = 0.015;",
+                                "  ignore_volume_control = \"no\";",
+                                "  interface = \"medianet0\";",
+                                "}",
+                                "jack = {",
+                                "  soxr_resample_quality = \"very high\"",
+                                "}",
+                                "sessioncontrol = {",
+                                "//  run_this_before_play_begins = \"/usr/local/bin/mn_disconnect zita-n2j.service\";",
+                                "//  run_this_after_play_ends = \"/usr/local/bin/mn_connect zita-n2j.service\";",
+                                "}",
+                                "diagnostics = {",
+                                "  statistics = \"no\";",
+                                "}"
 			]
 		},
 		{
