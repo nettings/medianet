@@ -1,5 +1,7 @@
 proc            /proc           proc    defaults				0       0
 /dev/mmcblk0p1  /boot		vfat	ro,defaults				0       2
 /dev/mmcblk0p2  /		ext4	ro,defaults,noatime			0       1
-/dev/mmcblk0p3	/local		ext4	rw,data=journal,noatime			0	2
+# nofail prevents /local failure from dropping us into emergency mode
+# (see man systemd.mount)
+/dev/mmcblk0p3	/local		ext4	rw,nofail,data=journal,noatime			0	2
 tmpfs		/tmp		tmpfs	nodev,nosuid,size=100000000		0	0
