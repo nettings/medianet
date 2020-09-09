@@ -30,9 +30,12 @@ esac
 # wait for mod-host to become ready
 until echo "" | "$NC" -N localhost 5555 > /dev/null; do sleep 1; done
 echo "$CONF" | "$GREP" -v -e "^#" | while read -r line ; do
-	echo -en "$line \t[" 
-	test -n "$line" && echo $line | "$NC" -N localhost 5555
-	echo "]"
+	if [[ -n "$line" ]] ; then
+		# mod-host produces null bytes in its telnet interface,
+		# remove them!
+		RESP=`echo $line | "$NC" -N localhost 5555 | tr -d '\0'`
+		echo -e "$line \t[${RESP}]"
+	fi
 done
 # make systemd happy if mod-host chokes on spurious whitespace with non-zero nc exit code
 exit 0
