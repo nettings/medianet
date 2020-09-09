@@ -1,0 +1,8 @@
+[Unit]
+Description=[mn] jackd socket watcher
+
+[Path]
+PathExistsGlob=/dev/shm/jack_*_????_?
+
+[Install]
+WantedBy=multi-user.target
