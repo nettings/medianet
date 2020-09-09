@@ -2,7 +2,7 @@
 
 . /medianet/lib/mn_includes
 
-MOD_DUMP_URI=http://localhost:80/mod-host/lv2rdf.php?dumpPersistenceCommands
+MOD_DUMP_URI="http://localhost:80/mod-host/lv2rdf.php?dumpChangedValues"
 
 if [[ ! -e "$CONF_FILE_MODHOST_STATE" ]] ; then
 	STATEDIR=`$DIRNAME "$CONF_FILE_MODHOST_STATE"`
