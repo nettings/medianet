@@ -22,15 +22,17 @@ case $1 in
     echo "--base-setup sets the mod-host base configuration defined in $SYSTEM_CONFIG."
     echo "--parameters restores the most recent user settings of the plugin chain."
     echo "--all does both."
+    echo "For performance reasons, only values that differ from their defaults are"
+    echo "stored in $CONF_FILE_MODHOST_STATE."
     ;;
 esac
 
 # wait for mod-host to become ready
-until echo "" | nc -N localhost 5555 > /dev/null; do sleep 1; done
-echo "$CONF" | grep -v -e "^#" | while read -r line ; do
-	echo "$line"
-	test -n "$line" && echo $line | nc -N localhost 5555
-	echo 
+until echo "" | "$NC" -N localhost 5555 > /dev/null; do sleep 1; done
+echo "$CONF" | "$GREP" -v -e "^#" | while read -r line ; do
+	echo -en "$line \t[" 
+	test -n "$line" && echo $line | "$NC" -N localhost 5555
+	echo "]"
 done
 # make systemd happy if mod-host chokes on spurious whitespace with non-zero nc exit code
 exit 0
