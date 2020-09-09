@@ -28,6 +28,7 @@ MKDIR=/bin/mkdir
 MOUNT=/bin/mount
 MOUNTPOINT=/bin/mountpoint
 MV=/bin/mv
+NC=/bin/nc
 PARTED=/sbin/parted
 PASSWD=/usr/bin/passwd
 PS=/bin/ps
