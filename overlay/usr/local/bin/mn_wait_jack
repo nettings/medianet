@@ -69,5 +69,5 @@ while [[ -n ${SEARCH[0]} ]] ; do
 		exit 127
 		break
 	fi
-	sleep 1	
+	sleep 1
 done
