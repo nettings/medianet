@@ -1,0 +1,4 @@
+[mn_wifi-rx]
+title=[mn] wifi-rx
+description=RTP stream receiver
+ports=4000

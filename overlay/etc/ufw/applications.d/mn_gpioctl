@@ -1,4 +1,4 @@
 [mn_gpioctl]
 title=[mn] gpioctl
 description=GPIO control daemon
-ports=3042
+ports=5000
