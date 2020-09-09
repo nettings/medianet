@@ -22,8 +22,8 @@ while read FOREIGNPORT; do
 done <<< "$CONNECTIONS_IN"
 
 echo -e "$PORTS" \
-	| "$XARGS" -d '\n' \
-	| /usr/local/bin/mn_wait_jack -t 15 && echo " - all found."
+	| "$XARGS" -d '\n' /usr/local/bin/mn_wait_jack -t 15 \
+	&& echo " - all found."
 
 N=0
 while read OUTPORT ; do
