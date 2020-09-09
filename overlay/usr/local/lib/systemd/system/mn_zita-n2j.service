@@ -18,6 +18,10 @@ ExecStart=/usr/local/bin/zita-n2j --jname "${JACKNAME}" $OPTIONS
 ExecStartPost=-/usr/local/bin/mn_connect %n
 RestartSec=5
 Restart=always
+# zita-n2j will repeat its last buffer on shutdown, which sounds ugly.
+# disconnect first, then kill
+ExecStop=/usr/local/bin/mn_disconnect %n
+ExecStop=/bin/kill $MAINPID
 
 [Install]
 WantedBy=multi-user.target
