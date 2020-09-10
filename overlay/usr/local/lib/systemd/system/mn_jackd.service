@@ -20,6 +20,10 @@ LimitMEMLOCK=700000000
 User=medianet
 Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket"
 ExecStart=/usr/bin/jackd $OPTIONS
+# block until the jackd socket pops up in /dev/shm, to delay jack client services until
+# we're ready. FIXME: This will break if/when we enable multiple jack
+# servers.
+ExecStartPost=/usr/local/bin/mn_wait_jack_daemon
 RestartSec=5
 Restart=on-failure
 
