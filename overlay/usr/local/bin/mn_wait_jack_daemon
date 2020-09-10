@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+. /medianet/lib/mn_includes
+
+JACK_SOCKET=
+while [[ -z "$JACK_SOCKET" ]] ; do
+	JACK_SOCKET=`"$FIND" /dev/shm -type s -regextype posix-extended -regex '/dev/shm/jack_[[:alnum:]]+_[0-9]+_[0-9]+' -exec ls -1 {} \;`
+	sleep 0.5
+done
+echo "Found $JACK_SOCKET. JACK server is ready!"
