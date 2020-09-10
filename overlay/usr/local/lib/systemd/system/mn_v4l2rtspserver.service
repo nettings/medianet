@@ -2,7 +2,7 @@
 Description=[mn] video rtsp server
 After=sound.target
 After=mn_jackd.target
-BindsTo=network-online.target
+After=network-online.target
 
 [Service]
 Type=exec

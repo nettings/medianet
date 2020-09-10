@@ -1,7 +1,6 @@
 [Unit]
 Description=[mn] fourth-order loudspeaker crossover
-BindsTo=jackd.target
-After=jackd.target
+After=mn_jackd.target
 
 [Service]
 # we read Environment= from a drop-in file

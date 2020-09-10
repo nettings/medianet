@@ -2,8 +2,7 @@
 Description=[mn] Wifi RTP stream receiver
 After=sound.target
 After=mn_jackd.target
-BindsTo=mn_jackd.target
-BindsTo=network-online.target
+After=network-online.target
 
 [Service]
 Type=exec

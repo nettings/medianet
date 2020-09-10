@@ -1,8 +1,6 @@
 [Unit]
 Description=[mn] resampling JACK-to-ALSA bridge
-BindsTo=mn_jackd.target
 After=mn_jackd.target
-BindsTo=sound.target
 After=sound.target
 
 [Service]

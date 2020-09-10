@@ -1,6 +1,5 @@
 [Unit]
 Description=[mn] JACK to Icecast2 encoder
-BindsTo=mn_jackd.target
 After=mn_jackd.target
 BindsTo=mn_icecast2.service
 After=mn_icecast2.service

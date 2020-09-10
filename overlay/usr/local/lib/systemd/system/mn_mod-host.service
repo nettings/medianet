@@ -1,7 +1,7 @@
 [Unit]
 Description=[mn] LV2 plugin host for JACK
-BindsTo=mn_jackd.target
-After=mn_jackd.target 
+Requires=mn_jackd.service
+After=mn_jackd.service
 Wants=lighttpd.service
 After=lighttpd.service
 Wants=mn_modsave.timer

@@ -2,7 +2,6 @@
 Description=[mn] mpv player daemon
 After=sound.target
 After=mn_jackd.target
-BindsTo=mn_jackd.target
 
 [Service]
 # we read Environment= from a drop-in file

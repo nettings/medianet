@@ -1,8 +1,6 @@
 [Unit]
 Description=[mn] JACK-to-Network bridge
-BindsTo=mn_jackd.target
 After=mn_jackd.target
-BindsTo=network-online.target
 After=network-online.target
 
 [Service]

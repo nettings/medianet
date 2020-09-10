@@ -1,8 +1,6 @@
 [Unit]
 Description=[mn] resampling ALSA-to-JACK bridge
-BindsTo=mn_jackd.target
 After=mn_jackd.target
-BindsTo=sound.target
 After=sound.target
 
 [Service]
@@ -19,7 +17,6 @@ Restart=always
 # zita-a2j will repeat its last buffer on shutdown, which sounds ugly.
 # disconnect first, then kill
 ExecStop=-/usr/local/bin/mn_disconnect %n
-ExecStop=-/bin/kill $MAINPID
 
 [Install]
 WantedBy=multi-user.target
