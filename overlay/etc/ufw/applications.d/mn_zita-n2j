@@ -1,4 +1,4 @@
 [mn_zita-n2j]
 title=[mn] zita-n2j
 description=Network-to-JACK bridge for uncompressed audio
-ports=3000/udp
+ports=30000:39999/udp
