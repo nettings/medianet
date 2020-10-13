@@ -229,6 +229,21 @@ $SYSTEMCTL daemon-reload && success || failure
 
 # write config files
 
+# jconvolver
+CONFIG=
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_jconvolver") | .config[]?'`
+if [[ -n "$DATA" ]] ; then
+	scream "Update jconvolver configuration:"
+	while read COMMAND ; do
+		CONFIG+="$COMMAND\n"
+	done <<< "$DATA"
+	echo -en "${CONFIG:-${NONE}}" | indent
+	CONFIG="$NOEDIT\n\n$CONFIG"
+	echo -n "Writing to $CONF_FILE_JCONVOLVER..."
+	echo -e "$CONFIG" > "$CONF_FILE_JCONVOLVER" && success || failure
+fi
+
+
 # mod-host
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_mod-host") | .config[]?'`
