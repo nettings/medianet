@@ -49,10 +49,11 @@ SYSTEMD_MEDIANET_UNITS="
 	mn_autostart.service
 	mn_cpufreq.service
 	mn_gpioctl.service
+	mn_icecast2.service
 	mn_jackd.service
 	mn_jackminimix.service
 	mn_jconvolver.service
-	mn_icecast2.service
+	mn_kodi.service
 	mn_listen.service
 	mn_mod-host.service
 	mn_mpv.service
