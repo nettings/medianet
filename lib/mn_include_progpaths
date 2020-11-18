@@ -31,6 +31,7 @@ MV=/bin/mv
 NC=/bin/nc
 PARTED=/sbin/parted
 PASSWD=/usr/bin/passwd
+PKILL=/usr/bin/pkill
 PS=/bin/ps
 READLINK=/bin/readlink
 RESIZE2FS=/sbin/resize2fs

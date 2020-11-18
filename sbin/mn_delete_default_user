@@ -4,6 +4,8 @@
 
 needroot
 
+echo -n "Killing all jobs owned by pi..."
+"$PKILL" --signal KILL -u pi && success || failure
 echo -n "Deleting user pi..."
 "$USERDEL" pi && success || bail "Is the user still logged in?"
 echo -n "Deleting sudo entry for pi..."
