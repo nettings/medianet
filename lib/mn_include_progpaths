@@ -34,6 +34,7 @@ PASSWD=/usr/bin/passwd
 PKILL=/usr/bin/pkill
 PS=/bin/ps
 READLINK=/bin/readlink
+REALPATH=/usr/bin/realpath
 RESIZE2FS=/sbin/resize2fs
 RM=/bin/rm
 SED=/bin/sed
