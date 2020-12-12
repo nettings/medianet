@@ -4,9 +4,9 @@ cat << EOF > lv2rdf2html/lv2rdf.conf
 # medianet deployment settings
 MODHOSTCONF=$CONF_FILE_MODHOST
 SAMPLERATE=48000
-WEBGUIROOT=/var/www/html/mod-host
+WEBGUIROOT=/var/www/html/medianet/DSP
 WEBGUIURI=index.html
 DOWNLOADJQUERY=true
-AJAXROOT=/var/www/html/mod-host
+AJAXROOT=/var/www/html/medianet/DSP
 DESTDIR=/medianet/overlay
 EOF
