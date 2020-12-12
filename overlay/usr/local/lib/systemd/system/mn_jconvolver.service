@@ -1,7 +1,7 @@
 [Unit]
 Description=[mn] FIR Convolution Engine
-After=sound.target
-After=mn_jackd.target
+Requires=mn_jackd.service
+After=mn_jackd.service
 
 [Service]
 # we read Environment= from a drop-in file

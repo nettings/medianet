@@ -1,7 +1,7 @@
 [Unit]
 Description=[mn] Wifi RTP stream sender
-After=sound.target
-After=mn_jackd.target
+Requires=mn_jackd.service
+After=mn_jackd.service
 After=network-online.target
 
 [Service]

@@ -1,6 +1,7 @@
 [Unit]
 Description=[mn] fourth-order loudspeaker crossover
-After=mn_jackd.target
+Requires=mn_jackd.service
+After=mn_jackd.service
 
 [Service]
 # we read Environment= from a drop-in file

@@ -1,7 +1,7 @@
 [Unit]
 Description=[mn] resampling ALSA-to-JACK bridge
-After=mn_jackd.target
-After=sound.target
+Requires=mn_jackd.service
+After=mn_jackd.service
 
 [Service]
 # we read Environment= from a drop-in file
