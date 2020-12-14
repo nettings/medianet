@@ -5,7 +5,7 @@
 
 noroot
 
-# from_FOO <URL> <dirname>
+# from_FOO <URL> <dirname> <branch> <commit>
 from_git() {
   if [[ ! -d "$2" ]] ; then
     echo -ne "Cloning $1 into $2..."
@@ -15,6 +15,17 @@ from_git() {
     cd "$2"
     "$GIT" pull || failure && success
     cd ..
+  fi
+  if [[ -n "$3" ]] ; then
+    echo -ne "Switching to branch $3..."
+    OLDWD=`"$PWD"`
+    cd "$2"
+    "$GIT" checkout "$3" || failure && success
+    if [[ -n "$4" ]] ; then
+      echo -ne "Resetting to commit $4..."
+      "$GIT" reset --hard "$4" || failure && success
+    fi
+    cd "$OLDWD"
   fi
 }
 
@@ -42,7 +53,7 @@ from_tar() {
 
 from_package()
 {
-	echo -ne "Installing packages ..."
+	echo -e "Installing packages ..."
   	sudo "$APT" -qqy install --no-install-recommends "$@" || failure && success
 }
 
