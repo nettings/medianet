@@ -18,7 +18,7 @@ from_git() {
   fi
   if [[ -n "$3" ]] ; then
     echo -ne "Switching to branch $3..."
-    OLDWD=`"$PWD"`
+    OLDWD="$PWD"
     cd "$2"
     "$GIT" checkout "$3" || failure && success
     if [[ -n "$4" ]] ; then
