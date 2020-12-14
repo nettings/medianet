@@ -1,4 +1,4 @@
-cmake .
-make
+cmake cmake -D LIVE555URL=https://download.videolan.org/pub/contrib/live555/live.2020.12.11.tar.gz .
+make -j4
 sudo DESTDIR="$DESTDIR" make install
 sudo rm /medianet/overlay/lib/systemd/system/v4l2rtspserver.service
