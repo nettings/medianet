@@ -1,6 +1,3 @@
-from_git https://github.com/moddevices/mod-host.git mod-host
+from_git https://github.com/moddevices/mod-host.git mod-host master 76ef52dc1ee461ca6c65dd478157e19b80fe708f
 from_package libjack-jackd2-dev liblilv-dev lilv-utils libreadline-dev
-cd mod-host
-git reset --hard 76ef52dc1ee461ca6c65dd478157e19b80fe708f
-cd ..
 
