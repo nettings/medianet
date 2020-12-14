@@ -71,7 +71,7 @@ will again be read-only.
 ### Web interfaces
 
 By default, you can reach an automatically generated web UI to control all
-plugins running in `mod-host` under `http://localhost:10080/mod-host`, 
+plugins running in `mod-host` under `http://localhost:10080/medianet/DSP/`, 
 assuming you have forwarded the http port through your ssh connection, like
 this:
 ```
@@ -80,7 +80,9 @@ user@your-bigbox:~ $ ssh -L 10080:localhost:80 medianet@your-pi
 If you have configured an external jump server for remote maintenance that
 your deployed medianet Pi can "phone home to" in `/etc/medianet/mn_tunnel`,
 you can start/stop your maintenance tunnel and check its state at
-`http://localhost:10080/mn_tunnel`
+`http://localhost:10080/medianet/Tunnel`
+If you have configured a local Icecast2 server to create a stream from your
+JACK signal graph, you will find a corresponding link here as well.
 
 ### Features
 
@@ -153,6 +155,5 @@ When the custom-built software has been upgraded, you will need to
 $ sbin/mn_checkout
 $ sbin/mn_build
 ```
-
 A better-documented updating process is under consideration. Starting with the 
 first official release, additional update steps will be documented here.

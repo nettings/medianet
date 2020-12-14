@@ -13,13 +13,13 @@ Make sure you have at least 6 GB free space in the directory where you invoke it
 This is the currently tested base image, although more recent ones should
 work as well:
 ```
-medianet/sbin/mn_make_image http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-08-24/2020-08-20-raspios-buster-armhf-lite.zip
+medianet/sbin/mn_make_image https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip
 ```
 
 ## Alternative: Manually create a Raspberry Pi OS base image
 1. Download the latest **raspios lite** image (tested with Buster, requalify
 for newer releases):  
-`wget http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-08-24/2020-08-20-raspios-buster-armhf-lite.zip
+`wget https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip`
 1. Unzip image:  
 `unzip *-raspios-*-lite.zip`
 1. Pad the image file with zeros up to 8 GB:  
