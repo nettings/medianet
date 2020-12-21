@@ -31,7 +31,7 @@ for i in $TARGET; do
       failure
     }
   cd ..
-  sudo $MN_DEPLOY_OVERLAY -q
+  sudo PREFIX="$PREFIX" "$MN_DEPLOY_OVERLAY" -q
   echo "Compiled programs have been installed to $DESTDIR and deployed."
 done
 
