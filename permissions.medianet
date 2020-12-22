@@ -57,8 +57,8 @@
 'overlay/usr/share/icecast2/etc/mime.types' root:root 644
 'overlay/usr/share/icecast2/etc/icecast.xml' root:root 644
 'overlay/usr/share/icecast2/log' icecast2:icecast 755
-'overlay/usr/share/icecast2/log/access.log' root:root 644
-'overlay/usr/share/icecast2/log/error.log' root:root 644
+'overlay/usr/share/icecast2/log/access.log' icecast2:icecast 644
+'overlay/usr/share/icecast2/log/error.log' icecast2:icecast 644
 'overlay/usr/share/icecast2/web' root:root 755
 'overlay/usr/share/icecast2/web/server_version.xsl' root:root 644
 'overlay/usr/share/icecast2/web/auth.xsl' root:root 644
