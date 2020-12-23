@@ -31,8 +31,8 @@ EOF
 }
 
 DEVICE="/dev/mmcblk0"
-BLOCKSIZE="512K"
-COUNT=16384
+BLOCKSIZE=$((512 * 1024))
+NBLOCKS=16384
 
 USER=""
 HOST=""
@@ -95,10 +95,13 @@ else
 	success
 fi
 
-echo "Transferring data..."
-"$DD" if="$DEVICE" bs="$BLOCKSIZE" count="$COUNT" status=progress \
-	| "$SSH" "$USER"@"$HOST" "cat > \"${TARGET}/${IMAGE}\""
+echo -n "Determining used space (= end of third partition) on ${DEVICE}..."
+PTABLE="`"$PARTED" -m "$DEVICE" unit B print all`"
+END_OF_P3=`echo "$PTABLE" | "$GREP" "^3:" | "$SED" -s 's/^3:[0-9]\+B:\([0-9]\+\)B:.*/\1/'`
+NBLOCKS=$((31323062271 / ${BLOCKSIZE} + 1))
+echo " $END_OF_P3 bytes (${NBLOCKS} blocks of ${BLOCKSIZE} bytes)"
 
-
-
-
+echo "Transferring data to ${USER}@${HOST}:${TARGET}/${IMAGE}..."
+"$DD" if="$DEVICE" bs="$BLOCKSIZE" count="$NBLOCKS" status=progress \
+	| "$SSH" "$USER"@"$HOST" "cat > \"${TARGET}/${IMAGE}\"" \
+	&& success || failure
