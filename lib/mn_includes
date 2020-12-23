@@ -1,4 +1,4 @@
-BASEDIR=/medianet
+BASEDIR=${BASEDIR:-"/medianet"}
 
 # can be overridden for custom overlays
 PREFIX=${PREFIX:-$BASEDIR}
