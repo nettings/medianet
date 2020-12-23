@@ -98,7 +98,7 @@ fi
 echo -n "Determining used space (= end of third partition) on ${DEVICE}..."
 PTABLE="`"$PARTED" -m "$DEVICE" unit B print all`"
 END_OF_P3=`echo "$PTABLE" | "$GREP" "^3:" | "$SED" -s 's/^3:[0-9]\+B:\([0-9]\+\)B:.*/\1/'`
-NBLOCKS=$((31323062271 / ${BLOCKSIZE} + 1))
+NBLOCKS=$((${END_OF_P3} / ${BLOCKSIZE} + 1))
 echo " $END_OF_P3 bytes (${NBLOCKS} blocks of ${BLOCKSIZE} bytes)"
 
 echo "Transferring data to ${USER}@${HOST}:${TARGET}/${IMAGE}..."
