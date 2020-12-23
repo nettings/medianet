@@ -1,52 +1,25 @@
 #!/bin/bash
 
+THISPATH=`realpath -- $0`
+THISPATH=`dirname -- $THISPATH`
+
+BASEDIR="${THISPATH}/.."
+. "$BASEDIR/lib/mn_includes"
+
 URL="$1"
-THIS=`basename $0`
 
 if [[ -z "$1" ]] ; then
-	echo Usage: $THIS [image URL]
-	echo $THIS creates a [mn] medianet base image from a Raspbian lite release.
+	echo Usage: $PROGNAME [image URL]
+	echo $PROGNAME creates a [mn] medianet base image from a Raspbian lite release.
 	echo You must provide the full URL.
 	echo For available releases, see http://downloads.raspberrypi.org/raspios_lite_armhf/images/
 	exit 2
 fi
 
-
 IMG_BASENAME=`basename "$URL"`
 IMG=`echo "$IMG_BASENAME" | sed 's/\.zip/\.img/'`
 FINAL_IMG=`echo "$IMG" | sed 's/raspios.*\./medianet-base\./'`
 IMG_SIZE=5368709120
-
-echo $IMG
-
-function scream {
-  echo
-  echo -e "\033[1;1m$1\033[0m"
-}
-
-function success {
-  echo  -e " \033[1;32msucceeded.\033[0m"
-}
-
-function failure {
-	ERR=$?
-	ERRSTR=""
-	if [[ $ERR != 0 ]] ; then
-		ERRSTR=" (return code $ERR)"
-	fi
-	echo  -e " \033[1;31mfailed$ERRSTR. $@\033[0m"
-}
-
-function bail {
-	ERR=$?
-	ERRSTR=""
-	if [[ $ERR != 0 ]] ; then
-		ERRSTR=" (return code $ERR)"
-	fi
-	echo -e "\033[1;31mFatal error \"$@\"$ERRSTR ... Exiting.\033[0m"
-  exit 1
-}
-
 
 scream "Creating a [mn] medianet base image:"
 
