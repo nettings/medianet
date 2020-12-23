@@ -1,0 +1,8 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+echo -n "Cleaning apt cache..."
+"$APT" clean && success || failure
