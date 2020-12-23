@@ -9,11 +9,25 @@ image creation process is all BASH code, you can check out this repo to any
 modern Linux on any architecture, and it will work (i.e. you don't need to run
 this on a Pi even though it's part of the medianet repository).
 
-Make sure you have at least 6 GB free space in the directory where you invoke it.
-This is the currently tested base image, although more recent ones should
-work as well:
+Make sure you have at least 12 GB free space in your output directory.
 ```
-medianet/sbin/mn_make_image https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip
+you@yourbigbox: $ ./mn_make_image -h
+mn_make_image creates a [mn] medianet base image from a RaspiOS release.
+
+--help         displays this message
+ -h
+
+--output-path  an output path where the downloaded RaspiOS image and
+ -o            the medianet base image will be stored
+
+--image        a HTTP URL to download or a locally stored image to start
+ -i            from; defaults to the latest known-good image, currently
+               http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip
+
+--size         the size of the base image in bytes; needs to be big
+ -s            enough to contain the original (unzipped) image plus an extra
+               local partition - leave alone unless you know what you're doing;
+               defaults to 5368709120
 ```
 
 ## Alternative: Manually create a Raspberry Pi OS base image
@@ -23,7 +37,7 @@ for newer releases):
 1. Unzip image:  
 `unzip *-raspios-*-lite.zip`
 1. Pad the image file with zeros up to 8 GB:  
-`truncate -s 7969177600 *-raspios-*-lite.img`
+`truncate -s 5368709120 *-raspios-*-lite.img`
 1. Resize the rootfs partition to 4G, using sectors for proper alignment:  
 `parted *-raspios-*-lite.img resizepart 2 8388607s`
 1. Create a localfs partition spanning the remainder of the disk:  
