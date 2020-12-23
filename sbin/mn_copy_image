@@ -75,9 +75,9 @@ echo -n "Checking if boot partition is mounted read-only..."
 BOOT_IS_RW=`"$MOUNT" | "$GREP" "^${DEVICE}p1.*[(,]rw[),]"`
 if [[ -n "$BOOT_IS_RW" ]] ; then
 	if [[ -n $IGNORE_RW ]] ; then
-		failure " yes. Ignoring at your own risk."
+		failure " no. Ignoring at your own risk."
 	else
-		bail " yes - aborting."
+		bail " no - aborting."
 	fi
 else
 	success
@@ -87,9 +87,9 @@ echo -n "Checking if root partition is mounted read-only..."
 ROOT_IS_RW=`"$MOUNT" | "$GREP" "^${DEVICE}p2.*[(,]rw[),]"`
 if [[ -n "$ROOT_IS_RW" ]] ; then
 	if [[ -n $IGNORE_RW ]] ; then
-		failure " yes. Ignoring at your own risk."
+		failure " no. Ignoring at your own risk."
 	else
-		bail " yes - aborting."
+		bail " no - aborting."
 	fi
 else
 	success
