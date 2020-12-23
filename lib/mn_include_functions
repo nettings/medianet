@@ -16,23 +16,31 @@ function success {
 
 # $@: error message
 function failure {
-	ERR=$?
-	ERRSTR=""
-	if [[ $ERR != 0 ]] ; then
-		ERRSTR=" (return code $ERR)"
+	if [[ -n "$@" ]] ; then
+		ERRMSG="$@"
+	else
+		ERRMSG="failed."
 	fi
-	echo  -e " ${ESC_RED}failed${ERRSTR}. $@${ESC_CLR}"
+	ERR=$?
+	if [[ $ERR != 0 ]] ; then
+		ERRMSG+=" (return code $ERR)"
+	fi
+	echo  -e " ${ESC_RED}${ERRMSG}${ESC_CLR}"
 }
 
 # $@: error message
 function bail {
-	ERR=$?
-	ERRSTR=""
-	if [[ $ERR != 0 ]] ; then
-		ERRSTR=" (return code $ERR)"
+	if [[ -n "$@" ]] ; then
+		ERRMSG="$@"
+	else
+		ERRMSG="failed critically."
 	fi
-	echo -e "${ESC_RED}Fatal error \"$@\"$ERRSTR ... Exiting.${ESC_CLR}"
-  exit 1
+	ERR=$?
+	if [[ $ERR != 0 ]] ; then
+		ERRMSG+=" (return code $ERR)"
+	fi
+	echo  -e " ${ESC_RED}${ESC_BLD}${ERRMSG}${ESC_CLR}"
+	exit 1
 }
 
 # this function works as a filter ("|")!
