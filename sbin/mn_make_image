@@ -6,57 +6,142 @@ THISPATH=`dirname -- $THISPATH`
 BASEDIR="${THISPATH}/.."
 . "$BASEDIR/lib/mn_includes"
 
-URL="$1"
+IMAGE_SIZE=5368709120
 
-if [[ -z "$1" ]] ; then
-	echo Usage: $PROGNAME [image URL]
-	echo $PROGNAME creates a [mn] medianet base image from a Raspbian lite release.
-	echo You must provide the full URL.
-	echo For available releases, see http://downloads.raspberrypi.org/raspios_lite_armhf/images/
-	exit 2
-fi
+function usage {
+	cat << EOF
+$PROGNAME creates a [mn] medianet base image from a RaspiOS release.
+Usage: $PROGNAME [options...]
 
-IMG_BASENAME=`basename "$URL"`
-IMG=`echo "$IMG_BASENAME" | sed 's/\.zip/\.img/'`
-FINAL_IMG=`echo "$IMG" | sed 's/raspios.*\./medianet-base\./'`
-IMG_SIZE=5368709120
+--help         displays this message
+ -h
+
+--output-path  an output path where the downloaded RaspiOS image and
+ -o            the medianet base image will be stored
+
+--image        a HTTP URL to download or a locally stored image to start
+ -i            from; defaults to the latest known-good image, currently
+               $RASPIOS_BASE_IMAGE
+
+--size         the size of the base image in bytes; needs to be big
+ -s            enough to contain the original (unzipped) image plus an extra
+               local partition - leave alone unless you know what you're doing;
+               defaults to $IMAGE_SIZE
+EOF
+	exit
+}
+
+OUTPUT_PATH="$PWD"
+IMAGE="$RASPIOS_BASE_IMAGE"
+while [[ -n "$1" ]] ; do
+	case $1 in
+		-h|--help)
+			usage
+			;;
+		-o|--output-path)
+			shift
+			if [[ -d "$1" ]] ; then
+				OUTPUT_PATH="$1"
+			else
+				bail "Output path does not exist."
+			fi
+			;;
+		-i|--image)
+			shift
+			if [[ "$1" =~ ^http || -f "$1" ]] ; then
+				IMAGE="$1"
+			else
+				bail "Image must either be a URL starting with 'http' or a local file."
+			fi
+			;;
+		-s|--size)
+			shift
+			if [[ "$1" =~ [0-9]+ ]] ; then
+				IMAGE_SIZE="$1"
+			else
+				bail "Size must be a number!"
+			fi
+			;;
+	esac
+	shift
+done
 
 scream "Creating a [mn] medianet base image:"
 
-echo "Downloading image $IMG..."
-wget -q --show-progress  "$URL" | tr '\n' ' ' && success || bail
-echo -n "Unzipping image..."
-unzip -q "${IMG_BASENAME}" && success || bail
-echo -n "Padding the image to $IMG_SIZE bytes..."
-truncate -s $IMG_SIZE "$IMG" && success || bail
+IMAGE_BASENAME=`basename "$IMAGE"`
+WGET_OUT="--output-document=${OUTPUT_PATH}/${IMAGE_BASENAME}"
+if [[ "$IMAGE" =~ ^http  ]] ; then
+	echo "Downloading image from $IMAGE..."
+	wget -q --show-progress "$WGET_OUT" "$IMAGE" | tr '\n' ' ' && success || bail
+	if [[ "$IMAGE" == "$RASPIOS_BASE_IMAGE" ]] ; then
+		# use locally stored checksum for default production image
+		CHECKSUM="$RASPIOS_BASE_IMAGE_SHA256"
+	else
+		echo "Downloading checksum from $IMAGE.sha256 ..."
+		CHECKSUM=`wget -q --output-document - "$IMAGE.sha256"`
+	fi
+	echo -n "Verifying checksum..."
+	COMPUTED_CHECKSUM=`sha256sum "${OUTPUT_PATH}/${IMAGE_BASENAME}" | cut -f 1 -d ' '`
+	if [[ "$CHECKSUM" =~ ^${COMPUTED_CHECKSUM} ]] ; then
+		success
+		IMAGE="${OUTPUT_PATH}/${IMAGE_BASENAME}"
+	else
+		bail "Checksum verification failed. Should be ${CHECKSUM}."
+	fi
+else
+	echo "Using local image $IMAGE..."
+fi
+
+if [[ "$IMAGE" =~ \.zip$ ]] ; then
+	echo -n "Unzipping ${IMAGE} to ${OUTPUT_PATH}..."
+	unzip -q -d "${OUTPUT_PATH}" "${IMAGE}" && success || bail
+	IMAGE=`echo "${OUTPUT_PATH}/${IMAGE_BASENAME}" | sed 's/\.zip$/\.img/'`
+elif [[ "$IMAGE" =~ \.img$ ]] ; then
+	echo -n "Copying ${IMAGE} to ${OUTPUT_PATH}..."
+	cp "$IMAGE" "$OUTPUT_PATH" && success || bail
+	IMAGE="${OUTPUT_PATH}/${IMAGE_BASENAME}"
+else
+	bail "Expecting either a .zip or .img file to work on."
+fi
+
+echo -n "Padding image to ${IMAGE_SIZE} bytes..."
+truncate -s $IMAGE_SIZE "$IMAGE" && success || bail
+
 echo -n "Resizing the rootfs partition to 4G, aligning to sectors assumed 512K..."
-sudo bash -c "parted \"$IMG\" resizepart 2 8388607s" && success || bail 
+sudo bash -c "parted \"$IMAGE\" resizepart 2 8388607s" && success || bail 
+
 echo -n "Creating a localfs partition spanning the remainder of the disk..."
-sudo bash -c "parted \"$IMG\" mkpart primary ext4 8388608s 100%" && success || bail
+sudo bash -c "parted \"$IMAGE\" mkpart primary ext4 8388608s 100%" && success || bail
+
 echo -n "Creating loop devices for the image..."
-PARTITIONS=`sudo kpartx -av "$IMG"`
+PARTITIONS=`sudo kpartx -av "$IMAGE"`
 PART1=/dev/mapper/`echo $PARTITIONS | grep -o loop.p1`
 PART2=/dev/mapper/`echo $PARTITIONS | grep -o loop.p2`
 PART3=/dev/mapper/`echo $PARTITIONS | grep -o loop.p3`
+
 echo -n "Mounting the boot partition to /mnt..."
 sudo bash -c "mount \"${PART1}\" /mnt" && success || bail
+
 echo -n "Activating SSH login on the image..."
 sudo bash -c "touch /mnt/ssh" && success || bail 
+
 echo -n "Disabling automatic resizing of root partition..."
 sudo bash -c "sed -i 's/init=[^[:space:]]*//' /mnt/cmdline.txt" && success || bail
+
 echo -n "Fixing root fs entry in kernel cmdline..."
 sudo bash -c "sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' /mnt/cmdline.txt"  && success || bail 
+
 echo -n "Unmounting boot partition..."
 sudo bash -c "umount /mnt" && success || bail 
+
 echo "Creating new ext4 file system on $PART3..."
-sudo bash -c "mkfs.ext4 -L localfs \"${PART3}\"" && success || bail
+sudo bash -c "mkfs.ext4 -L localfs \"${PART3}\""  | indent && success || bail
+
 echo "Removing loop devices..."
 # as of 2020-08, current versions of kpartx sometimes fail to clean up completely.
 # see https://www.linuxquestions.org/questions/suse-opensuse-60/kpartx-not-removing-loop-devices-while-deleting-an-image-in-suse-linux-12-4-and-greater-version-4175671611/
 # don't bail on unclean return code:
-sudo bash -c "kpartx -d \"$IMG\"" && success || failure
-echo -n "Renaming image to $FINAL_IMG..."
-mv "$IMG" "$FINAL_IMG" && success || bail
-
-
-
+sudo bash -c "kpartx -d \"$IMAGE\"" && success || failure
+FINAL_IMAGE=`echo "$IMAGE" | sed 's/raspios.*\./medianet-base\./'`
+echo -n "Renaming image to $FINAL_IMAGE..."
+mv "$IMAGE" "$FINAL_IMAGE" && success || bail
