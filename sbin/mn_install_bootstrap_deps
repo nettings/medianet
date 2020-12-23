@@ -4,10 +4,6 @@
 
 needroot
 
-scream "Updating base system:"
-"$APT" update
-"$APT" upgrade
-
 scream "Installing early boostrap dependencies from $CONF_FILE_PACKAGES_EARLY:"
 
 cat "$CONF_FILE_PACKAGES_EARLY" | while read line ; do
