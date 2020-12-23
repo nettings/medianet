@@ -10,6 +10,7 @@ LimitMEMLOCK=700000000
 User=root
 # chroot, so we cannot use the usual symlinks in the system file hierarchy
 ExecStartPre=/bin/mount --bind /local/log/icecast2 /medianet/overlay/usr/share/icecast2/log
+ExecStartPre=/usr/bin/chown -R icecast2:icecast /local/log/icecast2
 ExecStart=/usr/bin/icecast2 -c /medianet/overlay/usr/share/icecast2/etc/icecast.xml
 ExecStopPost=/bin/umount /medianet/overlay/usr/share/icecast2/log
 RestartSec=15
