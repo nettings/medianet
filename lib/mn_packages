@@ -22,6 +22,8 @@ ffmpeg
 i2c-tools
 # some graphics tools in case we want to use the hdmi output
 fbi omxplayer
+# required to bootstrap the system
+kpartx
 # support for GPIO access
 gpiod 
 # exfat file system support
