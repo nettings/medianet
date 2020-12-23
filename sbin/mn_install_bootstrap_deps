@@ -19,4 +19,4 @@ cat "$CONF_FILE_PACKAGES_EARLY" | while read line ; do
 			echo -n "$package "
 		fi
 	done
-done | "$XARGS" -n 32 "$APT" -y install
+done | "$XARGS" -n 32 "$APT" -y install --no-install-recommends
