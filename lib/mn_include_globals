@@ -2,6 +2,9 @@
 USER=medianet
 GROUP=medianet
 
+RASPIOS_BASE_IMAGE="http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip"
+RASPIOS_BASE_IMAGE_SHA256="186525f542056e953cb309c74a6398d8fef9bc808c6e83d82f358692a41e3964"
+
 SYSTEM_CONFIG_PATH=/etc/medianet
 SYSTEM_CONFIG="$SYSTEM_CONFIG_PATH"/config.json
 
