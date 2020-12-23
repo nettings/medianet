@@ -31,7 +31,7 @@
 			"unit"    : "mn_gpioctl",
 			"type"    : "service",
 			"enabled" : 1,
-			"options" : "-U osc.udp://239.0.0.254:3042 -R Digital -S Digital"
+			"options" : "-U osc.udp://239.0.0.254:3042 -R Headphone -S Headphone"
 		},
 		{
 			"unit"    : "mn_jackd", 
@@ -161,7 +161,7 @@
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-j2n",
-			"options" : "--chan 2 239.0.0.1 3000 medianet0",
+			"options" : "--chan 2 239.0.0.2 3000 medianet0",
 			"inPorts": [
 				{
 					"portName" : "in_1"
