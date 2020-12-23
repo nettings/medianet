@@ -62,6 +62,9 @@ while [[ -n "$1" ]] ; do
 				bail "Size must be a number!"
 			fi
 			;;
+		*)
+			bail "Unknown option '$1'."
+			;;
 	esac
 	shift
 done
