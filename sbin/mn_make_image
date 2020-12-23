@@ -8,6 +8,8 @@ BASEDIR="${THISPATH}/.."
 
 IMAGE_SIZE=5368709120
 
+needroot
+
 function usage {
 	cat << EOF
 $PROGNAME creates a [mn] medianet base image from a RaspiOS release.
@@ -111,10 +113,10 @@ echo -n "Padding image to ${IMAGE_SIZE} bytes..."
 truncate -s $IMAGE_SIZE "$IMAGE" && success || bail
 
 echo -n "Resizing the rootfs partition to 4G, aligning to sectors assumed 512K..."
-sudo bash -c "parted \"$IMAGE\" resizepart 2 8388607s" && success || bail 
+parted $IMAGE resizepart 2 8388607s && success || bail
 
 echo -n "Creating a localfs partition spanning the remainder of the disk..."
-sudo bash -c "parted \"$IMAGE\" mkpart primary ext4 8388608s 100%" && success || bail
+parted $IMAGE mkpart primary ext4 8388608s 100% && success || bail
 
 echo -n "Creating loop devices for the image..."
 PARTITIONS=`sudo kpartx -av "$IMAGE"`
@@ -123,28 +125,28 @@ PART2=/dev/mapper/`echo $PARTITIONS | grep -o loop.p2`
 PART3=/dev/mapper/`echo $PARTITIONS | grep -o loop.p3`
 
 echo -n "Mounting the boot partition to /mnt..."
-sudo bash -c "mount \"${PART1}\" /mnt" && success || bail
+mount \"${PART1}\" /mnt && success || bail
 
 echo -n "Activating SSH login on the image..."
-sudo bash -c "touch /mnt/ssh" && success || bail 
+touch /mnt/ssh && success || bail
 
 echo -n "Disabling automatic resizing of root partition..."
-sudo bash -c "sed -i 's/init=[^[:space:]]*//' /mnt/cmdline.txt" && success || bail
+sed -i 's/init=[^[:space:]]*//' /mnt/cmdline.txt && success || bail
 
 echo -n "Fixing root fs entry in kernel cmdline..."
-sudo bash -c "sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' /mnt/cmdline.txt"  && success || bail 
+sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' /mnt/cmdline.txt  && success || bail
 
 echo -n "Unmounting boot partition..."
-sudo bash -c "umount /mnt" && success || bail 
+umount /mnt && success || bail
 
 echo "Creating new ext4 file system on $PART3..."
-sudo bash -c "mkfs.ext4 -L localfs \"${PART3}\""  | indent && success || bail
+mkfs.ext4 -L localfs "${PART3}"  | indent && success || bail
 
 echo "Removing loop devices..."
 # as of 2020-08, current versions of kpartx sometimes fail to clean up completely.
 # see https://www.linuxquestions.org/questions/suse-opensuse-60/kpartx-not-removing-loop-devices-while-deleting-an-image-in-suse-linux-12-4-and-greater-version-4175671611/
 # don't bail on unclean return code:
-sudo bash -c "kpartx -d \"$IMAGE\"" && success || failure
+kpartx -d "$IMAGE" && success || failure
 FINAL_IMAGE=`echo "$IMAGE" | sed 's/raspios.*\./medianet-base\./'`
 echo -n "Renaming image to $FINAL_IMAGE..."
 mv "$IMAGE" "$FINAL_IMAGE" && success || bail
