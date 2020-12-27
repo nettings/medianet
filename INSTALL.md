@@ -36,14 +36,14 @@ for newer releases):
 `wget https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip`
 1. Unzip image:  
 `unzip *-raspios-*-lite.zip`
-1. Pad the image file with zeros up to 8 GB:  
+1. Pad the image file with zeros up to 5 GB:  
 `truncate -s 5368709120 *-raspios-*-lite.img`
 1. Resize the rootfs partition to 4G, using sectors for proper alignment:  
 `parted *-raspios-*-lite.img resizepart 2 8388607s`
 1. Create a localfs partition spanning the remainder of the disk:  
 `parted *-raspios-*-lite.img mkpart primary ext4 8388608s 100%`
 1. Create loop devices for the image partitions and find the boot partition:  
-```PART=/dev/mapper/`kpartx -av *-raspios-*-lite.img | grep -o "loop.p1"` ```
+```PART=/dev/mapper/`kpartx -av *-raspios-*-lite.img | grep -o "loop.p1"` ``` 
 1. Mount the boot partition:  
 `mount $PART /mnt`
 1. Activate SSH login on the image:   
@@ -56,7 +56,7 @@ editing the partition table):
 1. Unmount the boot partition:  
 `umount /mnt`
 1. Find the new localfs partition:  
-```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p3"````
+```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p3"` ```
 1. Create an ext4 file system:  
 `mkfs.ext4 -L localfs $PART`
 1. Remove the loop devices:  
