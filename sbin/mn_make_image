@@ -119,7 +119,7 @@ echo -n "Creating a localfs partition spanning the remainder of the disk..."
 parted $IMAGE mkpart primary ext4 8388608s 100% && success || bail
 
 echo -n "Creating loop devices for the image..."
-PARTITIONS=`sudo kpartx -av "$IMAGE"`
+PARTITIONS=`kpartx -av "$IMAGE"`
 PART1=/dev/mapper/`echo $PARTITIONS | grep -o loop.p1`
 PART2=/dev/mapper/`echo $PARTITIONS | grep -o loop.p2`
 PART3=/dev/mapper/`echo $PARTITIONS | grep -o loop.p3`
