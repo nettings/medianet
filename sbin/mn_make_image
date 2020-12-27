@@ -120,12 +120,23 @@ parted $IMAGE mkpart primary ext4 8388608s 100% && success || bail
 
 echo -n "Creating loop devices for the image..."
 PARTITIONS=`kpartx -av "$IMAGE"`
-PART1=/dev/mapper/`echo $PARTITIONS | grep -o loop.p1`
-PART2=/dev/mapper/`echo $PARTITIONS | grep -o loop.p2`
-PART3=/dev/mapper/`echo $PARTITIONS | grep -o loop.p3`
+test "$?" && success || failure
+declare -a PART
+PART[1]=/dev/mapper/`echo $PARTITIONS | grep -o loop.p1`
+PART[2]=/dev/mapper/`echo $PARTITIONS | grep -o loop.p2`
+PART[3]=/dev/mapper/`echo $PARTITIONS | grep -o loop.p3`
+
+for i in 1 2 3 ; do
+	while : ; do
+		echo -n "Waiting for ${PART[$i]}..."
+		test -e "${PART[$i]}" && break
+		sleep 1
+	done
+	success
+done | indent
 
 echo -n "Mounting the boot partition to /mnt..."
-mount \"${PART1}\" /mnt && success || bail
+mount "${PART[1]}" /mnt && success || bail
 
 echo -n "Activating SSH login on the image..."
 touch /mnt/ssh && success || bail
@@ -140,7 +151,7 @@ echo -n "Unmounting boot partition..."
 umount /mnt && success || bail
 
 echo "Creating new ext4 file system on $PART3..."
-mkfs.ext4 -L localfs "${PART3}"  | indent && success || bail
+mkfs.ext4 -L localfs "${PART[3]}"  | indent && success || bail
 
 echo "Removing loop devices..."
 # as of 2020-08, current versions of kpartx sometimes fail to clean up completely.
