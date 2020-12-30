@@ -1,3 +1,3 @@
-./autogen.sh
+CFLAGS="`platform_optimisations`" ./autogen.sh
 make -j4 
 sudo DESTDIR="$DESTDIR" make install

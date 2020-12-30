@@ -1,5 +1,5 @@
 autoreconf -i -f
-./configure \
+CFLAGS=`platform_optimisations` ./configure \
 	--with-ssl=openssl \
 	--with-stdout \
 	--with-alsa \

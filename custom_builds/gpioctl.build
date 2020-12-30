@@ -1,4 +1,4 @@
-./waf configure --prefix=/usr/local/
+CFLAGS="`platform_optimisations`" ./waf configure --prefix=/usr/local/
 ./waf 
 sudo ./waf install --destdir=/medianet/overlay
 

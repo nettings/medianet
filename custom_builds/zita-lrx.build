@@ -1,5 +1,5 @@
 cd source
 make clean
-MANDIR="/usr/local/share/man/man1" PREFIX="/usr/local/" DESTDIR="$DESTDIR" CXXFLAGS="-march=armv8-a+crc -mfpu=neon-fp-armv8 -mtune=cortex-a53" make -j4
-sudo MANDIR="/usr/local/share/man/man1" PREFIX="/usr/local" DESTDIR="$DESTDIR" CXXFLAGS="-march=armv8-a+crc -mfpu=neon-fp-armv8 -mtune=cortex-a53" make install
+MANDIR="/usr/local/share/man/man1" PREFIX="/usr/local/" DESTDIR="$DESTDIR" CXXFLAGS="`platform_optimisations`" make -j4
+sudo MANDIR="/usr/local/share/man/man1" PREFIX="/usr/local/" DESTDIR="$DESTDIR" make install
 cd ..

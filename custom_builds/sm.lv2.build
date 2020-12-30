@@ -1,4 +1,4 @@
-./waf configure --prefix="$DESTDIR/usr/local"
+CFLAGS="`platform_optimisations`" ./waf configure --prefix="$DESTDIR/usr/local"
 ./waf clean
 ./waf -j4
 sudo ./waf install
