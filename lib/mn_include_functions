@@ -49,6 +49,25 @@ function indent {
 	sed -E "s/^(.*)/${1:-  }\1/"
 }
 
+function get_platform {
+	if [[ -e "/proc/device-tree/model" ]] ; then
+	        HW=`cat /proc/device-tree/model | "$TR" -d '\0'`
+	        if [[ "$HW" =~ ^Raspberry\ Pi\ Model\ B ]] ; then
+	                echo -n PI1B
+	        elif [[ "$HW" =~ ^Raspberry\ Pi\ 2\ Model\ B ]] ; then
+	                echo -n PI2B
+	        elif [[ "$HW" =~ ^Raspberry\ Pi\ 3\ Model\ B\ Rev ]] ; then
+	                echo -n PI3B
+	        elif [[ "$HW" =~ ^Raspberry\ Pi\ 3\ Model\ B\ Plus ]] ; then
+	                echo -n PI3BP
+	        elif [[ "$HW" =~ ^Raspberry\ Pi\ 4\ Model\ B ]] ; then
+	                echo -n PI4B
+	        else
+			echo -n UNKNOWN
+		fi
+	fi
+}
+
 function needroot {
 	if [ "$EUID" -ne 0 ] ; then
 		echo -e "${ESC_RED}You must be root to run $PROGNAME.${ESC_CLR}"

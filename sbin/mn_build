@@ -5,21 +5,8 @@
 noroot
 
 function platform_optimisations {
-# this works on Raspberry Pis:
-        PIMODEL=`cat /proc/device-tree/model | "$TR" -d '\0'`
-        if [[ "$PIMODEL" =~ ^Raspberry\ Pi\ Model\ B ]] ; then
-                echo -n "$CUSTOM_BUILD_GCCFLAGS_PI1B"
-        elif [[ "$PIMODEL" =~ ^Raspberry\ Pi\ 2\ Model\ B ]] ; then
-                echo -n "$CUSTOM_BUILD_GCCFLAGS_PI2B"
-        elif [[ "$PIMODEL" =~ ^Raspberry\ Pi\ 3\ Model\ B\ Rev ]] ; then
-                echo -n "$CUSTOM_BUILD_GCCFLAGS_PI3B"
-        elif [[ "$PIMODEL" =~ ^Raspberry\ Pi\ 3\ Model\ B\ Plus ]] ; then
-                echo -n "$CUSTOM_BUILD_GCCFLAGS_PI2B"
-        elif [[ "$PIMODEL" =~ ^Raspberry\ Pi\ 4\ Model\ B ]] ; then
-                echo -n "$CUSTOM_BUILD_GCCFLAGS_PI4B"
-        fi
+	echo "${CUSTOM_BUILD_GCCFLAGS[`get_platform`]}"
 }
-
 
 OLDWD=`pwd`
 DESTDIR="$PREFIX"/overlay

@@ -85,11 +85,12 @@ CUSTOM_BUILDS="
 	v4l2rtspserver
 "
 
-CUSTOM_BUILD_GCCFLAGS_PI1B="-march=armv6zk -mcpu=arm1176jzf-s -mfloat-abi=hard -mfpu=vfp"
-CUSTOM_BUILD_GCCFLAGS_PI2B="-march=armv7-a -mfloat-abi=hard -mfpu=neon-vfpv4"
-CUSTOM_BUILD_GCCFLAGS_PI3B="-march=armv8-a+crc -mfloat-abi=hard -mfpu=neon-vfpv4 -mtune=cortex-a53 -ftree-vectorize"
-CUSTOM_BUILD_GCCFLAGS_PI3BP="$CUSTOM_BUIKLD_GCCFLAGS_PI3"
-CUSTOM_BUILD_GCCFLAGS_PI4="$CUSTOM_BUILD_GCCFLAGS_PI3"
+declare -A CUSTOM_BUILD_GCCFLAGS
+CUSTOM_BUILD_GCCFLAGS[PI1B]="-march=armv6zk -mcpu=arm1176jzf-s -mfloat-abi=hard -mfpu=vfp"
+CUSTOM_BUILD_GCCFLAGS[PI2B]="-march=armv7-a -mfloat-abi=hard -mfpu=neon-vfpv4"
+CUSTOM_BUILD_GCCFLAGS[PI3B]="-march=armv8-a+crc -mfloat-abi=hard -mfpu=neon-vfpv4 -mtune=cortex-a53 -ftree-vectorize"
+CUSTOM_BUILD_GCCFLAGS[PI3BP]="${CUSTOM_BUIKLD_GCCFLAGS[PI3B]}"
+CUSTOM_BUILD_GCCFLAGS[PI4]="${CUSTOM_BUILD_GCCFLAGS[PI3B]}"
 
 SHELLPROMPT='${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\u\[\033[00m\]@\h:\w\[\033[01;34m\] \$\[\033[00m\] '
 SHELLPROMPT_WRITABLE='${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\u\[\033[00m\]@\h:\w\[\033[01;34m\] \[\033[01;31m\]FS WRITABLE\[\033[00m\] \$ '
