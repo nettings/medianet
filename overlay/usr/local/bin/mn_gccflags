@@ -1,0 +1,5 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+echo -n ${CUSTOM_BUILD_GCCFLAGS[`get_platform`]}
