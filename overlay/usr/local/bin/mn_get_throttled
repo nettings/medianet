@@ -15,8 +15,6 @@ WAS_ARMFREQ_CAPPED=0x20000
 WAS_THROTTLED=0x40000
 WAS_SOFT_TEMP_LIMIT=0x80000
 
-(($TFLAGS == 0)) && \
-	echo "No critical events recorded."
 (($TFLAGS & $NOW_UNDERVOLTAGE)) && \
 	echo "Undervoltage."
 (($TFLAGS & $NOW_ARMFREQ_CAPPED)) && \
@@ -33,3 +31,7 @@ WAS_SOFT_TEMP_LIMIT=0x80000
 	echo "Previous throttle."
 (($TFLAGS & WAS_SOFT_TEMP_LIMIT)) &&
 	echo "Previous soft temperature limit."
+(($TFLAGS == 0)) && \
+	echo "No critical events recorded."
+# Don't irritate systemd!
+exit 0

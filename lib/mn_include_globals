@@ -45,6 +45,7 @@ SYSTEMD_DEFAULT_ENABLE="
 	mn_config.path
 	mn_tunnel.service
 	mn_tunnel_watch.path
+	mn_get_throttled.timer
 "
 
 # all units which are governed by medianet.json
