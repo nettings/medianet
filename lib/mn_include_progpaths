@@ -51,5 +51,6 @@ UFW=/usr/sbin/ufw
 UPDATELOCALE=/usr/sbin/update-locale
 USERADD=/usr/sbin/useradd
 USERDEL=/usr/sbin/userdel
+VCGENCMD=/usr/bin/vcgencmd
 WGET=/usr/bin/wget
 XARGS=/usr/bin/xargs

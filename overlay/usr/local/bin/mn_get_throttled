@@ -1,0 +1,35 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+# see https://www.raspberrypi.org/documentation/raspbian/applications/vcgencmd.md
+TFLAGS=`sudo "$VCGENCMD" get_throttled | "$SED" -E 's/^throttled=(0x[0-9a-fA-F]+)/\1/'`
+
+NOW_UNDERVOLTAGE=0x1
+NOW_ARMFREQ_CAPPED=0x2
+NOW_THROTTLED=0x4
+NOW_SOFT_TEMP_LIMIT=0x8
+
+WAS_UNDERVOLTAGE=0x10000
+WAS_ARMFREQ_CAPPED=0x20000
+WAS_THROTTLED=0x40000
+WAS_SOFT_TEMP_LIMIT=0x80000
+
+(($TFLAGS == 0)) && \
+	echo "No critical events recorded."
+(($TFLAGS & $NOW_UNDERVOLTAGE)) && \
+	echo "Undervoltage."
+(($TFLAGS & $NOW_ARMFREQ_CAPPED)) && \
+	echo "ARM frequency capped."
+(($TFLAGS & $NOW_THROTTLED)) && \
+	echo "Throttling."
+(($TFLAGS & NOW_SOFT_TEMP_LIMIT)) && \
+	echo "Soft temperature limit active."
+(($TFLAGS & WAS_UNDERVOLTAGE)) && \
+	echo "Previous undervoltage."
+(($TFLAGS & WAS_ARMFREQ_CAPPED)) &&
+	echo "Previous ARM frequency cap."
+(($TFLAGS & WAS_THROTTLED)) &&
+	echo "Previous throttle."
+(($TFLAGS & WAS_SOFT_TEMP_LIMIT)) &&
+	echo "Previous soft temperature limit."
