@@ -4,4 +4,4 @@ Description=[mn] periodically log undervoltage and temperature events
 [Service]
 Type=exec
 User=root
-ExecStart=/usr/local/bin/mn_get_throttled
+ExecStart=/usr/local/bin/mn_core_state --short --temp

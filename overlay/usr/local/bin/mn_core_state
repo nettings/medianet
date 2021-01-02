@@ -1,0 +1,127 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+function usage {
+	cat << EOF
+$PROGNAME displays core temperature and throttling status.
+
+--help    Display this help.
+ -h
+
+--short   Compact one-line output, useful for logging
+ -s
+
+--temp    Additionally display CPU and GPU temperature.
+ -t
+EOF
+}
+
+SHORT=
+TEMP=
+while [[ -n "$1" ]] ; do
+	case "$1" in
+	-h|--help)
+		usage
+		exit 0
+		;;
+	-s|--short)
+		SHORT=true
+		;;
+	-t|--temp)
+		TEMP=true
+		;;
+	*)
+		bail "Unknown option '$1'. Use -h for help"
+		;;
+	esac
+	shift
+done
+
+
+NOW_UNDERVOLTAGE=0x1
+NOW_ARMFREQ_CAPPED=0x2
+NOW_THROTTLED=0x4
+NOW_SOFT_TEMP_LIMIT=0x8
+
+WAS_UNDERVOLTAGE=0x10000
+WAS_ARMFREQ_CAPPED=0x20000
+WAS_THROTTLED=0x40000
+WAS_SOFT_TEMP_LIMIT=0x80000
+
+declare -A MSG
+
+if [[ -n "$SHORT" ]] ; then
+	MSG[NOW]=""
+	MSG[NOW_UNDERVOLTAGE]="undervoltage_now "
+	MSG[NOW_ARMFREQ_CAPPED]="armfreq_capped_now "
+	MSG[NOW_THROTTLED]="throttled_now "
+	MSG[NOW_SOFT_TEMP_LIMIT]="soft_temp_limit_now "
+	MSG[WAS]=""
+	MSG[WAS_UNDERVOLTAGE]="undervoltage_before "
+	MSG[WAS_ARMFREQ_CAPPED]="armfreq_capped_before "
+	MSG[WAS_THROTTLED]="throttled_before "
+	MSG[WAS_SOFT_TEMP_LIMIT]="soft_temp_limit_before "
+	MSG[NONE]=""
+	MSG[CPU_TEMP]=""
+	MSG[GPU_TEMP]=""
+else
+	MSG[NOW]="Ongoing events:\n"
+	MSG[NOW_UNDERVOLTAGE]="\tUndervoltage.\n"
+	MSG[NOW_ARMFREQ_CAPPED]="\tARM frequency cap.\n"
+	MSG[NOW_THROTTLED]="\tThrottled.\n"
+	MSG[NOW_SOFT_TEMP_LIMIT]="\tSoft temperature limit exceeded.\n"
+	MSG[WAS]="Events recorded since boot:\n"
+	MSG[WAS_UNDERVOLTAGE]=${MSG[NOW_UNDERVOLTAGE]}
+	MSG[WAS_ARMFREQ_CAPPED]=${MSG[NOW_ARMFREQ_CAPPED]}
+	MSG[WAS_THROTTLED]=${MSG[NOW_THROTTLED]}
+	MSG[WAS_SOFT_TEMP_LIMIT]=${MSG[NOW_SOFT_TEMP_LIMIT]}
+	MSG[NONE]="\t- none -\n"
+	MSG[CPU_TEMP]="CPU core temperature:\n\t"
+	MSG[GPU_TEMP]="\nGPU core temperature:\n\t"
+fi
+
+# see https://www.raspberrypi.org/documentation/raspbian/applications/vcgencmd.md
+TFLAGS=`"$VCGENCMD" get_throttled | "$SED" -E 's/^throttled=(0x[0-9a-fA-F]+)/\1/'`
+
+echo -en "${MSG[NOW]}"
+EVENTS=
+for i in NOW_UNDERVOLTAGE NOW_ARMFREQ_CAPPED NOW_THROTTLED NOW_SOFT_TEMP_LIMIT ; do
+	(($TFLAGS & ${!i})) && {
+		echo -en "${MSG[$i]}"
+		EVENTS=true
+	}
+done
+if [[ -z "$EVENTS" ]] ; then
+	echo -en "${MSG[NONE]}"
+fi
+
+echo -en "${MSG[WAS]}"
+EVENTS=
+for i in WAS_UNDERVOLTAGE WAS_ARMFREQ_CAPPED WAS_THROTTLED WAS_SOFT_TEMP_LIMIT ; do
+	(($TFLAGS & ${!i})) && {
+		echo -en "${MSG[$i]}"
+		EVENTS=true
+	}
+done
+if [[ -z "$EVENTS" ]] ; then
+	echo -en "${MSG[NONE]}"
+fi
+
+if [[ -n "$TEMP" ]] ; then
+	TCPU0=$(cat /sys/class/thermal/thermal_zone0/temp)
+	TCPU1=$(($TCPU0/1000))
+	TCPU2=$(($TCPU0/100))
+	TCPUM=$(($TCPU2 % $TCPU1))
+	TGPU=$("$VCGENCMD" measure_temp | "$SED" -E "s/[^0-9]*([0-9]+\.[0-9]+).*/\1/")
+	echo -en "${MSG[CPU_TEMP]}"
+	echo -n "${TCPU1}.${TCPUM}°C "
+	echo -en "${MSG[GPU_TEMP]}"
+	echo -n "${TGPU}°C "
+fi
+echo
+
+# Do not irritate systemd
+exit 0
