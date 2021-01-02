@@ -3,5 +3,5 @@ Description=[mn] periodically log undervoltage and temperature events
 
 [Service]
 Type=exec
-User=medianet
+User=root
 ExecStart=/usr/local/bin/mn_get_throttled
