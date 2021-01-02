@@ -2,8 +2,10 @@
 
 . /medianet/lib/mn_includes
 
+needroot
+
 # see https://www.raspberrypi.org/documentation/raspbian/applications/vcgencmd.md
-TFLAGS=`sudo "$VCGENCMD" get_throttled | "$SED" -E 's/^throttled=(0x[0-9a-fA-F]+)/\1/'`
+TFLAGS=`"$VCGENCMD" get_throttled | "$SED" -E 's/^throttled=(0x[0-9a-fA-F]+)/\1/'`
 
 NOW_UNDERVOLTAGE=0x1
 NOW_ARMFREQ_CAPPED=0x2
