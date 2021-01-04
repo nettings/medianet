@@ -7,4 +7,4 @@ needroot
 scream "Activating default configuration"
 
 echo "Installing default configuration files to ${SYSTEM_CONFIG_PATH}, edit to taste..."
-"$CP" -av ${PREFIX}/overlay/etc/medianet `"$REALPATH" ${SYSTEM_CONFIG_PATH}/../` && success || failure
+"$CP" -av "${PREFIX}/overlay${SYSTEM_CONFIG_PATH}" `"$REALPATH" -m "${SYSTEM_CONFIG_PATH}"` && success || failure
