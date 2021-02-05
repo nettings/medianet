@@ -70,17 +70,20 @@ will again be read-only.
 
 ### Web interfaces
 
-By default, you can reach an automatically generated web UI to control all
-plugins running in `mod-host` under `http://localhost:10080/medianet/DSP/`, 
+By default, you can reach a few web interfaces at `http://localhost:10080`, 
 assuming you have forwarded the http port through your ssh connection, like
 this:
 ```
 user@your-bigbox:~ $ ssh -L 10080:localhost:80 medianet@your-pi
 ```
+The most immediately useful is an auto-generated simple web GUI to set the
+parameters of your DSP plugins.
+
 If you have configured an external jump server for remote maintenance that
 your deployed medianet Pi can "phone home to" in `/etc/medianet/mn_tunnel`,
 you can start/stop your maintenance tunnel and check its state at
-`http://localhost:10080/medianet/Tunnel`
+`http://localhost:10080/medianet/Tunnel`.
+
 If you have configured a local Icecast2 server to create a stream from your
 JACK signal graph, you will find a corresponding link here as well.
 
@@ -103,7 +106,7 @@ from JACK
 * shairport-sync, an Apple AirPlay(tm) receiver
 * zita-ajbridge (to access a second sound card with an unsynchronized clock)
 * zita-njbridge (to stream multichannel uncompressed audio on a local Ethernet
-with 20ms latency either point-to-point or multicast)
+with < 20ms latency either point-to-point or multicast)
 * zita-lrx, a Linkwitz-Riley multiband loudspeaker crossover
 
 #### Video
@@ -114,6 +117,8 @@ latency (< .5 s)
 * cpufreq to set min and max core frequencies and governor (great to save power)
 * lv2rdf2html to generate a simple but useful web UI for all the plugins you
 configured to run in mod-host
+* a maintenance tunnel with "phone home" capability that will survive
+reboots
 
 Other services can be added easily if you don't mind dealing with a JSON parser
 written in BASH (but using JQ, so it's not that bad).
