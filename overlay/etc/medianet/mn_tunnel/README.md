@@ -12,6 +12,14 @@ back into it.
 
 Please check `mn_tunnel.conf` in this directory, it should be
 self-explanatory.
+Note that since the tunnel is not connected to a shell, you will not be able
+to manually accept the tunnel server's host key. Instead, you can obtain and
+store it by running
+```
+$ ssh-keyscan -H $TUNNEL_HOST [-p $TUNNEL_PORT_ACCESS] > \
+	$TUNNEL_HOST_FINGERPRINT
+```
+(The variables are explained in the config file.)
 
 ## activation
 
@@ -20,7 +28,7 @@ across reboots unless you disable the underlying systemd services.
 The location of said magic file is configurable and defaults to
 `/var/lib/mn_tunnel/active`.
 
-There is an example web interface at http://localhost/mn_tunnel that allows you
+There is an example web interface at http://localhost//medianet/Tunnel/ that allows you
 (or a user of the machine) to control and verify the maintenance tunnel.
 
 ## systemd services
@@ -36,7 +44,13 @@ tunnel as follows:
 ```
 user@${TUNNEL_HOST}:~> ssh -p ${TUNNEL_PORT_ACCESS} medianet@localhost
 ```
-
+Alternatively, use the "jump" option to directly tunnel to your medianet
+machine from another host:
+```
+user@yourbox:~> ssh -J ${TUNNEL_USER}@${TUNNEL_HOST}:${TUNNEL_PORT} \
+	-p ${TUNNEL_PORT_ACCESS} \
+	medianet@localhost
+```
 ## side note
 
 Yes, this directory contains a real, syntactically correct private key for documentation
