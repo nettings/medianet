@@ -1,0 +1,39 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+scream "Clean stale overlay links:"
+
+echo "Searching / and /local for links to non-existent files in ${PREFIX}/overlay..."
+
+LINKLIST=`"$FIND" / /local -xdev -xtype l -exec echo {} \; `
+echo "$LINKLIST"
+
+declare -a LINK
+declare -a TARGET
+i=0
+while read LINE ;  do
+	TARGET_=`"$READLINK" -f "$LINE"`
+	if [[ "$TARGET_" =~ ${PREFIX}/overlay ]] ; then
+		LINK[$i]="$LINE"
+		TARGET[$i]="$TARGET_"
+		((i++))
+	fi
+done <<< "$LINKLIST"
+
+k=0
+while (($k < $i)) ; do
+	echo "${LINK[$k]} points to non-existent ${TARGET[$k]}."
+	echo -n "Delete (y/N)?..."
+	read -r -n 1 YESNO
+	if [[ "$YESNO" =~ ^[Yy]$ ]] ; then
+		"$RM" "${LINK[$k]}" && success || failure
+	else
+		echo " skipped."
+	fi
+	((k++)) 
+done
+
+

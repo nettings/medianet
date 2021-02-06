@@ -1,12 +1,14 @@
 # program paths
 APT=/usr/bin/apt
 BASENAME=/usr/bin/basename
+BASH=/usr/bin/bash
 CAT=/bin/cat
 CHOWN=/bin/chown
 CHMOD=/bin/chmod
 CHSH=/usr/bin/chsh
 CMP=/usr/bin/cmp
 CP=/bin/cp
+CUT=/usr/bin/cut
 DATE=/bin/date
 DD=/bin/dd
 DIRNAME=/usr/bin/dirname
@@ -22,6 +24,7 @@ INOTIFYWAIT=/usr/bin/inotifywait
 IPBIN=/sbin/ip
 JQ=/usr/bin/jq
 LN=/bin/ln
+LS=/usr/bin/ls
 MN_CONFIG_UPDATE=/usr/local/bin/mn_config_update
 MN_DEPLOY_OVERLAY="$BASEDIR"/sbin/mn_deploy_overlay
 MKDIR=/bin/mkdir
