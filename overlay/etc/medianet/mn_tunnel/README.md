@@ -16,8 +16,8 @@ Note that since the tunnel is not connected to a shell, you will not be able
 to manually accept the tunnel server's host key. Instead, you can obtain and
 store it by running
 ```
-$ ssh-keyscan -H $TUNNEL_HOST [-p $TUNNEL_PORT_ACCESS] > \
-	$TUNNEL_HOST_FINGERPRINT
+$ . /etc/medianet/mn_tunnel.conf \
+  && ssh-keyscan -p $TUNNEL_PORT -H $TUNNEL_HOST  > $TUNNEL_HOST_FINGERPRINT
 ```
 (The variables are explained in the config file.)
 
