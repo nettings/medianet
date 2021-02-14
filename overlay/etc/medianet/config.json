@@ -77,7 +77,7 @@
 			],
 			"config": [
 				"add http://gareus.org/oss/lv2/fil4#stereo 1",
-				"add http://stackingdwarves.net/lv2/sm 4",
+				"add http://stackingdwarves.net/lv2/sm#stereo 4",
 				"add http://gareus.org/oss/lv2/dpl#stereo 9",
  				"connect effect_1:outL effect_4:inL",
 				"connect effect_1:outR effect_4:inR",
