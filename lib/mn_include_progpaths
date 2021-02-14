@@ -34,6 +34,7 @@ MV=/bin/mv
 NC=/bin/nc
 PARTED=/sbin/parted
 PASSWD=/usr/bin/passwd
+PGREP=/usr/bin/pgrep
 PKILL=/usr/bin/pkill
 PS=/bin/ps
 READLINK=/bin/readlink
