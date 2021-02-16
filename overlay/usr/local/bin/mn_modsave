@@ -2,16 +2,16 @@
 
 . /medianet/lib/mn_includes
 
-MOD_DUMP_URI="http://localhost:80/mod-host/lv2rdf.php?dumpChangedValues"
+MOD_DUMP_URI="http://localhost:80/medianet/DSP/lv2rdf.php?dumpChangedValues"
 
 if [[ ! -e "$CONF_FILE_MODHOST_STATE" ]] ; then
-	STATEDIR=`$DIRNAME "$CONF_FILE_MODHOST_STATE"`
+	STATEDIR=`"$DIRNAME" "$CONF_FILE_MODHOST_STATE"`
 	if [[ ! -d "$STATEDIR" ]] ; then
 		echo -n "Creating mod-host state directory $STATEDIR..."
-		$MKDIR -p "$STATEDIR" && success || failure
+		"$MKDIR" -p "$STATEDIR" && success || failure
 	fi
 fi
-STATE=`$WGET -q -O - $MOD_DUMP_URI`
+STATE=`"$WGET" -q -O - "$MOD_DUMP_URI"`
 OLDSTATE=`cat "$CONF_FILE_MODHOST_STATE" 2> /dev/null`
 
 if [[ "$STATE" != "$OLDSTATE" ]] ; then
@@ -19,11 +19,11 @@ if [[ "$STATE" != "$OLDSTATE" ]] ; then
 	for i in 3 2 1 0 ; do
 		if [[ -e "$CONF_FILE_MODHOST_STATE"."$i" ]] ; then
 			echo -n "[$i] "
-			$MV "$CONF_FILE_MODHOST_STATE"."$i" "$CONF_FILE_MODHOST_STATE"."$((i+1))" || failure
+			"$MV" "$CONF_FILE_MODHOST_STATE"."$i" "$CONF_FILE_MODHOST_STATE"."$((i+1))" || failure
 		fi
 	done && success || failure		
 	if [[ -e "$CONF_FILE_MODHOST_STATE" ]] ; then
-		$MV "$CONF_FILE_MODHOST_STATE" "$CONF_FILE_MODHOST_STATE".0 || failure
+		"$MV" "$CONF_FILE_MODHOST_STATE" "$CONF_FILE_MODHOST_STATE".0 || failure
 	fi
 	echo -n " Writing new mod-host state..."
 	echo "$STATE" > "$CONF_FILE_MODHOST_STATE" && success || failure
