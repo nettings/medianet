@@ -97,20 +97,21 @@ applications ready-to-use:
 * gpioctl, a quick and very dirty tool to use buttons and rotary encoders to
 affect ALSA mixer settings or generate JACK MIDI, can be multicast to several
 medianet nodes
-* mod-host (to run LV2 plugins for signal processing)
-* a large collection of LV2 plugins, among them the latest x42 plugin set
-automatically built from source.
+* mod-host by falkTX and the MOD team (to run LV2 plugins for signal processing)
+* a large collection of LV2 plugins, among them the latest x42 plugin set by
+Robin Gareus and Vladimir Sadovnikov's lsp-plugins automatically built from
+source
 * Icecast2 and an ffmpeg-based encoder to stream Opus-encoded audio over http
 from JACK
-* the jconvolver convolution engine, to apply FIR filters to loudspeakers
-* shairport-sync, an Apple AirPlay(tm) receiver
+* Fons Adriaensen's zita-convolver convolution engine, to apply FIR filters to loudspeakers
 * zita-ajbridge (to access a second sound card with an unsynchronized clock)
 * zita-njbridge (to stream multichannel uncompressed audio on a local Ethernet
 with < 20ms latency either point-to-point or multicast)
 * zita-lrx, a Linkwitz-Riley multiband loudspeaker crossover
+* Mike Brady's shairport-sync, an Apple AirPlay(tm) receiver
 
 #### Video
-* v4l2rtspserver to stream the Pi camera and mux in JACK audio with quite low
+* Michal Promonet's v4l2rtspserver to stream the Pi camera and mux in JACK audio with quite low
 latency (< .5 s)
 
 #### System tools
