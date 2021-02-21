@@ -80,6 +80,7 @@ CUSTOM_BUILDS="
 	alac
 	shairport-sync
 	x42-plugins
+	lsp-plugins
 	lv2rdf2html
 	zita-lrx
 	zita-njbridge

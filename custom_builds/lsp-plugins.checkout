@@ -1,0 +1,4 @@
+from_git https://github.com/sadko4u/lsp-plugins.git lsp-plugins
+from_package libcairo2-dev libsndfile1-dev libgl-dev
+
+
