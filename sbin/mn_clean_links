@@ -9,13 +9,12 @@ scream "Clean stale overlay links:"
 echo "Searching / and /local for links to non-existent files in ${PREFIX}/overlay..."
 
 LINKLIST=`"$FIND" / /local -xdev -xtype l -exec echo {} \; `
-echo "$LINKLIST"
 
 declare -a LINK
 declare -a TARGET
 i=0
 while read LINE ;  do
-	TARGET_=`"$READLINK" -f "$LINE"`
+	TARGET_=`"$READLINK" -m "$LINE"`
 	if [[ "$TARGET_" =~ ${PREFIX}/overlay ]] ; then
 		LINK[$i]="$LINE"
 		TARGET[$i]="$TARGET_"
