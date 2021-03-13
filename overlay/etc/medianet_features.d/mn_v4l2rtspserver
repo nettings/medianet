@@ -1,2 +1,2 @@
-rtsp://§HOSTNAME:8554/unicast
+rtsp://%HOSTNAME%:8554/unicast
 Camera server
