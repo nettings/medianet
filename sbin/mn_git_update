@@ -2,14 +2,9 @@
 
 . /medianet/lib/mn_includes
 
-needroot
+noroot
 
 scream "Updating git repository \"$PREFIX\"."
 
-. "$BASEDIR"/sbin/mn_git_update_prepare
-
-echo "Trying to pull git..."
 "$SUDO" -u "$USER" "$GIT" pull | indent
-
-. "$BASEDIR"/sbin/mn_set_permissions
 
