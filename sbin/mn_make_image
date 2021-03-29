@@ -6,6 +6,9 @@ THISPATH=`dirname -- $THISPATH`
 BASEDIR="${THISPATH}/.."
 . "$BASEDIR/lib/mn_includes"
 
+# initial size in bytes, will be expanded after deployment!
+LOCAL_BASE_SIZE=134217728
+# default total image size in bytes, determines size of root fs.
 IMAGE_SIZE=5368709120
 
 needroot
@@ -27,11 +30,40 @@ Usage: $PROGNAME [options...]
 
 --size         the size of the base image in bytes; needs to be big
  -s            enough to contain the original (unzipped) image plus an extra
-               local partition - leave alone unless you know what you're doing;
-               defaults to $IMAGE_SIZE
+               local partition. Making it bigger will give you a bigger root
+               fs - the local partition is expanded to the size of the medium
+               anyways. Leave alone unless you know what you're doing. 
+               Default is $IMAGE_SIZE.
 EOF
 	exit
 }
+
+# first param: the image
+# second param: the partition number counting from 1
+# prints: the size of the partition in bytes
+function end_of_partition {
+	echo $( \
+		parted "$1" unit B print \
+		| grep -Eo '\s*'$2'\s+[0-9]+B\s+[0-9]+B\s+[0-9]+B\s+.*' \
+		| sed -E 's/\s*'$2'\s+[0-9]+B\s+([0-9]+)B\s+[0-9]+B\s+.*/\1/' \
+	)
+}
+
+# first param: a disk position in bytes
+# prints: the size of the next highest aligned position
+function align_to_4MiB {
+	FOUR_MIB=$(( 4 * 2 ** 20 ))
+	echo $(( $1 + (FOUR_MIB - ($1 % FOUR_MIB)) ))
+}
+
+# first param: a size in bytes
+# prints: the same size in Gibibytes
+function bytes_to_GiB {
+	cGiB=$(( ($1 * 100 / (2 ** 30) ) % 100 ))
+	GiB=$(( $1 / (2 ** 30) ))
+	echo "${GiB}.${cGiB}" 
+}
+
 
 OUTPUT_PATH="$PWD"
 IMAGE="$RASPIOS_BASE_IMAGE"
@@ -109,14 +141,25 @@ else
 	bail "Expecting either a .zip or .img file to work on."
 fi
 
-echo -n "Padding image to ${IMAGE_SIZE} bytes..."
+echo -n "Padding image to ${IMAGE_SIZE} bytes ($( bytes_to_GiB ${IMAGE_SIZE} ) GiB)..."
 truncate -s $IMAGE_SIZE "$IMAGE" && success || bail
 
-echo -n "Resizing the rootfs partition to 4G, aligning to sectors assumed 512K..."
-parted $IMAGE resizepart 2 8388607s && success || bail
+echo -n "Checking end of /boot partition... "
+END_OF_BOOT=$( end_of_partition "$IMAGE" 1 )
+echo "at ${END_OF_BOOT} bytes ($( bytes_to_GiB ${END_OF_BOOT} ) GiB)."
 
-echo -n "Creating a localfs partition spanning the remainder of the disk..."
-parted $IMAGE mkpart primary ext4 8388608s 100% && success || bail
+END_OF_ROOT=$(( IMAGE_SIZE - LOCAL_BASE_SIZE - (END_OF_BOOT * 2) ))
+END_OF_ROOT=$(( $( align_to_4MiB "$END_OF_ROOT" ) - 1 ))
+echo -n "Resizing the rootfs partition to end at ${END_OF_ROOT} bytes ($( bytes_to_GiB ${END_OF_ROOT} ) GiB)..."
+parted $IMAGE resizepart 2 ${END_OF_ROOT}B && success || bail
+
+echo -n "Checking end of /root partition... "
+END_OF_ROOT=$( end_of_partition "$IMAGE" 2 )
+echo "at ${END_OF_ROOT} bytes ($( bytes_to_GiB ${END_OF_ROOT} ) GiB)."
+
+START_OF_LOCAL=$( align_to_4MiB "$END_OF_ROOT" )
+echo -n "Creating a localfs partition at $START_OF_LOCAL bytes, spanning the remainder of the disk..."
+parted $IMAGE mkpart primary ext4 $(( START_OF_LOCAL ))B 100% && success || bail
 
 echo -n "Creating loop devices for the image..."
 PARTITIONS=`kpartx -av "$IMAGE"`
