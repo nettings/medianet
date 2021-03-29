@@ -1,0 +1,10 @@
+# Updating the medianet distribution
+
+This is a first sketch for a generic update procedure.
+Depending on the nature of medianet updates, other actions might be necessary
+that will have to be specified by the update itself.
+
+Note that a scripted `git pull` may fail depending on whether we check out from
+a private or public repository. In case of problems, pull in `/medianet` from
+the command line and check for errors.
+Key handling needs to be specified and implemented.
