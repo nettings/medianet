@@ -83,7 +83,8 @@ The most immediately useful is an auto-generated simple web GUI to set the
 parameters of your DSP plugins.
 
 If you have configured an external jump server for remote maintenance that
-your deployed medianet Pi can "phone home to" in `/etc/medianet/mn_tunnel`,
+your deployed medianet Pi can "phone home to" in 
+[/etc/medianet/mn_tunnel.conf](/overlay/etc/medianet/mn_tunnel.conf),
 you can start/stop your maintenance tunnel and check its state at
 `http://localhost:10080/medianet/Tunnel`.
 
@@ -155,5 +156,5 @@ or too old in Debian upstream
 medianet-related tools. You might be interested in tweaking some of them.
 * [overlay/](/overlay) mimics the system directory structure. Its contents will be symlinked
 into the running base system. This is the runtime stuff that makes up the medianet distribution.
-* `sbin/` contains scripts that are only used during initial system bootstrapping,
+* [sbin/](/sbin) contains scripts that are only used during initial system bootstrapping,
 maintenance, or upgrade.
