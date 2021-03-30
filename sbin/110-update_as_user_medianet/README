@@ -8,3 +8,6 @@ Note that a scripted `git pull` may fail depending on whether we check out from
 a private or public repository. In case of problems, pull in `/medianet` from
 the command line and check for errors.
 Key handling needs to be specified and implemented.
+
+If you're reading this on Github: sorry the link targets are not displayed. Clone
+the repo and read it in your sandbox, and it will all magically make sense.
