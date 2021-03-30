@@ -14,6 +14,9 @@ signal chain are run as systemd services, and in the unlikely event that one
 process crashes, it will be restarted automatically and its connections
 re-established.
 
+System-critical partitions (`/boot` and `/`) are mounted read-only during
+normal operation, so the system will tolerate hard shutdowns well. 
+
 ## Installation
 
 This distribution provides a set of scripts and a file system overlay to turn
@@ -21,7 +24,7 @@ a vanilla Raspbian OS Lite image into a medianet system. That means you can
 always easily see what has been changed and how, and the system lends itself
 well to continuous integration with upstream.
 
-Please see [the installation documentation INSTALL.md](INSTALL.md) in this
+Please see the installation documentation [INSTALL.md](/INSTALL.md) in this
 directory for details.
 
 ## Usage
@@ -29,7 +32,7 @@ directory for details.
 ### User account and access
 
 The default user account is `medianet`. Its password is locked, so you must
-drop a suitable ssh key into `~medianet/.ssh/authorized_keys` while you are
+drop a suitable ssh key into `/home/medianet/.ssh/authorized_keys` while you are
 bootstrapping the distribution!
 All audio-related services run as user medianet.
 This user currently has full sudo rights, as it is also the maintenance
@@ -39,14 +42,14 @@ security.
 ### Configuration and system state
 
 The system configuration is collected in a single file,
-`/etc/medianet/config.json`, from which all necessary application config
-files are generated whenever it changes, by means of a systemd.path watcher
-(using inotify). Ideally, this file comprises the entire state of the
-system.
+[/etc/medianet/config.json](/overlay/etc/medianet/config.json), from which 
+all necessary application config files are generated whenever it changes,
+by means of a systemd.path watcher. Outside of hastily introduced new features,
+this file comprises the entire state of the system.
 
-This file is currently very badly documented, and the only hints as to its
-syntax are to be found in [the configuration updater script
-mn_config_update](overlay/usr/local/bin/mn_config_update). Example
+The JSON config file is currently very badly documented, and the only hints as
+to its syntax are to be found in the configuration updater script
+[mn_config_update](/overlay/usr/local/bin/mn_config_update). Example
 config snippets will be added in due time, and the default configuration
 will be extended to showcase more of the available services and features.
 
@@ -57,16 +60,16 @@ In order to make the system robust against cold shutdowns, the `/boot` and
 written to during operation but needn't be persistent across reboots have
 been symlinked into ram disks. For persistent system states and user data,
 there is the `/local` partition, which is mounted read-write and
-automatically extended to span the remainder of the flash medium.
+can be extended to span the remainder of the flash medium.
 
 The goal is that even if `/local` is unclean or even corrupted, the system
 will still boot up with ssh and a sufficient system environment to allow for
 remote repairs.
 
-For system maintenance, the scripts `mn_make_writable` and
-`mn_make_readonly` can be used. The shell prompt will inform you if you are
-in a directory that is currently writable. After the next reboot, the system
-will again be read-only.
+For system maintenance, the scripts [mn_make_writable](/overlay/usr/local/bin/mn_make_writable)
+and [mn_make_readonly](/overlay/usr/local/bin/mn_make_readonly) can be used.
+The shell prompt will inform you if you are in a directory that is currently
+writable. After the next reboot, the system will again be read-only.
 
 ### Web interfaces
 
@@ -85,7 +88,8 @@ you can start/stop your maintenance tunnel and check its state at
 `http://localhost:10080/medianet/Tunnel`.
 
 If you have configured a local Icecast2 server to create a stream from your
-JACK signal graph, you will find a corresponding link here as well.
+JACK signal graph, you will find a corresponding link here as well (which
+will require port 8000 to be forwarded as well).
 
 ### Features
 
@@ -99,7 +103,7 @@ affect ALSA mixer settings or generate JACK MIDI, can be multicast to several
 medianet nodes
 * mod-host by falkTX and the MOD team (to run LV2 plugins for signal processing)
 * a large collection of LV2 plugins, among them the latest x42 plugin set by
-Robin Gareus and Vladimir Sadovnikov's lsp-plugins automatically built from
+Robin Gareus and Vladimir Sadovnikov's lsp-plugins, all automatically built from
 source
 * Icecast2 and an ffmpeg-based encoder to stream Opus-encoded audio over http
 from JACK
@@ -137,29 +141,7 @@ The Bad things are listed in the [issue tracker](https://github.com/nettings/med
 
 ## Updating your system
 
-The base system is kept up to date with the standard Debian invocation:
-```
-$ sudo apt update
-$ sudo apt upgrade
-```
-Between major Debian releases, it's also usually safe to run `apt dist-upgrade`.
-
-There is no formalized and systematic way to update the medianet stuff yet.
-What you can do is pull from git, although since git cannot deal with file
-ownership and groups, you will first have to own everything and then restore the
-correct file modes:
-```
-$ cd /medianet
-$ sudo chown -R medianet:medianet
-$ git pull
-$ sudo sbin/mn_set_permissions
-$ sudo sbin/mn_deploy_overlay
-```
-Depending on what has changed, you might have to do other mysterious things :(
-When the custom-built software has been upgraded, you will need to 
-```
-$ sbin/mn_checkout
-$ sbin/mn_build
-```
-A better-documented updating process is under consideration. Starting with the 
-first official release, additional update steps will be documented here.
+Updating is still work in progress. Unless there have been major changes, applying
+the steps in [sbin/110-update_as_user_medianet](/medianet/sbin/110-update_as_user_medianet)
+should get you most of the way. More fundamental changes will necessitate other
+configuration steps which will be documented separately.
