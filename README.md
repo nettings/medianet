@@ -142,6 +142,18 @@ The Bad things are listed in the [issue tracker](https://github.com/nettings/med
 ## Updating your system
 
 Updating is still work in progress. Unless there have been major changes, applying
-the steps in [sbin/110-update_as_user_medianet](/medianet/sbin/110-update_as_user_medianet)
+the steps in [sbin/110-update_as_user_medianet](/sbin/110-update_as_user_medianet)
 should get you most of the way. More fundamental changes will necessitate other
 configuration steps which will be documented separately.
+
+## File system structure
+
+* [custom_builds/](/custom_builds) contains checkout and build instructions for
+third-party packages that are being built from source, because they are either unavailable
+or too old in Debian upstream
+* [lib/](/lib) contains BASH script includes and system-wide constants that are used in all
+medianet-related tools. You might be interested in tweaking some of them.
+* [overlay/](/overlay) mimics the system directory structure. Its contents will be symlinked
+into the running base system. This is the runtime stuff that makes up the medianet distribution.
+* `sbin/` contains scripts that are only used during initial system bootstrapping,
+maintenance, or upgrade.
