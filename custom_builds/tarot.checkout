@@ -1,0 +1,6 @@
+from_git https://github.com/nettings/tarot.git tarot
+cd tarot
+git submodule init
+git submodule update
+cd ..
+

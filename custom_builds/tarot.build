@@ -1,0 +1,3 @@
+sudo mkdir -m 755 /medianet/overlay/local/images
+sudo chown medianet:www-data /medianet/overlay/local/images
+sudo STATE_PATH=/local/lib/tarot DESTDIR="$DESTDIR" ./install.sh
