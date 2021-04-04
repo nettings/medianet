@@ -147,6 +147,8 @@ the steps in [sbin/110-update_as_user_medianet](/sbin/110-update_as_user_mediane
 should get you most of the way. More fundamental changes will necessitate other
 configuration steps which will be documented separately.
 
+Base system updates are documented at https://downloads.raspberrypi.org/raspios_lite_armhf/release_notes.txt.
+
 ## File system structure
 
 * [custom_builds/](/custom_builds) contains checkout and build instructions for
