@@ -6,5 +6,5 @@ noroot
 
 scream "Updating git repository \"$PREFIX\"."
 
-"$SUDO" -u "$USER" "$GIT" pull | indent
+"$GIT" pull | indent
 
