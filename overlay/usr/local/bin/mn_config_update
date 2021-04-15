@@ -231,8 +231,7 @@ $SYSTEMCTL daemon-reload && success || failure
 
 # jconvolver
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_jconvolver") | .config[]?'`
-if [[ -n "$DATA" ]] ; then
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_jconvolver" and .enabled == 1) | .config[]?'`
 	scream "Update jconvolver configuration:"
 	while read COMMAND ; do
 		CONFIG+="$COMMAND\n"
@@ -241,13 +240,11 @@ if [[ -n "$DATA" ]] ; then
 	CONFIG="$NOEDIT\n\n$CONFIG"
 	echo -n "Writing to $CONF_FILE_JCONVOLVER..."
 	echo -e "$CONFIG" > "$CONF_FILE_JCONVOLVER" && success || failure
-fi
 
 
 # mod-host
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_mod-host") | .config[]?'`
-if [[ -n "$DATA" ]] ; then
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_mod-host" and .enabled == 1) | .config[]?'`
 	scream "Update mod-host configuration:"
 	while read COMMAND ; do
 		CONFIG+="$COMMAND\n"
@@ -256,12 +253,10 @@ if [[ -n "$DATA" ]] ; then
 	CONFIG="$NOEDIT\n\n$CONFIG"
 	echo -n "Writing to $CONF_FILE_MODHOST..."
 	echo -e "$CONFIG" > "$CONF_FILE_MODHOST" && success || failure
-fi
 
 # shairport-sync
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_shairport-sync") | .config[]?'`
-if [[ -n "$DATA" ]] ; then
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_shairport-sync" and .enabled == 1) | .config[]?'`
 	scream "Update shairport-sync configuration:"
 	while read COMMAND ; do
 		CONFIG+="$COMMAND\n"
@@ -270,12 +265,10 @@ if [[ -n "$DATA" ]] ; then
 	CONFIG="$NOEDIT\n\n$CONFIG"
 	echo -n "Writing to $CONF_FILE_SHAIRPORT_SYNC..."
 	echo -e "$CONFIG" > "$CONF_FILE_SHAIRPORT_SYNC" && success || failure
-fi
 
 # zita-lrx
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_zita-lrx") | .config[]?'`
-if [[ -n "$DATA" ]] ; then
+DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_zita-lrx" and .enabled == 1) | .config[]?'`
 	scream "Update zita-lrx configuration:"
 	while read COMMAND ; do
 		CONFIG+="$COMMAND\n"
@@ -284,4 +277,3 @@ if [[ -n "$DATA" ]] ; then
 	CONFIG="$NOEDIT\n\n$CONFIG"
 	echo -n "Writing to $CONF_FILE_ZITALRX..."
 	echo -e "$CONFIG" > "$CONF_FILE_ZITALRX" && success || failure
-fi
