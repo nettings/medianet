@@ -230,50 +230,49 @@ $SYSTEMCTL daemon-reload && success || failure
 # write config files
 
 # jconvolver
+scream "Update jconvolver configuration:"
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_jconvolver" and .enabled == 1) | .config[]?'`
-	scream "Update jconvolver configuration:"
-	while read COMMAND ; do
-		CONFIG+="$COMMAND\n"
-	done <<< "$DATA"
-	echo -en "${CONFIG:-${NONE}}" | indent
-	CONFIG="$NOEDIT\n\n$CONFIG"
-	echo -n "Writing to $CONF_FILE_JCONVOLVER..."
-	echo -e "$CONFIG" > "$CONF_FILE_JCONVOLVER" && success || failure
-
+while read COMMAND ; do
+	CONFIG+="$COMMAND\n"
+done <<< "$DATA"
+echo -en "${CONFIG:-${NONE}}" | indent
+CONFIG="$NOEDIT\n\n$CONFIG"
+echo -n "Writing to $CONF_FILE_JCONVOLVER..."
+echo -e "$CONFIG" > "$CONF_FILE_JCONVOLVER" && success || failure
 
 # mod-host
+scream "Update mod-host configuration:"
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_mod-host" and .enabled == 1) | .config[]?'`
-	scream "Update mod-host configuration:"
-	while read COMMAND ; do
-		CONFIG+="$COMMAND\n"
-	done <<< "$DATA"
-	echo -en "${CONFIG:-${NONE}}" | indent
-	CONFIG="$NOEDIT\n\n$CONFIG"
-	echo -n "Writing to $CONF_FILE_MODHOST..."
-	echo -e "$CONFIG" > "$CONF_FILE_MODHOST" && success || failure
+while read COMMAND ; do
+	CONFIG+="$COMMAND\n"
+done <<< "$DATA"
+echo -en "${CONFIG:-${NONE}}" | indent
+CONFIG="$NOEDIT\n\n$CONFIG"
+echo -n "Writing to $CONF_FILE_MODHOST..."
+echo -e "$CONFIG" > "$CONF_FILE_MODHOST" && success || failure
 
 # shairport-sync
+scream "Update shairport-sync configuration:"
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_shairport-sync" and .enabled == 1) | .config[]?'`
-	scream "Update shairport-sync configuration:"
-	while read COMMAND ; do
-		CONFIG+="$COMMAND\n"
-	done <<< "$DATA"
-	echo -en "${CONFIG:-${NONE}}" | indent
-	CONFIG="$NOEDIT\n\n$CONFIG"
-	echo -n "Writing to $CONF_FILE_SHAIRPORT_SYNC..."
-	echo -e "$CONFIG" > "$CONF_FILE_SHAIRPORT_SYNC" && success || failure
+while read COMMAND ; do
+	CONFIG+="$COMMAND\n"
+done <<< "$DATA"
+echo -en "${CONFIG:-${NONE}}" | indent
+CONFIG="$NOEDIT\n\n$CONFIG"
+echo -n "Writing to $CONF_FILE_SHAIRPORT_SYNC..."
+echo -e "$CONFIG" > "$CONF_FILE_SHAIRPORT_SYNC" && success || failure
 
 # zita-lrx
+scream "Update zita-lrx configuration:"
 CONFIG=
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_zita-lrx" and .enabled == 1) | .config[]?'`
-	scream "Update zita-lrx configuration:"
-	while read COMMAND ; do
-		CONFIG+="$COMMAND\n"
-	done <<< "$DATA"
-	echo -en "${CONFIG:-${NONE}}" | indent
-	CONFIG="$NOEDIT\n\n$CONFIG"
-	echo -n "Writing to $CONF_FILE_ZITALRX..."
-	echo -e "$CONFIG" > "$CONF_FILE_ZITALRX" && success || failure
+while read COMMAND ; do
+	CONFIG+="$COMMAND\n"
+done <<< "$DATA"
+echo -en "${CONFIG:-${NONE}}" | indent
+CONFIG="$NOEDIT\n\n$CONFIG"
+echo -n "Writing to $CONF_FILE_ZITALRX..."
+echo -e "$CONFIG" > "$CONF_FILE_ZITALRX" && success || failure
