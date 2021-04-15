@@ -1,7 +1,7 @@
 # generates JACK output port connection list from JSON system configuration
 
-# To avoid duplication of information, we only store upstream connections,
-# i.e. those of the output ports of a jack client.
+# To avoid duplication of information, the configuration specifies only
+# downstream connections, i.e. those of the output ports of a jack client.
 # Since target port names can change depending on the configuration of the
 # target unit, we do not store fully-qualified port names, but rather the 
 # unit name of the target and an index into its port list (starting with
@@ -20,17 +20,18 @@
 
 # store array of all units for later use
 .systemdUnits as $units
-# iterate over all units individually
-	| .systemdUnits[]?
-# only look at those which are jack clients and enabled
-# 	| select(.enabled == 1 and .jackName != null) as $u
-	| select(.enabled == 1 and .jackName != null and .unit == $unit) as $u
-# iterate over their output ports (make sure they have target ports defined)
-	| (.outPorts[]? | select(.targetPort)) as $o
-# construct connection command
-	| 
-# check for fully-qualified port names (containing a ":")
-		if ($o.portName | contains(":"))  
+# iterate over all units
+	| $units[]?
+# find the desired unit, check if it is a jack client and enabled
+	| select(.unit == $unit and .enabled == 1 and .jackName != null) as $u
+# iterate over its output ports if they have target units and ports defined
+	| (.outPorts[]? | select(.targetUnit) | select(.targetPort)) as $o
+# only use those ports whose target unit is enabled
+	| select($units[]? | select(.unit == $o.targetUnit) | select(.enabled == 1))
+# construct connection pair (source newline sink)
+# is the port name fully qualified (containing a ":")?
+	|	if ($o.portName | contains(":"))
+# if so, use as-is:
 			then "\($o.portName)" 
 # if not fully qualified, prepend client name
 			else "\($u.jackName):\($o.portName)"

@@ -1,7 +1,7 @@
 # generates JACK input port connection list from JSON system configuration
 
-# To avoid duplication of information, we only store upstream connections,
-# i.e. those of the output ports of a jack client.
+# To avoid duplication of information, the configuration specifies only
+# downstream connections, i.e. those of the output ports of a jack client.
 # Since target port names can change depending on the configuration of the
 # target unit, we do not store fully-qualified port names, but rather the 
 # unit name of the target and an index into its port list (starting with
@@ -20,8 +20,10 @@
 
 # store array of all units for later use
 .systemdUnits as $units
-# iterate over all units individually
-	| .systemdUnits[]?
+# check if this unit is actually enabled
+	| select($units[]? | select(.unit == $unit and .enabled == 1))
+# if so, iterate over all units individually
+	| $units[]?
 # only look at those which are jack clients and enabled
  	| select(.enabled == 1 and .jackName != null) as $u
 # iterate over their output ports and take those which point to this unit
