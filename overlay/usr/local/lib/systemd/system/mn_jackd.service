@@ -7,10 +7,6 @@ After=mn_cpufreq.service
 # if we're running on actual hardware, make sure we're after:
 After=sound.target
 
-# make sure time is monotonic before we start (USB devices can explode when
-# system time jumps):
-After=time-sync.target
-
 [Service]
 # we read Environment= from a drop-in file
 # /etc/systemd/system/jackd.service.d/jackd.service.conf

@@ -19,12 +19,6 @@ These files are automatically generated from
 
 ## systemd ordering issues
 
-**NOTE:** This chapter is mostly obsolete as of Debian Buster.
-
-Unfortunately, some systemd ordering functions do not work as advertised in the
-version that is available in Debian Stretch and have had to be replaced by
-ad-hoc hacks. These are:
-
 ### Waiting for the system time to have settled down
 
 The Raspberry Pi does not have an onboard real-time clock. After system
@@ -35,14 +29,14 @@ downtime, which could be anything from minutes to weeks.
 After that, *systemd-timesyncd* takes over and will attempt to contact NTP
 servers from pool.ntp.org. It will take another minute or so to sync time.
 
-There is a target called *time-sync.target* which is supposed to be reached
-only when the time has been synced. Unfortunately, this has only been
-implemented correctly in systemd v239 and later.
-
-Meanwhile, we use
-[```mn_wait_time```](../overlay/usr/local/bin/mn_wait_time) to
-emulate this function, which is somewhat fragile, since it parses
-user-readable output of ```timedatectl``` that is not guaranteed to be stable.
+There is a target called *time-sync.target* which is reached only after the
+time has been synced.
+However, systemd-timesyncd in its default configuration does not start
+reliably if the /local partition is delayed at startup due to an unclean
+shutdown. This error is persistent as of 2021-06-17 and leads to a crippled
+system without a JACK graph in place. Since time jumps no longer seem to be
+fatal to a running JACK even if it is using USB devices, mn_jackd.service is
+no longer sequenced after time-sync.target.
 
 ### Waiting for the network to be available
 
