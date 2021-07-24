@@ -1,0 +1,32 @@
+[Unit]
+Description=[mn] mpv player daemon template
+Requires=mn_jackd.service
+After=mn_jackd.service
+
+[Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/mn_mpv%FOO.service.d/mn_mpv%FOO.service.conf
+# created by mn_config_update
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+# this is a player (source), hence no upstream connections
+#ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
+ExecStart=/usr/bin/mpv \
+	--ao="jack" \
+	--jack-name="${JACKNAME}" \
+	--gapless-audio=yes \
+	--idle=yes \
+	--quiet=yes \
+	--input-ipc-server=/run/mpv/mpv-%i.socket \
+	--vo=null \
+	--no-audio-display \
+	--audio-resample-max-output-size=5 \
+	$OPTIONS
+# mpv will want to handle its connections itself, it does not keep
+# persistent jack ports unfortunately
+RestartSec=15
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
