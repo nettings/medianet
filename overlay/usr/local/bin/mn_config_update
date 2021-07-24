@@ -133,7 +133,7 @@ if [[ -n "$DATA" ]] ; then
 			# service should be enabled
 			echo -n "Enabling $UNIT..."
 			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
-				echo " is already enabled."
+				echo " already enabled."
 			} || {
 				"$SYSTEMCTL" --quiet enable "$UNIT" && success || failure
 			}
@@ -153,6 +153,29 @@ if [[ -n "$DATA" ]] ; then
 			fi
 		}
 	done
+	scream "Update template units"
+	# now iterate over template units (those are only in the config file, since they cannot be known in advance):"
+	# unfortunately, while systemctl status accepts wildcards, systemctl disable does not.
+	# this is a bit dangerous - check if there is a more robust way to obtain a wildcard list of template units.
+	UNITS=`"$SYSTEMCTL" status mn_*@* | grep "^●" | cut -d ' ' -f 2`
+	for UNIT in $UNITS; do
+		"$GREP" --quiet "^${UNIT}$" <<< "$DATA" || {
+			# service should be disabled
+			echo -e "Disabling $UNIT..."
+			"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
+		}
+	done
+	while read UNIT ; do
+		if [[ "$UNIT" =~ .*@.*\.service ]] ; then
+			echo -n "Enabling template $UNIT..."
+			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
+				echo " already enabled."
+			} || {
+				"$SYSTEMCTL" --quiet enable "$UNIT"  && success || failure
+			}
+			# Template units for now don't have firewall rules.
+		fi
+	done <<< "$DATA"
 fi
 
 # systemd unit options
