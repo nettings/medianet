@@ -1,5 +1,5 @@
 make clean
 make -f Makefile.git
-make -j4 OPTIMIZATIONS="`platform_optimisations`" N_INPUTS=18 N_OUTPUTS=20 
+make -j4 OPTIMIZATIONS="`platform_optimisations`" N_INPUTS=12 N_OUTPUTS=10 
 # Hack but necessary:
-sudo DESTDIR="$DESTDIR" make OPTIMIZATIONS="`platform_optimisations`" N_INPUTS=18 N_OUTPUTS=20 install
+sudo DESTDIR="$DESTDIR" make OPTIMIZATIONS="`platform_optimisations`" N_INPUTS=12 N_OUTPUTS=10 install
