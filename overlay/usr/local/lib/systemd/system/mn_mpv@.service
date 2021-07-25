@@ -1,5 +1,5 @@
 [Unit]
-Description=[mn] mpv player daemon template
+Description=[mn] mpv player daemon [%I]
 Requires=mn_jackd.service
 After=mn_jackd.service
 
