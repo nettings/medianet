@@ -21,7 +21,6 @@ ExecStart=/usr/bin/mpv \
 	--input-ipc-server=/run/mpv/mpv-%i.socket \
 	--vo=null \
 	--no-audio-display \
-	--audio-resample-max-output-size=5 \
 	$OPTIONS
 # mpv will want to handle its connections itself, it does not keep
 # persistent jack ports unfortunately
