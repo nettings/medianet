@@ -15,6 +15,7 @@ User=medianet
 ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
 ExecStart=/usr/bin/ffmpeg -hide_banner -nostats -loglevel warning -f jack -i $JACKNAME -acodec libopus -b:a 192000 -vbr off -frame_duration 60 -packet_loss 5 -application audio -content_type application/ogg -f opus 'icecast://source:$1$cP.SV.Kr$1sNVU.u6glXfSatY8IjcR.@localhost:8000/ffmpeg.opus'
 ExecStartPost=-/usr/local/bin/mn_connect %n
+ExecStop=-/usr/local/bin/mn_disconnect %n
 RestartSec=5
 Restart=always
 

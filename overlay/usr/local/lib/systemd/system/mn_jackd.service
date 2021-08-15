@@ -20,6 +20,7 @@ ExecStart=/usr/bin/jackd $OPTIONS
 # we're ready. FIXME: This will break if/when we enable multiple jack
 # servers.
 ExecStartPost=/usr/local/bin/mn_wait_jack_daemon
+ExecStop=-/usr/local/bin/mn_disconnect %n
 RestartSec=5
 Restart=on-failure
 
