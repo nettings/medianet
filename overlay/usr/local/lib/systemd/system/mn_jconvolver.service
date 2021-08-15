@@ -13,6 +13,7 @@ User=medianet
 ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
 ExecStart=/usr/bin/jconvolver -N "${JACKNAME}" $OPTIONS /etc/medianet/jconvolver.conf
 ExecStartPost=-/usr/local/bin/mn_connect %n
+ExecStop=-/usr/local/bin/mn_disconnect %n
 RestartSec=15
 Restart=always
 

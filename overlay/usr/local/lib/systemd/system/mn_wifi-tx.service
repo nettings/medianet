@@ -16,6 +16,7 @@ User=medianet
 ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
 ExecStart=/usr/bin/ffmpeg -hide_banner -nostats -loglevel warning -f jack -i "${JACKNAME}" -acodec libopus -b:a 192000 -vbr on -frame_duration 20 -packet_loss 5 -application audio -f rtp rtp://239.0.0.250:3000 $OPTIONS 
 ExecStartPost=-/usr/local/bin/mn_connect %n
+ExecStop=-/usr/local/bin/mn_disconnect %n
 RestartSec=1
 Restart=always
 
