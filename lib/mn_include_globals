@@ -2,8 +2,8 @@
 USER=medianet
 GROUP=medianet
 
-RASPIOS_BASE_IMAGE="http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-05-28/2021-05-07-raspios-buster-armhf-lite.zip"
-RASPIOS_BASE_IMAGE_SHA256="c5dad159a2775c687e9281b1a0e586f7471690ae28f2f2282c90e7d59f64273c"
+RASPIOS_BASE_IMAGE="http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-11-08/2021-10-30-raspios-bullseye-armhf-lite.zip"
+RASPIOS_BASE_IMAGE_SHA256="008d7377b8c8b853a6663448a3f7688ba98e2805949127a1d9e8859ff96ee1a9"
 
 SYSTEM_CONFIG_PATH=/etc/medianet
 SYSTEM_CONFIG="$SYSTEM_CONFIG_PATH"/config.json
