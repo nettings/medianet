@@ -8,7 +8,8 @@ Description=[mn] low-latency HD video stream sink
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-ExecStart=/usr/bin/gst-launch-1.0 udpsrc port=29999 \
+ExecStart=/usr/bin/gst-launch-1.0 --quiet \
+	udpsrc port=29999 \
 	! application/x-rtp, media=video, clock-rate=90000, payload=96 \
 	! rtpjpegdepay \
 	! v4l2jpegdec \
