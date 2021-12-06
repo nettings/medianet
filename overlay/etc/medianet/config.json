@@ -25,7 +25,7 @@
 			"type"    : "service",
 			"enabled" : 1,
 			"jackName": "system",
-			"options" : "-R -P40 -d alsa -d hw:Headphones -P -S -p 1024 -n 2 -r 48000 -i 0 -o ",
+			"options" : "-R -P40 -d alsa -d hw:Headphones -P -S -p 1024 -n 2 -r 48000 -i 0 -o 2",
 			"inPorts": [
 				{
 					"portName"   : "playback_1"
