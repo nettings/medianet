@@ -1,0 +1,25 @@
+[Unit]
+Description=[mn] low-latency HD video stream sink
+
+[Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/mn_autostart.service.d/mn_video_rx.service.conf
+# created by mn_config_update
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+ExecStart=/usr/bin/gst-launch-1.0 udpsrc port=29999 \
+	! application/x-rtp, media=video, clock-rate=90000, payload=96 \
+	! rtpjpegdepay \
+	! v4l2jpegdec \
+	! v4l2convert \
+	! kmssink driver-name=vc4 \
+		sync=false \
+		force-modesetting=true \
+		blocksize=1048576 \
+		processing-deadline=160000
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

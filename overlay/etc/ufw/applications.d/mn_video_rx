@@ -1,0 +1,4 @@
+[mn_video_rx]
+title=[mn] mn_video_rx
+description=Low latency HD video stream sink
+ports=29999/udp

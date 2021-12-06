@@ -1,0 +1,19 @@
+[Unit]
+Description=[mn] low-latency HD video stream source
+
+[Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/mn_autostart.service.d/mn_video_tx.service.conf
+# created by mn_config_update
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+ExecStart=/usr/bin/gst-launch-1.0 v4l2src device=/dev/video0 \
+	! 'image/jpeg, framerate=30/1, type=video' \
+	! rtpjpegpay \
+	! udpsink $OPTIONS
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
