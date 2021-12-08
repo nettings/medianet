@@ -70,6 +70,7 @@ network).
    1. `sudo apt-get install git`
    1. `sudo git clone https://github.com/nettings/medianet.git /medianet`
    1. `cd /medianet`
+   1. if you are running bullseye: `git checkout bullseye
 1. Basic setup
    1. Change into `sbin/10-basics-as_user_pi/` and execute the symlinks in
 numerical order using ```sudo```, carefully noting any error messages in the
