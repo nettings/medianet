@@ -6,10 +6,8 @@ THISPATH=`dirname -- $THISPATH`
 BASEDIR="${THISPATH}/.."
 . "$BASEDIR/lib/mn_includes"
 
-# initial size in bytes, will be expanded after deployment!
+# initial size of /local partition in bytes, will be expanded after deployment!
 LOCAL_BASE_SIZE=134217728
-# default total image size in bytes, determines size of root fs.
-IMAGE_SIZE=5368709120
 
 needroot
 
@@ -67,6 +65,7 @@ function bytes_to_GiB {
 
 OUTPUT_PATH="$PWD"
 IMAGE="$RASPIOS_BASE_IMAGE"
+IMAGE_SIZE="$RASPIOS_BASE_IMAGE_SIZE"
 while [[ -n "$1" ]] ; do
 	case $1 in
 		-h|--help)
