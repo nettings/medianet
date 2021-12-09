@@ -14,9 +14,12 @@ lighttpd php php-cgi php-fpm
 mpv socat
 # local monitoring
 ffmpeg
-# some graphics tools in case we want to use the hdmi output
-#fbi omxplayer
+# gstreamer for video streaming
+gstreamer1.0-gl gstreamer1.0-alsa gst123 gstreamer1.0-tools gstreamer1.0-plugins-good
+gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
+
 # kodi
-glew-utils kodi libaudio2
+# glew-utils kodi libaudio2
+
 # lirc (disabled for now)
 # lirc
