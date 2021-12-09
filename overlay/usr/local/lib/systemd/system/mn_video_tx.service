@@ -12,7 +12,7 @@ ExecStart=/usr/bin/gst-launch-1.0 --quiet \
 	v4l2src device=/dev/video0 \
 	! 'image/jpeg, framerate=30/1, type=video' \
 	! rtpjpegpay \
-	! udpsink $OPTIONS
+	! udpsink port=29999 $OPTIONS
 RestartSec=5
 Restart=always
 
