@@ -76,7 +76,7 @@ fi
 
 
 # boot config
-scream "Update boot configuration in $CONF_FILE_BOOT:"
+scream "Update boot configuration:"
 CONFIG=
 # we assume anything that is not a dtparam, dtoverlay or gpio can occur only once
 # this becomes important if we later combine default settings with overrides
@@ -114,7 +114,7 @@ echo -en "$CONFIG" > "$CONF_FILE_BOOT" && success || failure
 
 # mounts
 CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.mounts[]'`
+DATA=$( cat "$CONFIG_FILE" | "$JQ" -r '.mounts[]?' )
 scream "Write $CONF_FILE_FSTAB and check for custom mounts:"
 # always read default fstab
 while read LINE ; do
@@ -132,62 +132,52 @@ echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
 
 
 # systemd unit status
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | "\(.unit).\(.type)"'`
-if [[ -n "$DATA" ]] ; then
-	scream "Update systemd unit status and firewall rules"
-	# we iterate over known list of services, so we can disable anything not enabled in the config file
-	for UNIT in $SYSTEMD_MEDIANET_UNITS ; do
-		# greedy match gets rid of last ".foo":
-		UFWAPP=`echo $UNIT | "$SED" 's/\(.*\)\..*/\1/'`
-		"$GREP" --quiet "^${UNIT}$" <<< "$DATA" && {
-			# service should be enabled
-			echo -n "Enabling $UNIT..."
-			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
-				echo " already enabled."
-			} || {
-				"$SYSTEMCTL" --quiet enable "$UNIT" && success || failure
-			}
-			if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UFWAPP}" ]] ; then
-				echo -n "Found matching firewall service '$UFWAPP'. Enabling..."
-				"$UFW" allow "$UFWAPP" && success || failure
-			fi
+DATA=$( cat "$CONFIG_FILE" \
+	| "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | "\(.unit).\(.type)"' )
+scream "Update systemd unit status and firewall rules:"
+# compiling the list of units to iterate over is a bit tricky, because not everything is known:
+# start with the system's list of medianet units:
+UNITS=$SYSTEMD_MEDIANET_UNITS
+# then add the currently active medianet template units:
+UNITS+="$( "$SYSTEMCTL" list-unit-files --state enabled --no-legend --no-pager mn_*@* | "$SED" -e 's/^[[:space:]]*//' | "$CUT" -d ' ' -f 1 )
+"
+# finally, add all template units enabled in the config file:
+UNITS+=$( "$GREP" '@' <<< "$DATA" )
+# now get rid of duplicates and extra whitespace:
+UNITS=$( echo "$UNITS" | "$SED" 's/^[[:space:]]//; s/[[space:]]$//' | "$SORT" | "$UNIQ" | $GREP -v '^$' )
+for UNIT in $UNITS; do
+	# match up to the first dot or @ sign,
+	# to include template units:
+	UFWAPP=$( echo $UNIT | "$SED" 's/\([^@.]*\).*\..*/\1/' )
+	# is the unit in the list of enabled units from the config file?
+	"$GREP" --quiet "^${UNIT}$" <<< "$DATA" && {
+		# service should be enabled
+		echo -n "Enabling $UNIT..."
+		"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
+			echo " already enabled."
 		} || {
-			# service should be disabled
-			echo -n "Disabling $UNIT..."
-			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
-				"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
-			} || echo " already disabled."
-			if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UFWAPP}" ]] ; then
-				echo -n "Found matching firewall service '$UFWAPP'. Disabling..."
-				"$UFW" delete allow "$UFWAPP" && success || failure
-			fi
+			"$SYSTEMCTL" --quiet enable "$UNIT" && success || failure
 		}
-	done
-	scream "Update template units"
-	# now iterate over template units (those are only in the config file, since they cannot be known in advance):"
-	# unfortunately, while systemctl status accepts wildcards, systemctl disable does not.
-	# this is a bit dangerous - check if there is a more robust way to obtain a wildcard list of template units.
-	UNITS=`"$SYSTEMCTL" status mn_*@* | grep "^●" | cut -d ' ' -f 2`
-	for UNIT in $UNITS; do
-		"$GREP" --quiet "^${UNIT}$" <<< "$DATA" || {
-			# service should be disabled
-			echo -e "Disabling $UNIT..."
-			"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
-		}
-	done
-	while read UNIT ; do
-		if [[ "$UNIT" =~ .*@.*\.service ]] ; then
-			echo -n "Enabling template $UNIT..."
-			"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
-				echo " already enabled."
-			} || {
-				"$SYSTEMCTL" --quiet enable "$UNIT"  && success || failure
-			}
-			# Template units for now don't have firewall rules.
+		if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UFWAPP}" ]] ; then
+			echo -n "Found matching firewall ruleset for '$UFWAPP'. Enabling..."
+			"$UFW" allow "$UFWAPP" && success || failure
 		fi
-	done <<< "$DATA"
-fi
-
+	} || {
+		# service should be disabled
+		echo -n "Disabling $UNIT..."
+		"$SYSTEMCTL" --quiet is-enabled "$UNIT" 2> /dev/null && {
+			"$SYSTEMCTL" --quiet disable "$UNIT" && success || failure
+		} || echo " already disabled."
+		if [[ -e "${CONF_DIR_UFW_MNAPPS}/${UFWAPP}" ]] ; then
+			"$GREP" --quiet "$UFWAPP" <<< "$DATA" && {
+				echo "Other template units are still using the firewall ruleset $UFWAPP. Not changing."
+			} || {
+				echo -n "No other templates using firewall ruleset $UFWAPP. Disabling..."
+				"$UFW" delete allow "$UFWAPP" && success || failure
+			}
+		fi
+	}
+done
 
 # systemd unit options
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | select(.jackName or .execStartPre or .options) | "\(.unit)\n\(.type)\n\(.jackName)\n\(.execStartPre)\n\(.options)"'`
