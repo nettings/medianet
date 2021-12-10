@@ -17,6 +17,7 @@ fi
 NOEDIT="# automatically created by $PROGNAME from $CONFIG_FILE, do not edit!"
 NONE="[none]\n"
 
+
 # globals
 MATCH="product description hostname location version"
 # make nice headline:
@@ -52,6 +53,7 @@ echo -e "$CONFIG" > "$CONFIG_INCLUDE" && success || failure
 
 . $CONFIG_INCLUDE
 
+
 # hostname
 if [[ $CONFIG_HOSTNAME =~ [a-zA-Z0-9][a-zA-Z0-9-]{0,62} ]] ; then
 	echo -n "Updating /etc/hostname to $CONFIG_HOSTNAME..."
@@ -72,6 +74,8 @@ else
 	echo -n "CONFIG_HOSTNAME is not a valid hostname..." ; failure
 fi
 
+
+# boot config
 scream "Update boot configuration in $CONF_FILE_BOOT:"
 CONFIG=
 # we assume anything that is not a dtparam, dtoverlay or gpio can occur only once
@@ -97,8 +101,14 @@ while read VALUE ; do
 	[[ $VALUE ]] && CONFIG+="dtoverlay=$VALUE\n"
 done <<< "$DATA"
 echo -en "${CONFIG:-${NONE}}" | indent
-CONFIG="$NOEDIT\n$CONFIG"
-echo -n "Writing $CONF_FILE_BOOT..."
+echo -n "Updating $CONF_FILE_BOOT..."
+# We need to replace everything after our $NOEDIT line.
+# First, escape everything in that line that might confuse sed:
+# Put every character in its own character class except ^, then
+# escape ^ and spaces. The chainsaw approach :o)
+NOEDIT_ESCAPED=$("$SED" 's/[^^]/[&]/g; s/\^/\\^/g; s/ /\\ /g;' <<< "$NOEDIT")
+SYSCONFIG=$("$SED" "/$NOEDIT_ESCAPED/Q" < "$CONF_FILE_BOOT")
+CONFIG="$SYSCONFIG\n$NOEDIT\n$CONFIG"
 echo -en "$CONFIG" > "$CONF_FILE_BOOT" && success || failure
 
 
@@ -178,6 +188,7 @@ if [[ -n "$DATA" ]] ; then
 	done <<< "$DATA"
 fi
 
+
 # systemd unit options
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.enabled == 1) | select(.jackName or .execStartPre or .options) | "\(.unit)\n\(.type)\n\(.jackName)\n\(.execStartPre)\n\(.options)"'`
 if [[ -n "$DATA" ]] ; then
@@ -215,6 +226,7 @@ if [[ -n "$DATA" ]] ; then
 		echo -e "$CONFIG" > "$DROPIN_DIR"/"$DROPIN_FILE" && success || failure
 	done <<< "$DATA"
 fi
+
 	
 # systemd jack unit connections
 DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.outPorts or .inPorts) | "\(.unit)\n\(.type)"'`
@@ -249,6 +261,7 @@ fi
 scream "Update systemd daemon settings:"
 echo -n "Performing 'systemctl daemon-reload'..."
 $SYSTEMCTL daemon-reload && success || failure
+
 
 # write config files
 
