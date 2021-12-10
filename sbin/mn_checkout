@@ -30,10 +30,13 @@ from_git() {
 }
 
 from_tar() {
-  echo -ne "Installing tarball $1 to $2..."
-  if [[ ! -d "$2" ]] ; then
-    mkdir "$2"
+  echo "Installing tarball $1 to $2:"
+  if [[ -d "$2" ]] ; then
+    echo -ne "Removing existing directory $2..."
+    "$RM" -rf "$2" || failure && success
   fi
+  echo -ne "Creating empty directory $2..."
+  "$MKDIR" "$2" || failure && success
   cd "$2"
   ALGO=
   case `basename "$1"` in
@@ -54,7 +57,7 @@ from_tar() {
 from_package()
 {
 	echo -e "Installing packages ..."
-  	sudo "$APT" -qqy install --no-install-recommends "$@" || failure && success
+	"$SUDO" "$APT" -qqy install --no-install-recommends "$@" || failure && success
 }
 
 
@@ -71,18 +74,16 @@ else
         done
 fi
 
-scream "Checking out \"$TARGET\"."
-
 for i in $TARGET ; do
-  scream "********* Checking out $i..."
+  scream "********* Checking out $i:"
   . "$i" \
-    && scream "********* ... $i and dependencies successfully checked out." \
+    && echo "********* $i and dependencies successfully checked out to $CUSTOM_BUILD_DIR." \
     || { 
-      scream "********* ... $i "
+      echo "********* $i "
       bail
     }
+    echo
 done
 
-echo "Checked out sources have been installed to $CUSTOM_BUILD_DIR."
 cd "$OLDWD"
 
