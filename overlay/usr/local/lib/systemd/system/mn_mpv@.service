@@ -5,7 +5,7 @@ After=mn_jackd.service
 
 [Service]
 # we read Environment= from a drop-in file
-# /etc/systemd/system/mn_mpv%FOO.service.d/mn_mpv%FOO.service.conf
+# /etc/systemd/system/mn_mpv@%i.service.d/mn_mpv@%i.service.conf
 # created by mn_config_update
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
