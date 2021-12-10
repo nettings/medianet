@@ -38,7 +38,9 @@ SYSTEMD_DEFAULT_DISABLE="
 	phpsessionclean.timer
 	rpi-eeprom-update.service
 	raspi-config.service
+	wpa_supplicant.service
 	triggerhappy.service
+	triggerhappy.socket
 "
 SYSTEMD_DEFAULT_ENABLE="
 	ufw.service
