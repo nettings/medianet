@@ -18,7 +18,7 @@
 			"unit"    : "mn_cpufreq",
 			"type"    : "service",
 			"enabled" : 1,
-			"options" : "-g performance --min 600 --max 1000"
+			"options" : "-g performance --min 600MHz --max 1000MHz"
 		},
 		{
 			"unit"    : "mn_jackd", 
@@ -126,9 +126,9 @@
 		{
 			"unit"    : "mn_zita-n2j",
 			"type"    : "service",
-			"enabled" : 1,
+			"enabled" : 0,
 			"jackName": "zita-n2j",
-			"options" : "--chan 1,2 --buff 20 239.0.0.1 3000 medianet0",
+			"options" : "--chan 1,2 --buff 20 239.0.0.1 30000 medianet0",
 			"inPorts" : [],
 			"outPorts": [
 				{
