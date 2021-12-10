@@ -4,8 +4,6 @@ cpufrequtils exfat-fuse exfat-utils expect gpiod inotify-tools i2c-tools joe kpa
 libasound2-plugins jackd2 jackmeter jack-capture jconvolver zita-ajbridge
 # lv2 plugins
 abgate calf-plugins fomp guitarix-lv2 invada-studio-plugins-lv2 mda-lv2 swh-lv2 zam-plugins
-# general build dependencies
-lilv-utils
 # telnet for mod-host debugging
 telnet
 # local lightweight webserver to run lv2rdf2html interface
