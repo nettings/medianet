@@ -10,7 +10,7 @@ LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
 ExecStart=/usr/bin/gst-launch-1.0 --quiet \
-	udpsrc port=29999 \
+	udpsrc port=29999 buffer-size=1048576 \
 	! application/x-rtp, media=video, clock-rate=90000, payload=96 \
 	! rtpjpegdepay \
 	! v4l2jpegdec \
