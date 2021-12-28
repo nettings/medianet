@@ -4,30 +4,57 @@
 
 . /medianet/lib/mn_includes
 
-RETMSG=$( "$GSTLAUNCH" --gst-debug-level=0 \
-	udpsrc port=29999 buffer-size=1048576 \
-	! application/x-rtp, media=video, clock-rate=90000, payload=96 \
-	! rtpjpegdepay \
-	! v4l2jpegdec \
-	! v4l2convert \
-	! kmssink driver-name=vc4 \
-		sync=false \
-		force-modesetting=true \
-		blocksize=1048576 \
-		processing-deadline=160000 \
-	2>&1 \
-)
-RETVAL="$?"		
+SLEEP_SECS=3
+LOG_NCYCLES=100
 
-if [[ "$RETVAL" == 255 ]] ; then
-	if [[ "$RETMSG" =~ "Could not get allowed GstCaps of device" ]] ; then
-		echo "No HDMI screen connected? Sleeping for 60s."
-		"$SLEEP" 60
-		exit "$RETVAL"
+LOG_COUNT=LOG_NCYCLES
+OLD_RETMSG="_"
+OLD_RETVAL=257
+while : ; do
+	RETMSG=$( \
+		"$GSTLAUNCH" --quiet \
+		rtspsrc location=rtspu://$1:8554/unicast latency=20 buffer-mode=none do-retransmission=false \
+		! decodebin \
+		! kmssink driver-name=vc4 \
+			sync=false \
+			force-modesetting=true \
+			blocksize=104857 \
+#			processing-deadline=160000 \
+		2>&1
+#		udpsrc port=29999 buffer-size=1048576 \
+#		! application/x-rtp, media=video, clock-rate=90000, payload=96 \
+#		! rtpjpegdepay \
+#		! v4l2jpegdec \
+#		! v4l2convert \
+#		! kmssink driver-name=vc4 \
+#			sync=false \
+#			force-modesetting=true \
+#			blocksize=1048576 \
+#			processing-deadline=160000 \
+#		2>&1 \
+	)
+	RETVAL=$?
+
+	#anything new happening?
+	if [[ 	"$RETMSG" != "$OLD_RETMSG" || \
+		"$RETVAL" != "$OLD_RETVAL" || \
+		"$LOG_COUNT" == 0 \
+	]] ; then
+		if [[ "$RETMSG" =~ "Could not get allowed GstCaps of device" ]] ; then
+			echo "No HDMI screen connected? Will keep retrying..." >&2
+		else
+			echo "$GSTLAUNCH terminated with error code $RETVAL:" >&2
+			echo "$RETMSG" | indent >&2
+			break
+		fi
+		LOG_COUNT=$LOG_NCYCLES
 	fi
-else
-	echo "$GSTLAUNCH aborted with error code $RETVAL:"
-	echo "$RETMSG" | indent
-fi
+	"$SLEEP" $SLEEP_SECS
 
+	OLD_RETMSG="$RETMSG"
+	OLD_RETVAL="$RETVAL"
+	((LOG_COUNT--))
+done
+
+exit $RETVAL
 
