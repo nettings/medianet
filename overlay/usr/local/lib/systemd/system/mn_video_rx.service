@@ -9,17 +9,7 @@ After=network.target network-online.target
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-ExecStart=/usr/bin/gst-launch-1.0 --quiet \
-	udpsrc port=29999 buffer-size=1048576 \
-	! application/x-rtp, media=video, clock-rate=90000, payload=96 \
-	! rtpjpegdepay \
-	! v4l2jpegdec \
-	! v4l2convert \
-	! kmssink driver-name=vc4 \
-		sync=false \
-		force-modesetting=true \
-		blocksize=1048576 \
-		processing-deadline=160000
+ExecStart=/usr/local/bin/mn_video_rx
 RestartSec=5
 Restart=always
 

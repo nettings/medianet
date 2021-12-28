@@ -19,6 +19,7 @@ FIND=/usr/bin/find
 GIT=/usr/bin/git
 GREP=/bin/grep
 GROUPADD=/usr/sbin/groupadd
+GSTLAUNCH=/usr/bin/gst-launch-1.0
 HOSTNAMEBIN=/bin/hostname
 INOTIFYWAIT=/usr/bin/inotifywait
 IPBIN=/sbin/ip

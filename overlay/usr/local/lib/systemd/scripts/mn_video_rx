@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# [mn] medianet Low-Latency HD Video stream sink
+
+. /medianet/lib/mn_includes
+
+RETMSG=$( "$GSTLAUNCH" --gst-debug-level=0 \
+	udpsrc port=29999 buffer-size=1048576 \
+	! application/x-rtp, media=video, clock-rate=90000, payload=96 \
+	! rtpjpegdepay \
+	! v4l2jpegdec \
+	! v4l2convert \
+	! kmssink driver-name=vc4 \
+		sync=false \
+		force-modesetting=true \
+		blocksize=1048576 \
+		processing-deadline=160000 \
+	2>&1 \
+)
+RETVAL="$?"		
+
+if [[ "$RETVAL" == 255 ]] ; then
+	if [[ "$RETMSG" =~ "Could not get allowed GstCaps of device" ]] ; then
+		echo "No HDMI screen connected? Sleeping for 60s."
+		"$SLEEP" 60
+		exit "$RETVAL"
+	fi
+else
+	echo "$GSTLAUNCH aborted with error code $RETVAL:"
+	echo "$RETMSG" | indent
+fi
+
+
