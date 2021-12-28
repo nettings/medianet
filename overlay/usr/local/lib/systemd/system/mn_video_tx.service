@@ -9,11 +9,12 @@ After=network.target network-online.target
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-ExecStart=/usr/bin/gst-launch-1.0 --quiet \
-	v4l2src device=/dev/video0 \
-	! 'image/jpeg, framerate=30/1, type=video' \
-	! rtpjpegpay \
-	! udpsink port=29999 $OPTIONS
+ExecStart=/usr/local/bin/v4l2rtspserver -Q 1 -f -W 1920 -H 1080 -F 30 $OPTIONS
+#ExecStart=/usr/bin/gst-launch-1.0 --quiet \
+#	v4l2src device=/dev/video0 \
+#	! 'image/jpeg, framerate=30/1, type=video' \
+#	! rtpjpegpay \
+#	! udpsink port=29999 $OPTIONS
 RestartSec=5
 Restart=always
 
