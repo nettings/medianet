@@ -7,8 +7,6 @@
 
 LOCAL_SSH_PORT=22
 
-scream "$PROGNAME [mn] medianet maintenance tunnel"
-
 if [[ -f "$TUNNEL_STATEFILE" ]] ; then
 
   echo "Starting..."

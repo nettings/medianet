@@ -11,7 +11,7 @@ Type=exec
 User=medianet
 RestartSec=2
 Restart=on-failure
-ExecStart=/usr/local/bin/mn_tunnel
+ExecStart=/usr/local/lib/systemd/scripts/mn_tunnel
 
 [Install]
 WantedBy=multi-user.target
