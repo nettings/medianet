@@ -13,13 +13,13 @@ OLD_RETVAL=257
 while : ; do
 	RETMSG=$( \
 		"$GSTLAUNCH" --quiet \
-		rtspsrc location=rtspu://$1:8554/unicast latency=20 buffer-mode=none do-retransmission=false \
+		rtspsrc location=rtspu://$1:29999/unicast latency=20 buffer-mode=none do-retransmission=false \
 		! decodebin \
 		! kmssink driver-name=vc4 \
 			sync=false \
-			force-modesetting=true \
 			blocksize=104857 \
-#			processing-deadline=160000 \
+			force-modesetting=true \
+			processing-deadline=160000 \
 		2>&1
 #		udpsrc port=29999 buffer-size=1048576 \
 #		! application/x-rtp, media=video, clock-rate=90000, payload=96 \
@@ -40,8 +40,11 @@ while : ; do
 		"$RETVAL" != "$OLD_RETVAL" || \
 		"$LOG_COUNT" == 0 \
 	]] ; then
+		echo -n "($RETVAL) "
 		if [[ "$RETMSG" =~ "Could not get allowed GstCaps of device" ]] ; then
 			echo "No HDMI screen connected? Will keep retrying..." >&2
+		elif [[ "$RETMSG" =~ "Failed to connect. (Generic error)" ]] ; then
+			echo "Could not connect to server. Will keep retrying..." >&2
 		else
 			echo "$GSTLAUNCH terminated with error code $RETVAL:" >&2
 			echo "$RETMSG" | indent >&2
