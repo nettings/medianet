@@ -1,5 +1,5 @@
 # rules by USB port on the Raspberry Pi 4B (other models can be added)
-KERNELS=="1-1.1:1.0", SUBSYSTEM=="video4linux", KERNEL=="video[0-9]*", ACTION=="add", SYMLINK+="video-topright"
-KERNELS=="1-1.2:1.0", SUBSYSTEM=="video4linux", KERNEL=="video[0-9]*", ACTION=="add", SYMLINK+="video-bottomright"
-KERNELS=="1-1.3:1.0", SUBSYSTEM=="video4linux", KERNEL=="video[0-9]*", ACTION=="add", SYMLINK+="video-topleft"
-KERNELS=="1-1.4:1.0", SUBSYSTEM=="video4linux", KERNEL=="video[0-9]*", ACTION=="add", SYMLINK+="video-bottomleft"
+KERNELS=="1-1.1:1.0", SUBSYSTEM=="video4linux", KERNEL=="video[0-9]*", ATTR{index}=="0", ACTION=="add", SYMLINK+="video-topright"
+KERNELS=="1-1.2:1.0", SUBSYSTEM=="video4linux", KERNEL=="video[0-9]*", ATTR{index}=="0", ACTION=="add", SYMLINK+="video-bottomright"
+KERNELS=="1-1.3:1.0", SUBSYSTEM=="video4linux", KERNEL=="video[0-9]*", ATTR{index}=="0", ACTION=="add", SYMLINK+="video-topleft"
+KERNELS=="1-1.4:1.0", SUBSYSTEM=="video4linux", KERNEL=="video[0-9]*", ATTR{index}=="0", ACTION=="add", SYMLINK+="video-bottomleft"
