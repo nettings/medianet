@@ -9,7 +9,7 @@ After=network.target network-online.target
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-ExecStart=/usr/local/lib/systemd/scripts/mn_video_rx
+ExecStart=/usr/local/lib/systemd/scripts/mn_video_rx $OPTIONS
 RestartSec=5
 Restart=always
 
