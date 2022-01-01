@@ -93,6 +93,7 @@ CUSTOM_BUILDS="
 "
 
 declare -A CUSTOM_BUILD_GCCFLAGS
+CUSTOM_BUILD_GCCFLAGS[PI0W]="-march=armv6zk -mcpu=arm1176jzf-s -mfloat-abi=hard -mfpu=vfp"
 CUSTOM_BUILD_GCCFLAGS[PI1B]="-march=armv6zk -mcpu=arm1176jzf-s -mfloat-abi=hard -mfpu=vfp"
 CUSTOM_BUILD_GCCFLAGS[PI2B]="-march=armv7-a -mfloat-abi=hard -mfpu=neon-vfpv4"
 CUSTOM_BUILD_GCCFLAGS[PI3B]="-march=armv8-a+crc -mfloat-abi=hard -mfpu=neon-vfpv4 -mtune=cortex-a53 -ftree-vectorize"
