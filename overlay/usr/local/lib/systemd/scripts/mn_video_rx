@@ -17,7 +17,7 @@ while : ; do
 		! decodebin \
 		! kmssink driver-name=vc4 \
 			sync=false \
-			blocksize=104857 \
+			blocksize=1048576 \
 			force-modesetting=true \
 			processing-deadline=160000 \
 		2>&1
