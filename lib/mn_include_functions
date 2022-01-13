@@ -52,7 +52,9 @@ function indent {
 function get_platform {
 	if [[ -e "/proc/device-tree/model" ]] ; then
 	        HW=`cat /proc/device-tree/model | "$TR" -d '\0'`
-	        if [[ "$HW" =~ ^Raspberry\ Pi\ Model\ B ]] ; then
+		if [[ "$HW" =~ ^Raspberry\ Pi\ Zero\ W\ Rev ]] ; then
+			echo -n "PI0W"
+	        elif [[ "$HW" =~ ^Raspberry\ Pi\ Model\ B ]] ; then
 	                echo -n PI1B
 	        elif [[ "$HW" =~ ^Raspberry\ Pi\ 2\ Model\ B ]] ; then
 	                echo -n PI2B
