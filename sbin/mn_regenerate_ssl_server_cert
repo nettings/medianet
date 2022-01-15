@@ -1,0 +1,27 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+scream "Regenerating self-signed lighttpd openssl certificate"
+echo
+echo -n "Deleting old ssl certificates... "
+"$RM" "$CONF_WEB_SSL_CERT" || failure && success
+echo
+echo "After collecting some randomness, the openssl tool will ask you for some"
+echo "metadata to attach to the certificate. It doesn't really matter what you"
+echo "enter here, but if you enter the correct hostname and/or IP, the warning"
+echo "message your browser displays when first connecting might be less scary."
+echo
+echo "A self-signed certificate does not protect against man-in-the-middle"
+echo "attacks unless you distribute the key fingerprint to your clients and"
+echo "validate it manually (yeah, right)."
+echo "But it does enable encryption for http traffic, keeping uploaded data"
+echo "such as passwords and also the data you receive reasonably secure against"
+echo "a casual attacker."
+echo "Do not rely on self-signed certificates for important production services."
+echo
+echo "Regenerating keys... "
+"$OPENSSL" req -new -x509 -keyout "$CONF_WEB_SSL_CERT" -out "$CONF_WEB_SSL_CERT" -days 3650 -nodes || failure && success
+

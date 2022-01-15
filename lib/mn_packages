@@ -7,7 +7,7 @@ abgate calf-plugins fomp guitarix-lv2 invada-studio-plugins-lv2 mda-lv2 swh-lv2 
 # telnet for mod-host debugging
 telnet
 # local lightweight webserver to run lv2rdf2html interface
-lighttpd php php-cgi php-fpm
+lighttpd lighttpd-mod-openssl php php-cgi php-fpm
 # local mpv and remote control
 mpv socat
 # local monitoring

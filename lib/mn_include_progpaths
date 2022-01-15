@@ -33,6 +33,7 @@ MOUNT=/bin/mount
 MOUNTPOINT=/bin/mountpoint
 MV=/bin/mv
 NC=/bin/nc
+OPENSSL=/usr/bin/openssl
 PARTED=/sbin/parted
 PASSWD=/usr/bin/passwd
 PGREP=/usr/bin/pgrep

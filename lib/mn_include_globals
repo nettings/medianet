@@ -24,6 +24,7 @@ CONF_FILE_FSTAB_DEFAULT="$PREFIX"/overlay/etc/fstab.medianet
 CONF_DIR_MNTUNNEL="$SYSTEM_CONFIG_PATH"/mn_tunnel
 CONF_FILE_MNTUNNEL="$CONF_DIR_MNTUNNEL"/mn_tunnel.conf
 CONF_DIR_UFW_MNAPPS=/etc/ufw/applications.d
+CONF_WEB_SSL_CERT=/etc/lighttpd/ssl/server.pem
 
 SYSTEMD_UNIT_DIR=/etc/systemd/system
 
