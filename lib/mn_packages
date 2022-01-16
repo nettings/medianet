@@ -1,5 +1,6 @@
 # basic system packages
 cpufrequtils exfat-fuse exfat-utils expect gpiod inotify-tools i2c-tools joe kpartx lsof screen
+libpam-ssh-agent-auth
 # basic audio packages
 libasound2-plugins jackd2 jackmeter jack-capture jconvolver zita-ajbridge
 # lv2 plugins

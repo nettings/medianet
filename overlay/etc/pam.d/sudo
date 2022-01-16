@@ -1,0 +1,5 @@
+#%PAM-1.0
+auth sufficient pam_ssh_agent_auth.so file=/etc/security/sudo_authorized_keys
+@include common-auth
+@include common-account
+@include common-session-noninteractive
