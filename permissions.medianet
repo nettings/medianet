@@ -5,7 +5,6 @@
 'overlay/usr' root:root 755
 'overlay/usr/lib' root:root 755
 'overlay/usr/lib/arm-linux-gnueabihf' root:root 755
-'overlay/usr/lib/arm-linux-gnueabihf/jack' root:root 755
 'overlay/usr/local' root:root 755
 'overlay/usr/local/bin' root:root 755
 'overlay/usr/local/bin/mn_gccflags' root:root 755
@@ -79,6 +78,7 @@
 'overlay/usr/local/lib/systemd/scripts' root:root 755
 'overlay/usr/local/lib/systemd/scripts/mn_video_rx' root:root 755
 'overlay/usr/local/lib/systemd/scripts/mn_tunnel' root:root 755
+'overlay/usr/local/lib/libalac.la' root:root 755
 'overlay/usr/local/share' root:root 755
 'overlay/usr/local/share/man' root:root 755
 'overlay/usr/share' root:root 755
@@ -110,13 +110,6 @@
 'overlay/var/www/html/index.php' root:root 644
 'overlay/var/www/html/medianet' root:root 755
 'overlay/var/www/html/medianet/DSP' root:root 755
-'overlay/var/www/html/medianet/DSP/jquery-ui.css' root:root 644
-'overlay/var/www/html/medianet/DSP/index.html' root:root 644
-'overlay/var/www/html/medianet/DSP/jquery-ui.min.js' root:root 644
-'overlay/var/www/html/medianet/DSP/lv2rdf.php' root:root 644
-'overlay/var/www/html/medianet/DSP/lv2rdf.js' root:root 644
-'overlay/var/www/html/medianet/DSP/lv2rdf.css' root:root 644
-'overlay/var/www/html/medianet/DSP/jquery-3.4.1.min.js' root:root 644
 'overlay/var/www/html/medianet/Tunnel' root:root 755
 'overlay/var/www/html/medianet/Tunnel/mn_tunnel.css' root:root 644
 'overlay/var/www/html/medianet/Tunnel/index.php' root:root 644
@@ -154,6 +147,10 @@
 'overlay/etc/sudoers.d/10_medianet-nopasswd' root:root 440
 'overlay/etc/tmpfiles.d' root:root 755
 'overlay/etc/tmpfiles.d/__medianet.conf' root:root 644
+'overlay/etc/pam.d' root:root 755
+'overlay/etc/pam.d/sudo' root:root 644
+'overlay/etc/security' root:root 755
+'overlay/etc/security/sudo_authorized_keys' root:root 644
 'overlay/etc/ufw' root:root 755
 'overlay/etc/ufw/before6.rules' root:root 644
 'overlay/etc/ufw/applications.d' root:root 755
@@ -188,7 +185,6 @@
 'overlay/etc/medianet/mn_tunnel/README.md' medianet:medianet 644
 'overlay/etc/medianet/mn_tunnel/tunnel_key' medianet:medianet 644
 'overlay/etc/medianet/config.json' medianet:medianet 644
-'overlay/etc/medianet/shairport-sync.conf.sample' root:root 644
 'overlay/etc/medianet/shairport-sync.conf' medianet:medianet 644
 'overlay/etc/medianet/README.md' medianet:medianet 644
 'overlay/etc/samba' root:root 755
