@@ -2,6 +2,7 @@
 
 . /medianet/lib/mn_includes
 
+VOL=40
 
 declare -a STREAM
 STREAM[0]="https://somafm.com/nossl/deepspaceone130.pls"
@@ -16,6 +17,9 @@ for PSOCKET in /run/mpv/mpv*.socket ; do
 		echo '{ "command": ["stop"] }' \
 		| "$SOCAT" - "$PSOCKET" | indent | indent 
 	else
+		echo "Setting volume on player $PSOCKET to $VOL: "
+		echo '{ "command" : [ "set_property", "volume", 40 ] }' \
+		| "$SOCAT" - "$PSOCKET" | indent | indent
 		echo "Playing ${STREAM[$S]} on player $PSOCKET: "
 		echo '{ "command": ["loadfile", "'${STREAM[$S]}'"] }' \
 		| "$SOCAT" - "$PSOCKET" | indent | indent
