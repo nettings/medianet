@@ -31,13 +31,16 @@ directory for details.
 
 ### User account and access
 
-The default user account is `medianet`. Its password is locked, so you must
-drop a suitable ssh key into `/home/medianet/.ssh/authorized_keys` while you are
-bootstrapping the distribution!
+The default user account is `medianet`. Its password is locked. You will be
+asked to paste a suitable ssh public key during the bootstrapping process.
 All audio-related services run as user medianet.
-This user currently has full sudo rights, as it is also the maintenance
-account. This will be split in the near future to improve operational
-security.
+This user currently has full sudo rights, but they are protected by the 
+pam_ssh_agent_auth mechanism, i.e. you can only execute sudo commends
+without a password if the correct private key is present in your ssh agent.
+You will likewise be prompted to paste the corresponding public key during
+bootstrapping.
+This improves operational security such that if medianet is compromised, the
+attacker does not automatically have root access.
 
 ### Configuration and system state
 
