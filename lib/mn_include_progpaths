@@ -50,6 +50,7 @@ SWAPOFF=/sbin/swapoff
 SYSTEMCTL=/bin/systemctl
 STAT=/usr/bin/stat
 SORT=/usr/bin/sort
+SOCAT=/usr/bin/socat
 SUDO=/usr/bin/sudo
 TAR=/bin/tar
 TEST=/usr/bin/test

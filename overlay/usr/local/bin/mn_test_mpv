@@ -1,0 +1,24 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+
+declare -a STREAM
+STREAM[0]="https://somafm.com/nossl/deepspaceone130.pls"
+STREAM[1]="https://somafm.com/nossl/spacestation130.pls"
+STREAM[2]="https://somafm.com/nossl/fluid130.pls"
+NSTREAMS=${#STREAM[@]}
+
+S=0
+for PSOCKET in /run/mpv/mpv*.socket ; do
+	if [[ "$1" == "stop" ]] ; then
+		echo "Stopping player $PSOCKET: "
+		echo '{ "command": ["stop"] }' \
+		| "$SOCAT" - "$PSOCKET" | indent | indent 
+	else
+		echo "Playing ${STREAM[$S]} on player $PSOCKET: "
+		echo '{ "command": ["loadfile", "'${STREAM[$S]}'"] }' \
+		| "$SOCAT" - "$PSOCKET" | indent | indent
+	fi
+	((S = ($S+1) % $NSTREAMS ))
+done
