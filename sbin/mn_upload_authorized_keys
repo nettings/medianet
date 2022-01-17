@@ -1,0 +1,47 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+scream "Upload authorized access keys:"
+
+echo "In this step, you will be asked to paste two SSH public keys, one for unprivileged"
+echo "access of user $CONF_USER, and the second to be able to execute SUDO commands as root"
+echo "without entering a password."
+echo "On critical production systems, make sure the SUDO key is different from the user key above,"
+echo "to get some privilege separation."
+echo "Also, be sure not to accidentally paste your *private* keys below."
+echo
+echo "You can create ssh keys with"
+echo
+echo -e "${ESC_BLD}\$~> ssh-keygen -t ed25519 -C $CONF_USER@localhost -f \$HOME/.ssh/${CONF_USER}${ESC_CLR}"
+echo -e "${ESC_BLD}\$~> ssh-keygen -t ed25519 -C $CONF_USER-sudo@localhost -f \$HOME/.ssh/$CONF_USER-sudo${ESC_CLR}"
+echo
+echo "For sudo access to work, you will need to run an ssh-agent on the machine from which you"
+echo "are logging in to this device, you will have to add the SUDO key to said agent by running"
+echo
+echo -e "${ESC_BLD}\$~> ssh-add \$HOME/.ssh/$CONF_USER-sudo${ESC_CLR}"
+echo
+echo "   (Note that your agent will not be triggered to unlock that key automatically, so you"
+echo "    *must* perform this step before logging in if you need to perform admin tasks)."
+echo
+echo "Furthermore, you must forward your ssh agent by logging in with -A parameter:"
+echo
+echo -e "${ESC_BLD}\$~> ssh -A $CONF_USER@${HOSTNAME}${ESC_CLR}"
+echo
+echo
+
+stdin_to_file \
+	"$CONF_SSH_PUBKEY" \
+	"Please paste an SSH ${ESC_BLD}public${ESC_CLR} key ($CONF_SSH_PUBKEY) for user access here:" \
+	&& success || failure "skipped"
+echo
+stdin_to_file \
+	"$CONF_SUDO_PUBKEY" \
+	"Please paste an SSH ${ESC_BLD}public${ESC_CLR} key ($CONF_SUDO_PUBKEY) to enable SUDO access:" \
+	&& success || failure "skipped"
+
+echo
+echo -n "Changing owner of $CONF_SSH_PUBKEY to $CONF_USER:$CONF_GROUP..."
+"$CHOWN" "$CONF_USER":"$CONF_GROUP" "$CONF_SSH_PUBKEY" && success || failure

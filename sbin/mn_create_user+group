@@ -4,6 +4,7 @@
 
 needroot
 
+scream "Create user account:"
 
 echo -n "Creating group $CONF_GROUP..."
 "$GROUPADD" "$CONF_GROUP" && success || failure
@@ -23,42 +24,14 @@ echo -n "Changing login shell to /bin/bash..."
 "$CHSH" -s /bin/bash medianet && success || failure
 
 echo -n "Creating .ssh dir..."
-"$MKDIR" -m 077 "$CONF_HOME"/.ssh && success || failure
-
-scream "Setting up authorized access keys:"
-
-echo "In this step, you will be asked to paste two SSH public keys, one for unprivileged"
-echo "access of user $CONF_USER, and the second to be able to execute SUDO commands as root"
-echo "without entering a password."
-echo "On critical production systems, make sure the SUDO key is different from the user key above,"
-echo "to get some privilege separation."
-echo
-echo "You can create ssh keys with"
-echo -e "${ESC_BLD}\$~> ssh-keygen -t ed25519 -C $CONF_USER@localhost -f \$HOME/.ssh/${CONF_USER}${ESC_CLR}"
-echo -e "${ESC_BLD}\$~> ssh-keygen -t ed25519 -C $CONF_USER-sudo@localhost -f \$HOME/.ssh/$CONF_USER-sudo${ESC_CLR}"
-echo
-echo "For sudo access to work, you will need to run an ssh-agent on the machine from which you"
-echo "are logging in to this device, you will have to add the SUDO key to said agent by running"
-echo -e "${ESC_BLD}\$~> ssh-add \$HOME/.ssh/$CONF_USER-sudo${ESC_CLR}"
-echo "and you must enable agent forwarding by logging in with the -A parameter:"
-echo -e "${ESC_BLD}\$~> ssh -A $CONF_USER@${HOSTNAME}${ESC_CLR}"
-echo
-echo
-
-stdin_to_file \
-	"$CONF_SSH_PUBKEY" \
-	"Please paste an SSH ${ESC_BLD}public${ESC_CLR} key ($CONF_SSH_PUBKEY) for user access here:" \
-	&& success || failure "skipped"
-stdin_to_file \
-	"$CONF_SUDO_PUBKEY" \
-	"Please paste an SSH ${ESC_BLD}public${ESC_CLR} key ($CONF_SUDO_PUBKEY) to enable SUDO access:" \
-	&& success || failure "skipped"
+"$MKDIR" -m 700 "$CONF_HOME"/.ssh && success || failure
 
 echo -n "Changing ownership of home directory..."
 "$CHOWN" -R "$CONF_USER:$CONF_GROUP" "$CONF_HOME" && success || failure
 
 echo -n "Adding $CONF_USER to sudoers..."
-# prevent user lockout from permission breakage in the overlay tree by making a hard copy
+# prevent user lockout due to permission breakage in the overlay tree:
+# make a hard file, not a symlink
 cat << EOF > "/etc/sudoers.d/10-${CONF_USER}-pubkey" && success || failure
 Defaults env_keep += "SSH_AUTH_SOCK"
 medianet ALL=(ALL) ALL
