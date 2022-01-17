@@ -1,4 +1,4 @@
-ESC_RED="\033[0;31m"
+ESC_RED="\033[1;31m"
 ESC_GRN="\033[1;32m"
 ESC_YLW="\033[1;33m"
 ESC_BLU="\033[1;34m"
@@ -25,7 +25,7 @@ function failure {
 	if [[ $ERR != 0 ]] ; then
 		ERRMSG+=" (return code $ERR)"
 	fi
-	echo  -e " ${ESC_RED}${ERRMSG}${ESC_CLR}"
+	echo -e " ${ESC_RED}${ERRMSG}${ESC_CLR}"
 }
 
 # $@: error message
@@ -39,7 +39,7 @@ function bail {
 	if [[ $ERR != 0 ]] ; then
 		ERRMSG+=" (return code $ERR)"
 	fi
-	echo  -e " ${ESC_RED}${ESC_BLD}${ERRMSG}${ESC_CLR}"
+	echo -e " ${ESC_RED}${ESC_BLD}${ERRMSG}${ESC_CLR}"
 	exit 1
 }
 
@@ -84,4 +84,34 @@ function noroot {
 		echo -e "${ESC_RED}For security reasons, you must not run $PROGNAME as root!${ESC_CLR}"
 		exit 2
 	fi
+}
+
+function yesno {
+        echo -en "$@ (y/n)"
+        while read -n1 -s CHAR ; do
+                case "$CHAR" in
+                y|Y)
+                        return 0
+                        ;;
+                n|N)
+                        return 1
+                        ;;
+                esac
+        done
+}
+
+function stdin_to_file {
+        FILE="$1"
+        shift
+        if [[ -z "$FILE" ]] ; then
+                bail "stdin_to_file: You must specify a file name as first parameter!"
+        fi
+        if [[ -e "$FILE" ]] ; then
+                yesno "File $FILE exists. Do you want to overwrite it?" || return 1
+                "$RM" "$FILE"
+        fi
+        echo -e "\n$@ (ENTER, then CTRL-D when done)"
+        while IFS= read -r LINE; do
+                echo "$LINE" >> "$FILE"
+        done;
 }
