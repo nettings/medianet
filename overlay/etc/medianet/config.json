@@ -1,9 +1,9 @@
 {
 	"product": "ø",
-	"description": "[mn] medianet example setup using built-in audio",
+	"description": "[mn] medianet base setup using built-in audio",
 	"hostname": "mn-basic",
 	"location": "Frankenlab",
-	"version": "2021-12-05",
+	"version": "2022-01-17",
 	"bootConfig": {
 		"dtparam" : [
 			"audio=on"
@@ -18,7 +18,12 @@
 			"unit"    : "mn_cpufreq",
 			"type"    : "service",
 			"enabled" : 1,
-			"options" : "-g performance --min 600MHz --max 1000MHz"
+			"options" : "-g performance --min 600MHz --max 1500MHz"
+		},
+		{
+			"unit"    : "mn_icecast2",
+			"type"    : "service",
+			"enabled" : 1
 		},
 		{
 			"unit"    : "mn_jackd", 
@@ -38,6 +43,20 @@
 			]
 		},
 		{
+			"unit"    : "mn_listen",
+			"type"    : "service",
+			"enabled" : 1,
+			"jackName": "icecast",
+			"inPorts" : [
+				{
+					"portName"   : "input_1"
+				},
+				{
+					"portName"   : "input_2"
+				}
+			]
+		},
+		{
 			"unit"    : "mn_mod-host",
 			"type"    : "service",
 			"enabled" : 1,
@@ -45,10 +64,22 @@
 			"options" : "",
 			"inPorts" : [
 				{
-					"portName"   : "effect_1:inL"
+					"portName"   : "effect_0:in1"
 				},
 				{
-					"portName"   : "effect_1:inR"
+					"portName"   : "effect_0:in2"
+				},
+				{
+					"portName"   : "effect_0:in3"
+				},
+				{
+					"portName"   : "effect_0:in4"
+				},
+				{
+					"portName"   : "effect_0:in5"
+				},
+				{
+					"portName"   : "effect_0:in6"
 				}
 			],
 			"outPorts": [
@@ -60,29 +91,50 @@
 					"portName"   : "effect_9:outR",
 					"targetUnit"     : "mn_jackd",
 					"targetPort" : 1
-				}
+				},{
+                                        "portName"   : "effect_9:outL",
+                                        "targetUnit"     : "mn_listen",
+                                        "targetPort" : 0
+                                },{
+                                        "portName"   : "effect_9:outR",
+                                        "targetUnit"     : "mn_listen",
+                                        "targetPort" : 1
+                                }
 			],
 			"config": [
+				"add http://gareus.org/oss/lv2/matrixmixer#i12o10 0",
 				"add http://gareus.org/oss/lv2/fil4#stereo 1",
 				"add http://stackingdwarves.net/lv2/sm#stereo 4",
 				"add http://gareus.org/oss/lv2/dpl#stereo 9",
+				"connect effect_0:out1 effect_1:inL",
+				"connect effect_0:out2 effect_1:inR",
  				"connect effect_1:outL effect_4:inL",
 				"connect effect_1:outR effect_4:inR",
 				"connect effect_4:outL effect_9:inL",
 				"connect effect_4:outR effect_9:inR",
-				"param_set 4 gain -2.0000",
-				"param_set 4 attL 0.0000",
-				"param_set 4 attOnL 1.0000",
-				"param_set 4 delayL 0.0000",
-				"param_set 4 delayLOn 0.0000",
-				"param_set 4 activeL 1.0000",
-				"param_set 4 attR 0.0000",
-				"param_set 4 attOnR 1.0000",
-				"param_set 4 delayR 0.0000",
-				"param_set 4 delayROn 0.0000",
-				"param_set 4 activeR 1.0000",
+				"param_set 0 mix_1_1 1",
+				"param_set 0 mix_2_2 1",
+				"param_set 0 mix_3_1 1",
+				"param_set 0 mix_3_3 0",
+				"param_set 0 mix 4_2 1",
+				"param_set 0 mix_4_4 0",
+				"param_set 0 mix_5_1 1",
+				"param_set 0 mix_5_5 0",
+				"param_set 0 mix_6_2 1",
+				"param_set 0 mix_6_6 0",
+				"param_set 0 mix_7_7 0",
+				"param_set 0 mix_8_8 0",
+				"param_set 0 mix_9_9 0",
+				"param_set 0 mix_10_10 0",
+				"param_set 9 gain -2",
 				"param_set 9 threshold -2"
 			]
+		},
+		{
+			"unit"    : "mn_mpv@player_1",
+			"type"    : "service",
+			"enabled" : 1,
+			"options" : "--jack-port=effect_0:in[12]"
 		},
  		{
 			"unit"    : "mn_shairport-sync",
@@ -94,12 +146,12 @@
 				{
 					"portName"   : "out_L",
 					"targetUnit" : "mn_mod-host",
-					"targetPort" : 0
+					"targetPort" : 2
 				},
 				{
 					"portName"   : "out_R",
 					"targetUnit" : "mn_mod-host",
-					"targetPort" : 1
+					"targetPort" : 3
 				}
 			],
 			"config"  : [
@@ -126,20 +178,20 @@
 		{
 			"unit"    : "mn_zita-n2j",
 			"type"    : "service",
-			"enabled" : 0,
+			"enabled" : 1,
 			"jackName": "zita-n2j",
-			"options" : "--chan 1,2 --buff 20 239.0.0.1 30000 medianet0",
+			"options" : "--chan 1,2 --buff 20 239.192.1.1 30000 medianet0",
 			"inPorts" : [],
 			"outPorts": [
 				{
 					"portName"   : "out_1",
 					"targetUnit" : "mn_mod-host",
-					"targetPort" : 0
+					"targetPort" : 4
 				},
 				{
 					"portName"   : "out_2",
 					"targetUnit" : "mn_mod-host",
-					"targetPort" : 1
+					"targetPort" : 5
 				}
 			]
 		},
@@ -148,7 +200,7 @@
 			"type"    : "service",
 			"enabled" : 0,
 			"jackName": "zita-j2n",
-			"options" : "--chan 2 239.0.0.2 3000 medianet0",
+			"options" : "--chan 2 239.192.1.2 30000 medianet0",
 			"inPorts": [
 				{
 					"portName" : "in_1"
@@ -190,3 +242,4 @@
 		}
 	]
 }
+[5~
