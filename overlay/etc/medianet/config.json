@@ -15,6 +15,12 @@
 	},
 	"systemdUnits": [
 		{
+			"unit"    : "mn_autostart",
+			"type"    : "service",
+			"enabled" : 1,
+			"options" : "sleep 45 && mn_test_mpv && sleep infinity"
+		},
+		{
 			"unit"    : "mn_cpufreq",
 			"type"    : "service",
 			"enabled" : 1,
@@ -242,4 +248,3 @@
 		}
 	]
 }
-[5~
