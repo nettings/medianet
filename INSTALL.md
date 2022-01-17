@@ -4,14 +4,28 @@ The `sbin/` directory contains scripts used to convert an almost-vanilla
 Raspbian Buster image into a medianet distribution. The process is as follows:
 
 ## Automatically create a Raspbian base image
-You can use the experimental script `mn_make_image` in `sbin/`. Since the
-image creation process is all BASH code, you can check out this repo to any
-modern Linux on any architecture, and it will work (i.e. you don't need to run
-this on a Pi even though it's part of the medianet repository).
-
-Make sure you have at least 12 GB free space in your output directory.
+First, check out the [mn] medianet github repository on a Linux machine:
 ```
-you@yourbigbox: $ ./mn_make_image -h
+git clone https://github.com/nettings/medianet.git
+```
+You will find a script `mn_make_image` in `sbin/`.
+Since the image creation process is all BASH code, you can check out this repo 
+to any modern Linux on any architecture, and it will work (i.e. you don't need
+to run this on a Pi even though it's part of the medianet repository).
+The script will work without installing anything, but it needs a few shell
+include files from the repository, so don't just download the script alone.
+> Important: the default branch ("master") is still on Debian/RaspiOS Buster 
+> and will download a slightly out-of-date version. It works well.
+>
+> If you want to live on the bleeding edge, switch to the "bullseye" branch first:
+```
+git checkout bullseye
+```
+Make sure you have at least 14 GB free space in the output directory you are
+going to specify below. You need root to make the image, because it involves mounting
+it and altering its partition table.
+```
+you@yourbigbox: $ sudo ./mn_make_image -h
 mn_make_image creates a [mn] medianet base image from a RaspiOS release.
 
 --help         displays this message
@@ -29,48 +43,18 @@ mn_make_image creates a [mn] medianet base image from a RaspiOS release.
                local partition - leave alone unless you know what you're doing;
                defaults to 5368709120
 ```
-
-## Alternative: Manually create a Raspberry Pi OS base image
-1. Download the latest **raspios lite** image (tested with Buster, requalify
-for newer releases):  
-`wget https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip`
-1. Unzip image:  
-`unzip *-raspios-*-lite.zip`
-1. Pad the image file with zeros up to 5 GB:  
-`truncate -s 5368709120 *-raspios-*-lite.img`
-1. Resize the rootfs partition to 4G, using sectors for proper alignment:  
-`parted *-raspios-*-lite.img resizepart 2 8388607s`
-1. Create a localfs partition spanning the remainder of the disk:  
-`parted *-raspios-*-lite.img mkpart primary ext4 8388608s 100%`
-1. Create loop devices for the image partitions and find the boot partition:  
-```PART=/dev/mapper/`kpartx -av *-raspios-*-lite.img | grep -o "loop.p1"` ``` 
-1. Mount the boot partition:  
-`mount $PART /mnt`
-1. Activate SSH login on the image:   
-`touch /mnt/ssh`
-1. Disable automatic resizing of root partition in Raspbian:  
-`sed -i 's/init=[^[:space:]]*//' /mnt/cmdline.txt`
-1. Fix kernel commandline link to root fs (the PARTUUID has changed after
-editing the partition table):  
-`sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' /mnt/cmdline.txt`
-1. Unmount the boot partition:  
-`umount /mnt`
-1. Find the new localfs partition:  
-```PART=/dev/mapper/`kpartx -av *-raspbian-*-lite.img | grep -o "loop.p3"` ```
-1. Create an ext4 file system:  
-`mkfs.ext4 -L localfs $PART`
-1. Remove the loop devices:  
-`kpartx -d *-raspios-*-lite.img`
-1. At this point, it makes sense to rename the image to reflect the
-customisations:  
-`mv *-raspios-*-lite.img medianet-base.img`
+If the script does not work for you, please open an issue and paste the complete output,
+together with information about your distribution.
 
 ## Create an SD card
 Now the image is ready to be written to a µ-SD card using the tool of your
-choice, which is dd:
+choice. Real men and women use dd:
 ```
-dd if=medianet-base.img of=/dev/$CARDREADER bs=4M status=progress
+sudo dd if=medianet-base.img of=/dev/$CARDREADER bs=4M status=progress
 ```
+> Be sure you know what you're doing. dd will happily write the image to your
+> data drives if you tell it to. You can find out your cardreader device with
+> `sudo fdisk -l`
 
 ## Bootstrap the system
 After booting the system image created above in a Raspberry Pi, it will have
@@ -86,10 +70,15 @@ network).
    1. `sudo apt-get install git`
    1. `sudo git clone https://github.com/nettings/medianet.git /medianet`
    1. `cd /medianet`
+   1. if you are running bullseye: `git checkout bullseye
 1. Basic setup
    1. Change into `sbin/10-basics-as_user_pi/` and execute the symlinks in
 numerical order using ```sudo```, carefully noting any error messages in the
-output. Do not run the final one (reboot) just yet.
+output. 
+    During package installation, you will be asked whether to configure
+Icecast2. Answer `no`.  
+   Then you will be asked whether to enable realtime privileges for JACK.
+Answer `yes`.Do not run the final one (reboot) just yet.
    1. Drop your own public key into `/home/medianet/.ssh/authorized_keys`,
 since the one installed by default is ours and the private key is not part of
 this repository.
@@ -101,12 +90,9 @@ The host name is now "mn-basic":
    1. Change into `sbin/50-customize-as_user_medianet/` and again execute the
 symlinks in numerical order using `sudo`, except for the checkout and build
 steps of custom software, those are done with user rights for security reasons.  
-   During package installation, you will be asked whether to configure
-Icecast2. Answer `no`.  
-   Then you will be asked whether to enable realtime privileges for JACK.
-Answer `yes`.
+   
 
-   The next steps in this directory will guide you to create a medianet image
+The next steps in this directory will guide you to create a medianet image
 file and copy it to a remote machine, which you can use to deploy different
 medianet systems. Make sure you have 8G free on the target machine.
 
@@ -128,3 +114,10 @@ symlinks in numerical order using `sudo`.
       sudo apt upgrade
       ```
       before rebooting.
+
+## Update the system
+After running your system for a while, you can update it by going through the
+steps in `sbin/110-update-as-user-medianet`. All steps except the updating of
+your local git repository require `sudo`. The scripts will tell you if you get
+it wrong.
+
