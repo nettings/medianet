@@ -54,6 +54,7 @@ SOCAT=/usr/bin/socat
 SUDO=/usr/bin/sudo
 TAR=/bin/tar
 TEST=/usr/bin/test
+TOUCH=/usr/bin/touch
 TR=/usr/bin/tr
 UFW=/usr/sbin/ufw
 UPDATELOCALE=/usr/sbin/update-locale
