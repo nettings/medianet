@@ -1,8 +1,8 @@
 # [mn] medianet
 
-The medianet distribution is a derivative of Debian Linux/Raspberry Pi OS.
-It was created to turn Raspberry Pis into reliable embedded audio nodes,
-signal processors, and streaming endpoints.
+The [mn] media**net** distribution is a derivative of Debian Linux/RaspiOS.
+It was created to turn Raspberry Pis into reliable audio nodes, signal
+processors, and streaming endpoints.
 
 The audio system is built around the JACK Audio Connection Kit, complemented
 with the mod-host to run LV2 plugins, the zita-njbridge to provide clock
@@ -19,7 +19,7 @@ normal operation, so the system will tolerate hard shutdowns well.
 
 ## Installation
 
-This distribution provides a set of scripts and a file system overlay to turn
+The distribution provides a set of scripts and a file system overlay to turn
 a vanilla Raspbian OS Lite image into a medianet system. That means you can
 always easily see what has been changed and how, and the system lends itself
 well to continuous integration with upstream.
@@ -31,16 +31,20 @@ directory for details.
 
 ### User account and access
 
-The default user account is `medianet`. Its password is locked. You will be
-asked to paste a suitable ssh public key during the bootstrapping process.
-All audio-related services run as user medianet.
-This user currently has full sudo rights, but they are protected by the 
-pam_ssh_agent_auth mechanism, i.e. you can only execute sudo commends
-without a password if the correct private key is present in your ssh agent.
-You will likewise be prompted to paste the corresponding public key during
-bootstrapping.
-This improves operational security such that if medianet is compromised, the
-attacker does not automatically have root access.
+The default user account is `medianet`.  All media-related services run as
+this user. The password is locked, so access is only possible via SSH public
+key authentication. You will be asked to install a suitable ssh public key
+to `/home/medianet/.ssh/authorized_keys` during the bootstrapping process.
+
+The user has full sudo rights, but they are protected by the
+pam_ssh_agent_auth mechanism, i.e. you can only execute sudo commands if the
+correct private key is present in your ssh agent. This improves operational
+security such that if `medianet` is ever compromised, the attacker does not
+automatically have root access.
+Again, you are prompted for the respective public key during bootstrapping.
+
+Depending on your usecase, and if your privilege separation requirements are
+not that strict, you can re-use the same key for both purposes.
 
 ### Configuration and system state
 
@@ -119,14 +123,16 @@ with < 20ms latency either point-to-point or multicast)
 * Mike Brady's shairport-sync, an Apple AirPlay(tm) receiver
 
 #### Video
-* Michal Promonet's v4l2rtspserver to stream the Pi camera and mux in JACK audio with quite low
-latency (< .5 s)
+* Michel Promonet's v4l2rtspserver and a gstreamer-based low latency stream
+playback service, to be used as an affordable HDMI network extender in
+combination with a 30 € USB HDMI grabber, or to stream the Pi camera, with
+latency significantly below .5 seconds
 
-#### System tools
+#### Other tools
 * cpufreq to set min and max core frequencies and governor (great to save power)
-* lv2rdf2html to generate a simple but useful web UI for all the plugins you
+* lv2rdf2html to generate a simple but useful web UI for all the lv2 plugins you
 configured to run in mod-host
-* a maintenance tunnel with "phone home" capability that will survive
+* an SSH-based maintenance tunnel with "phone home" capability that will survive
 reboots
 
 Other services can be added easily if you don't mind dealing with a JSON parser
@@ -134,23 +140,42 @@ written in BASH (but using JQ, so it's not that bad).
 
 ## The Good, the Bad, and the Ugly
 
-This system has many very very ugly things going on. Shitloads of BASH scripting,
-horrible JSON parsing, and (gasp!) even XSL transformations from RDF/XML to HTML.
+This system has many very very ugly things going on. Shitloads of BASH
+scripting, horrible JSON parsing, and (gasp!) even XSL transformations from
+RDF/XML to HTML.
 
-The good thing is that all these atrocities only serve to generate shit, that
-means as soon as your system is running and actually doing its job, they are out
-of the way and cannot affect system stability or efficiency.
+The good thing is that all these atrocities only serve to generate stuff. 
+That means as soon as your system is running and actually doing its job, the
+shell scripts are are out of the way and cannot affect system reliability or
+efficiency.
 
 The Bad things are listed in the [issue tracker](https://github.com/nettings/medianet/issues).
 
+In general, the philosophy is to modify a standard base distribution in a
+reproducible, discoverable way for reliable headless unattended low latency
+media operation. 
+
+Each installation step is a separate script that can be read as a HOWTO for
+accomplishing a particular task. Symlinking customized files into the base
+distribution rather than overwriting files will make modifications obvious
+and will help you customize or improve the system for your own needs.
+
 ## Updating your system
 
-Updating is still work in progress. Unless there have been major changes, applying
-the steps in [sbin/110-update_as_user_medianet](/sbin/110-update_as_user_medianet)
-should get you most of the way. More fundamental changes will necessitate other
-configuration steps which will be documented separately.
+It is generally safe to apply all minor Debian/RaspiOS rolling upgrades
+within the same release at any time (`sudo apt update ; sudo apt upgrade`).
+Updating the medianet part is still work in progress. Unless there have been 
+major changes, applying the steps in
+[sbin/110-update_as_user_medianet](/sbin/110-update_as_user_medianet)
+should get you most of the way. More fundamental changes will necessitate
+other configuration steps which will be documented separately.
 
-Base system updates are documented at https://downloads.raspberrypi.org/raspios_lite_armhf/release_notes.txt.
+Doing a full distribution upgrade from one RaspiOS major release to the next
+is not officially supported by the RaspiOS team, but usually possible.
+For a dedicated system like this with minimal configuration and
+customization, it is however advisable to just back up your personal 
+configuration changes and roll a new image from scratch rather than updating
+in place.
 
 ## File system structure
 

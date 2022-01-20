@@ -17,7 +17,8 @@ include files from the repository, so don't just download the script alone.
 > Important: the default branch ("master") is still on Debian/RaspiOS Buster 
 > and will download a slightly out-of-date version. It works well.
 >
-> If you want to live on the bleeding edge, switch to the "bullseye" branch first:
+> If you want to use the most up-to-date  version based on bullseye, switch to
+> the "bullseye" branch first:
 ```
 git checkout bullseye
 ```
