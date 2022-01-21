@@ -4,13 +4,20 @@ The entire state of a medianet node is collected in
 mn_config.path (a [systemd path
 unit](https://www.freedesktop.org/software/systemd/man/systemd.path.html)).
 When a change in that file is detected, the `mn_config_update` command is
-triggered and automatically generates all necessary configuration files for
+triggered to automatically generate all necessary configuration files for
 the features provided by the medianet distribution overlay.
 
 You can provision or re-provision a running medianet node by dropping a new
 config file in the proper place, waiting for the `mn_config_update`
 background task to complete its job (you can watch its progress with `sudo
 journalctl -f`), and rebooting.
+
+In its current state, the config.json mechanism is a very thin layer of glue
+to collect the configurations of multiple audio tools in a single place. It
+exposes the wildly different configuration mechanisms for all these tools. In
+the future, alternative service may be offered which hardcode most of the
+configuration and offer a more systematic and inituitive interface to
+config.json.
 
 ## config.json syntax
 
@@ -66,20 +73,13 @@ your Raspberry Pi as described in [/boot/config.txt](https://www.raspberrypi.com
 ```
 	"bootConfig": {
 ```
-dtparam and dtoverlay can occur multiple times, so they
-are handled as arrays of strings:
+dtparam and dtoverlay statements can occur multiple times, so they
+are handled as arrays of strings.
 ```
 		"dtparam"   : [
-```
-Every single dtparam setting becomes single string, for example:
-```
 			"audio=off"
 		],
 		"dtoverlay" : [
-```
-Every single dtoverlay setting becomes a single string
-value:
-```
 			"disable-wifi",
 			"disable-bt"
 		],
@@ -193,7 +193,7 @@ If a connection fails, the service will fail after a timeout, and attempt to
 restart. This sometimes leads to undesired behaviour, where it would be
 better to keep a service running in a degraded state with one or more
 failed connections rather than attempting restarts. The heuristic for the
-port connection may change in the future.
+port connections may change in the future.
 
 ## example configuration snippets
 
@@ -221,7 +221,10 @@ port connection may change in the future.
 
 This set of command line options makes jackd run with realtime permissions
 (`-R`) at a realtime priority `-P` of 40, i.e. below that of the kernel's
-tasklet handlers, so it cannot starve the audio device.
+tasklet handlers, so it cannot starve the audio device. In some
+circumstances, e.g. under heavy network load when running alongside an MJPEG
+stream receiver, it may be necessary to raise this above the tasklet
+priority.
 
 We use the ALSA backend and the hardware device "Headphones" without any
 software adaptor layer (`hw:`). This is highly efficient, but it means that
@@ -275,6 +278,7 @@ bootConfig : [
 	]
 ]
 ```
+
 ```
 {
 	"unit"    : "mn_jackd",
@@ -330,6 +334,16 @@ The config section also contains some default settings of plugin parameters.
 If parameters are changed at runtime, the `mn_modsave`/`mn_modconf`
 mechanism will ensure their persistence.
 
+The medianet distribution comes with a simple web GUI to control the
+settings of plugins running in mod-host. It is accessible via
+http://$HOSTNAME/medianet/DSP and provided by the lv2rdf2html package. The
+GUI is machine-generated, but not dynamically: after changing the plugin
+configuration of mn_mod-host, you will have to re-run
+```
+$~> /medianet/sbin/mn_build lv2rdf2html
+```
+The generated plugin GUI will automatically be deployed to the web server
+docroot.
 ```
 {
 	"unit"    : "mn_mod-host",
@@ -402,3 +416,123 @@ mechanism will ensure their persistence.
 	]
 }
 ```
+
+### streaming audio to other [mn] medianet hosts
+
+The zita-njbridge package will enable you to stream very low-latency,
+uncompressed audio between hosts running JACK with unsynchronised sample
+clocks, using very-high-quality dynamic resampling.
+
+#### source configuration
+
+This snippet will send audio from the local JACK graph onto an
+administratively-scoped IPv4 multicast group, where it can be picked up by
+an arbitrary number of receivers on the local network.
+
+Be careful: dumb switches that do not support IGMP snooping will just
+duplicate multicast traffic to all ports, no matter whether the client
+behind that ports wants it or not. Using more than a few multicast streams
+under such conditions will quickly degrate network performance.
+
+```
+{
+	"unit"    : "mn_zita-j2n",
+	"type"    : "service",
+	"enabled" : 1,
+	"jackName": "zita-j2n",
+	"options" : "--chan 2 239.192.17.65 30000 medianet0",
+	"inPorts": [
+		{
+			"portName" : "in_1"
+		},
+		{
+			"portName" : "in_2"
+		}
+	]
+}
+```
+
+#### sink configuration
+
+This snippet will receive audio from an administratively-scoped IPv4
+multicast group and make it available to the local JACK graph. Because the
+zita-n2j client has to perform dynamic resampling, its CPU load is
+non-negligible.
+An additional buffer setting of 20 ms is conservative and may be reduced to
+10 or even 0 on a dedicated network without other traffic.
+
+If you stick to the default port of 30000, mn_config_update will
+automatically punch a hole in the firewall for you.
+
+```
+{
+	"unit"    : "mn_zita-n2j",
+	"type"    : "service",
+	"enabled" : 0,
+	"jackName": "zita-n2j",
+	"options" : "--chan 1,2 --buff 20 239.0.0.1 30000 medianet0",
+	"inPorts" : [],
+	"outPorts": [
+		{
+			"portName"   : "out_1",
+			"targetUnit" : "mn_mod-host",
+			"targetPort" : 0
+		},
+		{
+			"portName"   : "out_2",
+			"targetUnit" : "mn_mod-host",
+			"targetPort" : 1
+		}
+	]
+}
+```
+
+### providing an AirPlay sink with shairport-sync
+
+Thanks to Mike Brady and his helpful attitude towards accepting a JACK
+backend to shairport-sync, AirPlay audio can now be fully integrated into a
+medianet audio system. You do not need an Apple device to use this audio
+source - a number of free Android apps are available to stream AirPlay, and
+it is also supported by PulseAudio with its RAOP sink and source.
+
+```
+{
+	"unit"    : "mn_shairport-sync",
+	"type"    : "service",
+	"enabled" : 0,
+	"jackName": "shairport-sync",
+	"inPorts" : [],
+	"outPorts": [
+		{
+			"portName"   : "out_L",
+			"targetUnit" : "mn_mod-host",
+			"targetPort" : 0
+		},
+		{
+			"portName"   : "out_R",
+			"targetUnit" : "mn_mod-host",
+			"targetPort" : 1
+		}
+	],
+	"config"  : [
+		"general = {",
+		"  name = \"[mn] %h\";",
+		"  interpolation = \"soxr\";",
+		"  output_backend = \"jack\";",
+		"  drift_tolerance_in_seconds = 0.015;",
+		"  ignore_volume_control = \"no\";",
+		"  interface = \"medianet0\";",
+		"}",
+		"jack = {",
+		"  soxr_resample_quality = \"very high\"",
+		"}",
+		"sessioncontrol = {",
+		"//  run_this_before_play_begins = \"/usr/local/bin/mn_disconnect zita-n2j.service\";",
+		"//  run_this_after_play_ends = \"/usr/local/bin/mn_connect zita-n2j.service\";",
+		"}",
+		"diagnostics = {",
+		"  statistics = \"no\";",
+		"}"
+	]
+}
+```   
