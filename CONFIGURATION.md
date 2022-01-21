@@ -179,6 +179,17 @@ comments are not valid JSON, so you cannot cut-and-paste this example):
 	]
 }
 ```
+### JACK connection management
+
+The system tries to connect all JACK clients on startup according to the
+connections specified in `config.json`. If a client dies and is restarted,
+both its up- and downstream connections are reconnected automatically.
+
+If a connection fails, the service will fail after a timeout, and attempt to
+restart. This sometimes leads to undesired behaviour, where it would be
+better to keep a service running in a degraded state with one or more
+failed connections rather than attempting restarts. The heuristic for the
+port connection may change in the future.
 
 ## example configuration snippets
 
@@ -202,7 +213,7 @@ comments are not valid JSON, so you cannot cut-and-paste this example):
 	"outPorts": [
 	]
 }
-`
+```
 
 This set of command line options makes jackd run with realtime permissions
 (`-R`) at a realtime priority `-P` of 40, i.e. below that of the kernel's
