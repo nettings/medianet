@@ -56,9 +56,10 @@ this file comprises the entire state of the system.
 
 The JSON config file is currently very badly documented, and the only hints as
 to its syntax are to be found in the configuration updater script
-[mn_config_update](/overlay/usr/local/bin/mn_config_update). Example
-config snippets will be added in due time, and the default configuration
-will be extended to showcase more of the available services and features.
+[mn_config_update](/overlay/usr/local/bin/mn_config_update). 
+
+An initial documentation effort can be found in
+[CONFIGURATION.md](/CONFIGURATION.md).
 
 ### File systems are read-only
 
