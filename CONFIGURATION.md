@@ -66,27 +66,26 @@ your Raspberry Pi as described in [/boot/config.txt](https://www.raspberrypi.com
 ```
 	"bootConfig": {
 ```
-    dtparam and dtoverlay can occur multiple times, so they
-    are handled as arrays of strings:
+dtparam and dtoverlay can occur multiple times, so they
+are handled as arrays of strings:
 ```
 		"dtparam"   : [
 ```
-    Every single dtparam setting becomes single string,
-    for example:
+Every single dtparam setting becomes single string, for example:
 ```
 			"audio=off"
 		],
 		"dtoverlay" : [
 ```
-    Every single dtoverlay setting becomes a single string
-    value:
+Every single dtoverlay setting becomes a single string
+value:
 ```
 			"disable-wifi",
 			"disable-bt"
 		],
 ```
-    All other settings only occur a single time, so they are
-    handled as simple key/value pairs:
+All other settings only occur a single time, so they are
+handled as simple key/value pairs:
 ```
 		"gpu_mem"  : 128
 	},
@@ -98,60 +97,60 @@ configured as follows:
 		{
 			"unit"      : "mn_foo",
 ```
-    This is redundant, because we do not currently handle
-    unit types other than "service" in config.json, and the
-    option might go away in the future:
+This is redundant, because we do not currently handle
+unit types other than "service" in config.json, and the
+option might go away in the future:
 ```
 			"type"      : "service",
 ```
-    A 0/1 value to allow configured units to be turned off
-    easily. Any unit that is not explicitly enabled in
-    config.json is assumed off (i.e. deleting a unit object
-    here will disable it)
+A 0/1 value to allow configured units to be turned off
+easily. Any unit that is not explicitly enabled in
+config.json is assumed off (i.e. deleting a unit object
+here will disable it)
 ```
 			"enabled"   : 1,
 ```		
-    JACK clients will honour the following option if the
-    underlying program supports setting the client name. If
-    it doesn't (such as with jackd itself, which always names
-    itself "system"), it must be set to the actual value the
-    jack client uses, so that connection management works
-    correctly.
+JACK clients will honour the following option if the
+underlying program supports setting the client name. If
+it doesn't (such as with jackd itself, which always names
+itself "system"), it must be set to the actual value the
+jack client uses, so that connection management works
+correctly.
 ```
 			"jackName"  : "foo"
 ```
-    This is either the full set of command line options to the
-    underlying program, or a partial set with some settings 
-    hardcoded into the corresponding service file. Check
-    `/medianet/overlay/usr/lib/systemd/system/mn_foo.service`
-    for details.
-    The *options* mechanism is used for programs that can be
-    completely configured via the command line.
+This is either the full set of command line options to the
+underlying program, or a partial set with some settings 
+hardcoded into the corresponding service file. Check
+`/medianet/overlay/usr/lib/systemd/system/mn_foo.service`
+for details.
+The *options* mechanism is used for programs that can be
+completely configured via the command line.
 ```
 			"options"  : "-k -zMagic --anticipate_user_needs"
 ```
-    For programs that read their configuration from a
-    configuration file, the *config* mechanism is used. It
-    consists of a simple array of strings, which will be
-    written out into the corresponding config file by
-    mn_config_update, which knows the name and location of
-    said file.
+For programs that read their configuration from a
+configuration file, the *config* mechanism is used. It
+consists of a simple array of strings, which will be
+written out into the corresponding config file by
+mn_config_update, which knows the name and location of
+said file.
 ```
 			"config"   : [
 				"first line of config statements",
 				"second line of config statements"
 			],
 ```
-    JACK clients can optionally define inPorts and outPorts.
-    The ports thus defined are handled by the automatic
-    connection management. You cannot change the names via
-    this mechanism, port names have to match what the client
-    is actually providing. inPorts and outPorts are arrays of
-    objects. When the client name matches the jackName, you
-    only need to list the relative port names after the colon
-    (see jack_lsp). If they don't, as is the case with
-    mod-host for example, you will have to provide a fully
-    qualified port name.
+JACK clients can optionally define inPorts and outPorts.
+The ports thus defined are handled by the automatic
+connection management. You cannot change the names via
+this mechanism, port names have to match what the client
+is actually providing. inPorts and outPorts are arrays of
+objects. When the client name matches the jackName, you
+only need to list the relative port names after the colon
+(see jack_lsp). If they don't, as is the case with
+mod-host for example, you will have to provide a fully
+qualified port name.
 ```
 			"inPorts"  : [
 				{
@@ -162,10 +161,10 @@ configured as follows:
 				}
 			],
 ```
-    outPorts can optionally specifiy the targetUnit and port
-    index (of that unit's list of inPorts) they want to be
-    connected to. The port index starts with 0. I regret that
-    choice now, but we're stuck with it for the time being.
+outPorts can optionally specifiy the targetUnit and port
+index (of that unit's list of inPorts) they want to be
+connected to. The port index starts with 0. I regret that
+choice now, but we're stuck with it for the time being.
 ```
 			"outPorts" : [
 				{
