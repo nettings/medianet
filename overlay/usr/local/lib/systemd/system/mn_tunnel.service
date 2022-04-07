@@ -8,7 +8,7 @@ After=mn_tunnel_watch.path
 
 [Service]
 Type=exec
-User=medianet
+User=root
 RestartSec=2
 Restart=on-failure
 ExecStart=/usr/local/bin/mn_tunnel
