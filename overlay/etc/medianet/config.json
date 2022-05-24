@@ -1,9 +1,9 @@
 {
 	"product": "ø",
 	"description": "[mn] medianet base setup using built-in audio",
-	"hostname": "mn-basic",
+	"hostname": "mn-basic-arm64",
 	"location": "Frankenlab",
-	"version": "2022-01-17",
+	"version": "2022-04-24",
 	"bootConfig": {
 		"dtparam" : [
 			"audio=on"
