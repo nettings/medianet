@@ -13,11 +13,11 @@ background task to complete its job (you can watch its progress with `sudo
 journalctl -f`), and rebooting.
 
 In its current state, the config.json mechanism is a very thin layer of glue
-to collect the configurations of multiple audio tools in a single place. It
-exposes the wildly different configuration mechanisms for all these tools. In
-the future, alternative service may be offered which hardcode most of the
-configuration and offer a more systematic and inituitive interface to
-config.json.
+on top of systemd unit files to collect the configurations of multiple 
+audio tools in a single place. It exposes the wildly different configuration
+mechanisms for all these tools. In the future, alternative services may be
+offered which hardcode most of the configuration and offer a more systematic
+and inituitive interface to config.json.
 
 ## config.json syntax
 
@@ -40,41 +40,41 @@ The outer framework of top-level elements is as follows:
 A short string describing what this particular setup does, 
 ideally a token without whitespaces and special chars, 
 shown on the login screen and available to scripts that include
-/etc/mediant/config.inc as ${CONFIG_PRODUCT}.
+`/etc/medianet/config.inc` as `${CONFIG_PRODUCT}`:
 ```
 	"product"     : "base_model",
 ```
 A longer description of what this setup does, also shown on
-the login screen and available as ${CONFIG_DESCRIPTION}: 
+the login screen and available as `{CONFIG_DESCRIPTION}`: 
 ```
 	"description" : "Example audio source with simple DSP chain, shairport-sync sink, zita-njbridge source and Icecast2 stream server",
 ```
 This will be the actual hostname of this machine, so 
-[a-z9-9]-] only and should not start with a number. It is
-available as ${CONFIG_HOSTNME} (or via the ubiquitous env
-variable $HOSTNAME).
+`[a-z][a-z0-9-]*` only and should not start with a number. It is
+available as `${CONFIG_HOSTNME}` (or via the ubiquitous env
+variable $HOSTNAME):
 ```
 	"hostname"    : "mn-basic",
 ```
 An arbitrarily chosen string that helps you remember the 
 physical whereabouts of this machine. Available as
-${CONFIG_LOCATION}.
+`${CONFIG_LOCATION}`:
 ```
 	"location"    : "Mad Scientist Lab", 
 ```
 An arbitrarily chosen string that helps you keep track of
 configuration changes in longer-term deployments. Available
-as ${CONFIG_VERSION}.
+as `${CONFIG_VERSION}`:
 ```
 	"version"     : "2022-01-17", 
 ```
 The following keys control the low-level configuration of
-your Raspberry Pi as described in [/boot/config.txt](https://www.raspberrypi.com/documentation/computers/config_txt.html). 
+your Raspberry Pi as described in [/boot/config.txt](https://www.raspberrypi.com/documentation/computers/config_txt.html):
 ```
 	"bootConfig": {
 ```
 dtparam and dtoverlay statements can occur multiple times, so they
-are handled as arrays of strings.
+are handled as arrays of strings:
 ```
 		"dtparam"   : [
 			"audio=off"
@@ -106,7 +106,7 @@ option might go away in the future:
 A 0/1 value to allow configured units to be turned off
 easily. Any unit that is not explicitly enabled in
 config.json is assumed off (i.e. deleting a unit object
-here will disable it)
+here will disable it):
 ```
 			"enabled"   : 1,
 ```		
@@ -115,7 +115,7 @@ underlying program supports setting the client name. If
 it doesn't (such as with jackd itself, which always names
 itself "system"), it must be set to the actual value the
 jack client uses, so that connection management works
-correctly.
+correctly:
 ```
 			"jackName"  : "foo"
 ```
@@ -125,7 +125,7 @@ hardcoded into the corresponding service file. Check
 `/medianet/overlay/usr/lib/systemd/system/mn_foo.service`
 for details.
 The *options* mechanism is used for programs that can be
-completely configured via the command line.
+completely configured via the command line:
 ```
 			"options"  : "-k -zMagic --anticipate_user_needs"
 ```
@@ -134,7 +134,7 @@ configuration file, the *config* mechanism is used. It
 consists of a simple array of strings, which will be
 written out into the corresponding config file by
 mn_config_update, which knows the name and location of
-said file.
+said file:
 ```
 			"config"   : [
 				"first line of config statements",
@@ -150,7 +150,7 @@ objects. When the client name matches the jackName, you
 only need to list the relative port names after the colon
 (see jack_lsp). If they don't, as is the case with
 mod-host for example, you will have to provide a fully
-qualified port name.
+qualified port name:
 ```
 			"inPorts"  : [
 				{
@@ -164,7 +164,7 @@ qualified port name.
 outPorts can optionally specifiy the targetUnit and port
 index (of that unit's list of inPorts) they want to be
 connected to. The port index starts with 0. I regret that
-choice now, but we're stuck with it for the time being.
+choice now, but we're stuck with it for the time being:
 ```
 			"outPorts" : [
 				{
