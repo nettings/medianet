@@ -20,7 +20,9 @@ Usage: $PROGNAME [options...]
  -h
 
 --output-path  an output path where the downloaded RaspiOS image and
- -o            the medianet base image will be stored
+ -o            the medianet base image will be stored - make sure you have
+               enough space for the final image plus an intermediate copy,
+               i.e. more than 2x [size] below
 
 --image        a HTTP URL to download or a locally stored image to start
  -i            from; defaults to the latest known-good image, currently
@@ -84,7 +86,7 @@ while [[ -n "$1" ]] ; do
 			if [[ "$1" =~ ^http || -f "$1" ]] ; then
 				IMAGE="$1"
 			else
-				bail "Image must either be a URL starting with 'http' or a local file."
+				bail "Image must either be a URL starting with 'http[s]' or a local file."
 			fi
 			;;
 		-s|--size)
@@ -106,7 +108,7 @@ scream "Creating a [mn] medianet base image:"
 
 IMAGE_BASENAME=`basename "$IMAGE"`
 WGET_OUT="--output-document=${OUTPUT_PATH}/${IMAGE_BASENAME}"
-if [[ "$IMAGE" =~ ^http  ]] ; then
+if [[ "$IMAGE" =~ ^https?://  ]] ; then
 	echo "Downloading image from $IMAGE..."
 	wget -q --show-progress "$WGET_OUT" "$IMAGE" | tr '\n' ' ' && success || bail
 	if [[ "$IMAGE" == "$RASPIOS_BASE_IMAGE" ]] ; then
@@ -122,46 +124,56 @@ if [[ "$IMAGE" =~ ^http  ]] ; then
 		success
 		IMAGE="${OUTPUT_PATH}/${IMAGE_BASENAME}"
 	else
-		bail "Checksum verification failed. Should be ${CHECKSUM}."
+		bail "Checksum verification failed. Should be ${CHECKSUM}, is ${COMPUTED_CHECKSUM}."
 	fi
+elif [[ "$IMAGE" =~ [a-z]+:// ]] ; then
+	bail "Protocol not implemented. Use http, https, or local file for now. Patches welcome."
 else
-	echo "Using local image $IMAGE..."
+	echo "Using local image ${IMAGE}..."
 fi
 
 if [[ "$IMAGE" =~ \.zip$ ]] ; then
 	echo -n "Unzipping ${IMAGE} to ${OUTPUT_PATH}..."
+	EXTRACTED_IMAGE=`echo "${OUTPUT_PATH}/${IMAGE_BASENAME}" | sed 's/\.zip$/\.img/'`
 	unzip -q -d "${OUTPUT_PATH}" "${IMAGE}" && success || bail
-	IMAGE=`echo "${OUTPUT_PATH}/${IMAGE_BASENAME}" | sed 's/\.zip$/\.img/'`
+elif [[ "$IMAGE" =~ \.xz$ ]] ; then
+	echo -n "Decompressing ${IMAGE} to ${OUTPUT_PATH}..."
+	EXTRACTED_IMAGE=`echo "${OUTPUT_PATH}/${IMAGE_BASENAME}" | sed 's/\.xz$//'`
+	xz --decompress --keep --no-sparse --stdout "$IMAGE" > "$EXTRACTED_IMAGE" && success || bail
 elif [[ "$IMAGE" =~ \.img$ ]] ; then
-	echo -n "Copying ${IMAGE} to ${OUTPUT_PATH}..."
-	cp "$IMAGE" "$OUTPUT_PATH" && success || bail
-	IMAGE="${OUTPUT_PATH}/${IMAGE_BASENAME}"
+	EXTRACTED_IMAGE="${OUTPUT_PATH}/${IMAGE_BASENAME}"
+	if [[ "$IMAGE" != "$EXTRACTED_IMAGE" ]] ; then
+		echo -n "Copying ${IMAGE} to ${OUTPUT_PATH}..."
+		cp "$IMAGE" "$OUTPUT_PATH" && success || bail
+	fi
 else
-	bail "Expecting either a .zip or .img file to work on."
+	bail "Expecting either a .zip, .xz,  or .img file to work on."
 fi
 
+
+
 echo -n "Padding image to ${IMAGE_SIZE} bytes ($( bytes_to_GiB ${IMAGE_SIZE} ) GiB)..."
-truncate -s $IMAGE_SIZE "$IMAGE" && success || bail
+truncate -s $IMAGE_SIZE "$EXTRACTED_IMAGE" && success || bail
 
 echo -n "Checking end of /boot partition... "
-END_OF_BOOT=$( end_of_partition "$IMAGE" 1 )
+END_OF_BOOT=$( end_of_partition "$EXTRACTED_IMAGE" 1 )
 echo "at ${END_OF_BOOT} bytes ($( bytes_to_GiB ${END_OF_BOOT} ) GiB)."
 
 END_OF_ROOT=$(( IMAGE_SIZE - LOCAL_BASE_SIZE - (END_OF_BOOT * 2) ))
 END_OF_ROOT=$(( $( align_to_4MiB "$END_OF_ROOT" ) - 1 ))
 echo -n "Resizing the rootfs partition to end at ${END_OF_ROOT} bytes ($( bytes_to_GiB ${END_OF_ROOT} ) GiB)..."
-parted $IMAGE resizepart 2 ${END_OF_ROOT}B && success || bail
+parted $EXTRACTED_IMAGE resizepart 2 ${END_OF_ROOT}B && success || bail
 
 echo -n "Checking end of /root partition... "
-END_OF_ROOT=$( end_of_partition "$IMAGE" 2 )
+END_OF_ROOT=$( end_of_partition "$EXTRACTED_IMAGE" 2 )
 echo "at ${END_OF_ROOT} bytes ($( bytes_to_GiB ${END_OF_ROOT} ) GiB)."
 
 START_OF_LOCAL=$( align_to_4MiB "$END_OF_ROOT" )
 echo -n "Creating a localfs partition at $START_OF_LOCAL bytes, spanning the remainder of the disk..."
-parted $IMAGE mkpart primary ext4 $(( START_OF_LOCAL ))B 100% && success || bail
+parted $EXTRACTED_IMAGE mkpart primary ext4 $(( START_OF_LOCAL ))B 100% && success || bail
 
 echo -n "Creating loop devices for the image..."
-PARTITIONS=`kpartx -av "$IMAGE"`
+PARTITIONS=`kpartx -av "$EXTRACTED_IMAGE"`
 test "$?" && success || failure
 declare -a PART
 PART[1]=/dev/mapper/`echo $PARTITIONS | grep -o loop.p1`
@@ -199,7 +211,7 @@ echo "Removing loop devices..."
 # as of 2020-08, current versions of kpartx sometimes fail to clean up completely.
 # see https://www.linuxquestions.org/questions/suse-opensuse-60/kpartx-not-removing-loop-devices-while-deleting-an-image-in-suse-linux-12-4-and-greater-version-4175671611/
 # don't bail on unclean return code:
-kpartx -d "$IMAGE" && success || failure
-FINAL_IMAGE=`echo "$IMAGE" | sed 's/raspios.*\./medianet-base\./'`
+kpartx -d "$EXTRACTED_IMAGE" && success || failure
+FINAL_IMAGE=`echo "$EXTRACTED_IMAGE" | sed 's/raspios.*\./medianet-base\./'`
 echo -n "Renaming image to $FINAL_IMAGE..."
-mv "$IMAGE" "$FINAL_IMAGE" && success || bail
+mv "$EXTRACTED_IMAGE" "$FINAL_IMAGE" && success || bail
