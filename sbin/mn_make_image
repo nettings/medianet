@@ -9,6 +9,17 @@ BASEDIR="${THISPATH}/.."
 # initial size of /local partition in bytes, will be expanded after deployment!
 LOCAL_BASE_SIZE=134217728
 
+FIRSTRUN="firstrun.sh"
+CONF_TIMEZONE="Europe/Berlin"
+CONF_XKBMODEL="pc105"
+CONF_XKBLAYOUT="de"
+CONF_XKBVARIANT=""
+CONF_XKBOPTIONS=""
+
+# You cannot change the following:
+CMDLINE=cmdline.txt
+MOUNTPOINT=/mnt
+
 needroot
 
 function usage {
@@ -63,6 +74,61 @@ function bytes_to_GiB {
 	GiB=$(( $1 / (2 ** 30) ))
 	echo "${GiB}.${cGiB}" 
 }
+
+function create_script {
+cat << EOF
+#!/bin/bash
+
+# This code has been extracted from rpi-imager 2022-06-19.
+
+set +e
+
+FIRSTUSER=\$(getent passwd 1000 | cut -d: -f1)
+FIRSTUSERHOME=\$(getent passwd 1000 | cut -d: -f6)
+FIRSTPASS="$(mkpasswd -m yescrypt --stdin <<< "$CONF_USER")"
+if [ -f /usr/lib/userconf-pi/userconf ]; then
+   /usr/lib/userconf-pi/userconf "$CONF_USER" "\$FIRSTPASS"
+else
+   echo "\$FIRSTUSER:\$FIRSTPASS" | chpasswd -e
+   if [ "\$FIRSTUSER" != "$CONF_USER" ]; then
+      usermod -l "$CONF_USER" "\$FIRSTUSER"
+      usermod -m -d "$CONF_HOME" "$CONF_USER"
+      groupmod -n "$CONF_GROUP" "\$FIRSTUSER"
+      if grep -q "^autologin-user=" /etc/lightdm/lightdm.conf ; then
+         sed /etc/lightdm/lightdm.conf -i -e "s/^autologin-user=.*/autologin-user=medianet/"
+      fi
+      if [ -f /etc/systemd/system/getty@tty1.service.d/autologin.conf ]; then
+         sed /etc/systemd/system/getty@tty1.service.d/autologin.conf -i -e "s/\$FIRSTUSER/medianet/"
+      fi
+      if [ -f /etc/sudoers.d/010_pi-nopasswd ]; then
+         sed -i "s/^\$FIRSTUSER /$CONF_USER /" /etc/sudoers.d/010_pi-nopasswd
+      fi
+   fi
+fi
+
+rm -f /etc/localtime
+echo "${CONF_TIMEZONE}" >/etc/timezone
+dpkg-reconfigure -f noninteractive tzdata
+
+cat << KBEOF > /etc/default/keyboard
+XKBMODEL="$CONF_XKBMODEL"
+XKBLAYOUT="$CONF_XKBLAYOUT"
+XKBVARIANT="$CONF_XKBVARIANT"
+XKBOPTIONS="$CONF_XKBOPTIONS"
+KBEOF
+
+dpkg-reconfigure -f noninteractive keyboard-configuration
+
+systemctl enable ssh
+
+rm -f "/boot/$FIRSTRUN"
+# delete all until end of line:
+sed -i 's| systemd.run.*||g' "/boot/$CMDLINE"
+exit 0
+EOF
+
+}
+
 
 
 OUTPUT_PATH="$PWD"
@@ -189,17 +255,27 @@ for i in 1 2 3 ; do
 	success
 done | indent
 
-echo -n "Mounting the boot partition to /mnt..."
-mount "${PART[1]}" /mnt && success || bail
+echo -n "Mounting the boot partition to ${MOUNTPOINT}..."
+mount "${PART[1]}" "$MOUNTPOINT" && success || bail
 
-echo -n "Activating SSH login on the image..."
-touch /mnt/ssh && success || bail
+echo -n "Create $FIRSTRUN to set user medianet pass medianet, set default tz DE and keyboard DE, and activate SSH login..."
+create_script > "${MOUNTPOINT}/${FIRSTRUN}" && success || bail
+
+echo -n "Make $FIRSTRUN executable..."
+chmod +x "/${MOUNTPOINT}/${FIRSTRUN}" && success || bail
+
+echo -n "Run $FIRSTRUN on first boot..."
+# Add at end, will be deleted by $FIRSTRUN:
+sed -i "s|$| systemd.run=/boot/${FIRSTRUN} \
+ systemd.run_success_action=reboot \
+ systemd.unit=kernel-command-line.target|" \
+	"/${MOUNTPOINT}/${CMDLINE}" && success || bail
 
 echo -n "Disabling automatic resizing of root partition..."
-sed -i 's/init=[^[:space:]]*//' /mnt/cmdline.txt && success || bail
+sed -i 's/init=[^[:space:]]*//' "/${MOUNTPOINT}/${CMDLINE}" && success || bail
 
 echo -n "Fixing root fs entry in kernel cmdline..."
-sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' /mnt/cmdline.txt  && success || bail
+sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' "/${MOUNTPOINT}/${CMDLINE}"  && success || bail
 
 echo -n "Unmounting boot partition..."
 umount /mnt && success || bail
