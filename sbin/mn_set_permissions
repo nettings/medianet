@@ -29,8 +29,7 @@ while read FILE ; do
 #  echo Perms ${PERMS["$FILE"]}
 done <<< $PERM_LIST
 
-# HACK: fix sudoers first to avoid a warning on each subsequent action:
-for QUERY in "overlay/etc/sudoers.d" "-P overlay/ ! -type l"; do
+for QUERY in "-P overlay/ ! -type l" "-P lib/" "-P sbin/"; do
 
   while read FILE ; do
   
