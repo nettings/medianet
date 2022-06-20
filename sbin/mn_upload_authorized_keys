@@ -32,6 +32,12 @@ echo -e "${ESC_BLD}\$~> ssh -A $CONF_USER@${HOSTNAME}${ESC_CLR}"
 echo
 echo
 
+echo -n "Creating $CONF_HOME/.ssh..."
+"$MKDIR" "$CONF_HOME/.ssh" && success || failure
+
+echo -n "Changing permissions to 700..."
+"$CHMOD" 700 "$CONF_HOME/.ssh" && success || failure
+
 stdin_to_file \
 	"$CONF_SSH_PUBKEY" \
 	"Please paste an SSH ${ESC_BLD}public${ESC_CLR} key ($CONF_SSH_PUBKEY) for user access here:" \
