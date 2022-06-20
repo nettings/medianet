@@ -1,7 +1,0 @@
-# necessary for config.json handling:
-jq
-# will create icecast2 user and icecast group, necessary to deploy overlay w/ correct permissions:
-icecast2
-# necessary to deal with firewall rules during initial config generation
-ufw
-

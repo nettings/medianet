@@ -1,6 +1,7 @@
 # basic system packages
-cpufrequtils exfat-fuse exfat-utils expect gpiod inotify-tools i2c-tools joe kpartx lsof screen
-libpam-ssh-agent-auth
+cpufrequtils exfat-fuse exfat-utils expect gpiod inotify-tools i2c-tools joe kpartx lsof screen libpam-ssh-agent-auth ufw
+# necessary for config.json handling:
+jq
 # basic audio packages
 libasound2-plugins jackd2 jackmeter jack-capture jconvolver zita-ajbridge
 # lv2 plugins
@@ -12,10 +13,9 @@ lighttpd lighttpd-mod-openssl php php-cgi php-fpm
 # local mpv and remote control
 mpv socat
 # local monitoring
-ffmpeg
+ffmpeg icecast2
 # gstreamer for video streaming
-gstreamer1.0-gl gstreamer1.0-alsa gst123 gstreamer1.0-tools gstreamer1.0-plugins-good
-gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
+gstreamer1.0-gl gstreamer1.0-alsa gst123 gstreamer1.0-tools gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 # debugging and performance tuning
 iptraf-ng iotop htop
 
