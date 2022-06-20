@@ -1,0 +1,80 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+noroot
+
+DEFAULT_GITURI="git@github.com:nettings/medianet.git"
+function usage {
+cat << EOF
+$PROGNAME sets the system up for development.
+
+-h | --help		This help.
+
+-u | --git-uri [URI]	Changes repository URI from public https [URI]. If
+			empty, use $DEFAULT_GITURI.
+
+-n | --git-name [name]	Changes git global username to [name].
+			
+-m | --git-mail [mail]	Changes git global mail address to [mail].			
+
+
+EOF
+}
+
+while [[ -n "$1" ]] ; do
+	case $1 in
+		-h|--help)
+			usage
+			;;
+		-u|--git-uri)
+			shift
+			if [[ "$1" =~ ^- || -z "$1" ]] ; then
+				GITURI=$DEFAULT_GITURI
+				continue
+			else
+				GITURI="$1"
+			fi
+			;;
+		-n|--git-name)
+			shift
+			if [[ "$1" =~ ^- || -z "$1" ]] ; then
+				bail "--git-name needs a parameter!"
+			else
+				GITNAME="$1"
+			fi
+			;;
+		-m|--git-mail)
+			shift
+			if [[ "$1" =~ ^- || -z "$1" ]] ; then
+				bail "--git-mail needs a parameter!"
+			else
+				GITMAIL="$1"
+			fi
+			;;
+		*)
+			bail "Unknown option '$1'."
+			;;
+	esac
+	shift
+done
+
+OLDWD=$(pwd)
+cd /medianet
+
+if [[ -n "$GITURI" ]] ; then
+	echo -n "Changing upstream URI to $GITURI..."
+	git remote set-url origin "$GITURI" && success || failure
+fi
+
+if [[ -n "$GITNAME" ]] ; then
+	echo -n "Changing global git username to $GITNAME..."
+	git config --global user.name "$GITNAME" && success || failure
+fi
+
+if [[ -n "$GITMAIL" ]] ; then
+	echo -n "Changing global git mail address to $GITMAIL..."
+	git config --global user.mail "$GITMAIL" && success || failure
+fi
+
+cd "$OLDWD"
