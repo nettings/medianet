@@ -239,7 +239,7 @@ for i in 1 2 3 ; do
 	success
 done | indent
 
-echo -n "Mounting the boot partition to ${MOUNTPOINT}..."
+echo -n "Mounting boot partition to ${MOUNTPOINT}..."
 mount "${PART[1]}" "$MOUNTPOINT" && success || bail
 
 echo -n "Create $FIRSTRUN to set user medianet pass medianet, set default tz DE and keyboard DE, and activate SSH login..."
@@ -262,6 +262,27 @@ echo -n "Fixing root fs entry in kernel cmdline..."
 sed -i 's/root=PARTUUID=[^[:space:]]*/root=\/dev\/mmcblk0p2/' "/${MOUNTPOINT}/${CMDLINE}"  && success || bail
 
 echo -n "Unmounting boot partition..."
+umount /mnt && success || bail
+
+echo -n "Mounting root partition to ${MOUNTPOINT}..."
+mount "${PART[2]}" "$MOUNTPOINT" && success || bail
+
+echo -n "Cloning git repository to root partition..."
+git clone https://github.com/nettings/medianet.git "$MOUNTPOINT/medianet" && success || bail
+
+echo -n "Determining current branch "
+GITOWNER=$(stat -c "%U" "$BASEDIR"/.git)
+echo -n "(owned by $GITOWNER)...: "
+GITBRANCH=$(sudo -u "$GITOWNER" git symbolic-ref --short HEAD)
+echo "$GITBRANCH"
+
+echo -n "Checking out $GITBRANCH..."
+OLDWD=$(pwd)
+cd "$MOUNTPOINT/medianet"
+git checkout "$GITBRANCH"
+cd "$OLDWD"
+
+echo -n "Unmounting root partition..."
 umount /mnt && success || bail
 
 echo "Creating new ext4 file system on $PART3..."
