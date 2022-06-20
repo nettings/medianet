@@ -12,7 +12,7 @@ for i in $("$GREP" -ril nopasswd /etc/sudoers.d/*) ; do
 	"$RM" -f "$i" && success || failure
 done
 
-echo -n "Adding $CONF_USER to sudoers..."
+echo -n "Adding $CONF_USER to sudoers with SSH authentication..."
 # prevent user lockout due to permission breakage in the overlay tree:
 # make a hard file, not a symlink
 cat << EOF > "/etc/sudoers.d/10-${CONF_USER}-pubkey" && success || failure
