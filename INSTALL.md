@@ -18,9 +18,9 @@ include files from the repository, so don't just download the script alone.
 > and will download a slightly out-of-date version. It works well.
 >
 > If you want to use the most up-to-date  version based on bullseye, switch to
-> the "bullseye" branch first:
+> the "arm64" branch first:
 ```
-git checkout bullseye
+git checkout arm64
 ```
 Make sure you have at least 14 GB free space in the output directory you are
 going to specify below. You need root to make the image, because it involves mounting
@@ -62,18 +62,18 @@ After booting the system image created above in a Raspberry Pi, it will have
 to be turned into a medianet system, which requires two remote logins each
 followed by a reboot.
 
-1. Log into the system as user *pi* with default password *raspberry* (this
+1. Log into the system as user *medianet* with default password *medianet* (this
 opens a window of vulnerability and should only be done on a trusted private
 network).  
-`ssh pi@raspberrypi`
+`ssh medianet@raspberrypi`
 1. Check out medianet environment
    1. `sudo apt-get update`
    1. `sudo apt-get install git`
    1. `sudo git clone https://github.com/nettings/medianet.git /medianet`
    1. `cd /medianet`
-   1. if you are running bullseye: `git checkout bullseye
+   1. `git checkout arm64`
 1. Basic setup
-   1. Change into `sbin/10-basics-as_user_pi/` and execute the symlinks in
+   1. Change into `sbin/10-base_image/` and execute the symlinks in
 numerical order using ```sudo```, carefully noting any error messages in the
 output. 
     During package installation, you will be asked whether to configure
@@ -86,9 +86,9 @@ this repository.
    1. Reboot
 1. Customization
    1. Log into the system as user *medianet* with the appropriate public key.
-The host name is now "mn-basic":  
-   `ssh -i $PATH_TO_YOURKEY medianet@mn-basic`
-   1. Change into `sbin/50-customize-as_user_medianet/` and again execute the
+The host name is now "mn-basic-arm64":  
+   `ssh -i $PATH_TO_YOURKEY medianet@mn-basic-arm64`
+   1. Change into `sbin/50-base_image/` and again execute the
 symlinks in numerical order using `sudo`, except for the checkout and build
 steps of custom software, those are done with user rights for security reasons.  
    
@@ -107,7 +107,7 @@ prevent odd things from happening:
 
    1. If not already there, log back into the system (still called
 `mn-basic`) as user `medianet`.
-   1. Change into `/medianet/sbin/80-deploy-as_user_medianet` and execute the
+   1. Change into `/medianet/sbin/80-deployment` and execute the
 symlinks in numerical order using `sudo`.
    1. If it's been a while, you might throw in an extra  
       ```
@@ -118,7 +118,7 @@ symlinks in numerical order using `sudo`.
 
 ## Update the system
 After running your system for a while, you can update it by going through the
-steps in `sbin/110-update-as-user-medianet`. All steps except the updating of
+steps in `sbin/110-update`. All steps except the updating of
 your local git repository require `sudo`. The scripts will tell you if you get
 it wrong.
 
