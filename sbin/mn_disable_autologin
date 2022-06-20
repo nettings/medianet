@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+scream "Disable autologin:"
+
+AUTOLOGIN_FILE="/etc/systemd/system/getty@tty1.service.d/autologin.conf"
+
+echo "Deleting $AUTOLOGIN_FILE..."
+"$RM" "$AUTOLOGIN_FILE" && success || failure
+done
