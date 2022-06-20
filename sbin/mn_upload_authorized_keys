@@ -33,16 +33,17 @@ echo
 echo
 
 SSHDIR="$CONF_HOME/.ssh"
-echo -n "Creating $SSDIR..."
+echo -n "Creating $SHSDIR..."
 if [[ -d "$SSHDIR" ]] ; then
 	echo "exists."
 else
 	"$MKDIR" "$CONF_HOME/.ssh" && success || failure
+	echo -n "Changing owner to $CONF_USER:$CONF_GROUP..."
+	"$CHOWN" "${CONF_USER}:${CONF_GROUP}" "$SSHDIR"
+	echo -n "Changing permissions to 700..."
+	"$CHMOD" 700 "$SSHDIR" && success || failure
+	
 fi
-
-echo -n "Changing permissions to 700..."
-"$CHMOD" 700 "$CONF_HOME/.ssh" && success || failure
-
 stdin_to_file \
 	"$CONF_SSH_PUBKEY" \
 	"Please paste an SSH ${ESC_BLD}public${ESC_CLR} key ($CONF_SSH_PUBKEY) for user access here:" \
