@@ -13,8 +13,9 @@ FIRSTRUN="firstrun.sh"
 CONF_TIMEZONE="Europe/Berlin"
 CONF_XKBMODEL="pc105"
 CONF_XKBLAYOUT="de"
-CONF_XKBVARIANT=""
-CONF_XKBOPTIONS=""
+CONF_XKBVARIANT="deadgraveacute"
+CONF_XKBOPTIONS="compose:lwin"
+CONF_BACKSPACE="guess"
 
 # You cannot change the following:
 CMDLINE=cmdline.txt
@@ -98,6 +99,7 @@ XKBMODEL="$CONF_XKBMODEL"
 XKBLAYOUT="$CONF_XKBLAYOUT"
 XKBVARIANT="$CONF_XKBVARIANT"
 XKBOPTIONS="$CONF_XKBOPTIONS"
+BACKSPACE="$CONF_BACKSPACE"
 KBEOF
 dpkg-reconfigure -f noninteractive keyboard-configuration
 
