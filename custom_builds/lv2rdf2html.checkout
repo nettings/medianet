@@ -1,5 +1,5 @@
 from_git https://github.com/nettings/lv2rdf2html.git lv2rdf2html
-from_package xsltproc raptor-utils
+from_package xsltproc raptor2-utils
 cat << EOF > lv2rdf2html/lv2rdf.conf
 # medianet deployment settings
 MODHOSTCONF=$CONF_FILE_MODHOST
