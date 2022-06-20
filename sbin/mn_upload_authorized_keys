@@ -32,8 +32,13 @@ echo -e "${ESC_BLD}\$~> ssh -A $CONF_USER@${HOSTNAME}${ESC_CLR}"
 echo
 echo
 
-echo -n "Creating $CONF_HOME/.ssh..."
-"$MKDIR" "$CONF_HOME/.ssh" && success || failure
+SSHDIR="$CONF_HOME/.ssh"
+echo -n "Creating $SSDIR..."
+if [[ -d "$SSHDIR" ]] ; then
+	echo "exists."
+else
+	"$MKDIR" "$CONF_HOME/.ssh" && success || failure
+fi
 
 echo -n "Changing permissions to 700..."
 "$CHMOD" 700 "$CONF_HOME/.ssh" && success || failure
