@@ -6,8 +6,8 @@ jq
 libasound2-plugins jackd2 jackmeter jack-capture jconvolver zita-ajbridge
 # lv2 plugins
 abgate calf-plugins fomp guitarix-lv2 invada-studio-plugins-lv2 mda-lv2 swh-lv2 zam-plugins
-# telnet for mod-host debugging
-telnet
+# for mod-host (telnet for debugging only)
+netcat-openbsd telnet
 # local lightweight webserver to run lv2rdf2html interface
 lighttpd lighttpd-mod-openssl php php-cgi php-fpm
 # local mpv and remote control
