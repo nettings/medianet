@@ -6,14 +6,19 @@ needroot
 
 scream "sudo setup:"
 
+SUDO_CONF="/etc/sudoers.d/10-${CONF_USER}-pubkey"
+
 echo -n "Adding $CONF_USER to sudoers with SSH authentication..."
 # prevent user lockout due to permission breakage in the overlay tree:
 # make a hard file, not a symlink
-cat << EOF > "/etc/sudoers.d/10-${CONF_USER}-pubkey" && success || failure
+cat << EOF > "$SUDO_CONF" && success || failure
 Defaults env_keep += "SSH_AUTH_SOCK"
 medianet ALL=(ALL) ALL
 EOF
 
+echo -n "Setting permissions on $SUDO_CONF to 440:"
+"$CHMOD" 440 "$SUDO_CONF" && success || failure
+ 
 echo "Remove default NOPASSWD setting(s)..."
 for i in $("$GREP" -ril nopasswd /etc/sudoers.d/*) ; do
 	echo -n "Found $i - deleting..." | indent
