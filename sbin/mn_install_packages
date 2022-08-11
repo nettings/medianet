@@ -6,6 +6,8 @@ needroot
 
 scream "Adding packages from $CONF_FILE_PACKAGES:"
 
+"$APT" update
+
 cat "$CONF_FILE_PACKAGES" | while read line ; do
 	for package in $line; do
 		if [[ $package == \#* ]] ; then
