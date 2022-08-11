@@ -66,28 +66,43 @@ followed by a reboot.
 opens a window of vulnerability and should only be done on a trusted private
 network).  
 `ssh medianet@raspberrypi`
-1. Check out medianet environment
-   1. `sudo apt-get update`
-   1. `sudo apt-get install git`
-   1. `sudo git clone https://github.com/nettings/medianet.git /medianet`
-   1. `cd /medianet`
-   1. `git checkout arm64`
 1. Basic setup
-   1. Change into `sbin/10-base_image/` and execute the symlinks in
+   1. Change into `/medianet/sbin/10-base_image/` and execute the symlinks in
 numerical order using ```sudo```, carefully noting any error messages in the
-output. 
+output:
+```
+medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ ls -al
+total 8
+drwxr-xr-x 2 root root 4096 Aug 11 19:53 .
+drwxr-xr-x 7 root root 4096 Aug 11 19:53 ..
+lrwxrwxrwx 1 root root   17 Aug 11 17:01 10 -> ../mn_mount_local
+lrwxrwxrwx 1 root root   22 Aug 11 17:01 15 -> ../mn_generate_locales
+lrwxrwxrwx 1 root root   22 Aug 11 17:01 19 -> ../mn_install_packages
+lrwxrwxrwx 1 root root   24 Aug 11 17:01 20 -> ../mn_set_owner_medianet
+lrwxrwxrwx 1 root root   21 Aug 11 17:01 21 -> ../mn_set_permissions
+lrwxrwxrwx 1 root root   20 Aug 11 17:01 25 -> ../mn_deploy_overlay
+lrwxrwxrwx 1 root root   28 Aug 11 17:01 27 -> ../mn_install_default_config
+lrwxrwxrwx 1 root root   44 Aug 11 17:01 29 -> ../../overlay/usr/local/bin/mn_config_update
+lrwxrwxrwx 1 root root   28 Aug 11 17:01 30 -> ../mn_upload_authorized_keys
+lrwxrwxrwx 1 root root   16 Aug 11 19:53 35 -> ../mn_setup_sudo
+lrwxrwxrwx 1 root root   23 Aug 11 17:01 37 -> ../mn_disable_autologin
+lrwxrwxrwx 1 root root   22 Aug 11 19:53 39 -> ../mn_disable_password
+lrwxrwxrwx 1 root root   18 Aug 11 17:01 40 -> ../mn_disable_swap
+lrwxrwxrwx 1 root root   12 Aug 11 17:01 49 -> ../mn_reboot
+medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ sudo ./10
+...
+``` 
     During package installation, you will be asked whether to configure
 Icecast2. Answer `no`.  
    Then you will be asked whether to enable realtime privileges for JACK.
-Answer `yes`.Do not run the final one (reboot) just yet.
-   1. Drop your own public key into `/home/medianet/.ssh/authorized_keys`,
-since the one installed by default is ours and the private key is not part of
-this repository.
-   1. Reboot
+Answer `yes`.
+   The final step of the first phase is to reboot the system.
 1. Customization
-   1. Log into the system as user *medianet* with the appropriate public key.
-The host name is now "mn-basic-arm64":  
-   `ssh -i $PATH_TO_YOURKEY medianet@mn-basic-arm64`
+   1. Log into the system as user *medianet* with the appropriate private
+key(s) that belong to the public key(s) you uploaded earlier.
+The host name is now "mn-basic-arm64". Use agent forwarding (`-A`) to make
+sudo work with SSH key authorization:  
+   `ssh -A -i $PATH_TO_YOURKEY medianet@mn-basic-arm64`
    1. Change into `sbin/50-base_image/` and again execute the
 symlinks in numerical order using `sudo`, except for the checkout and build
 steps of custom software, those are done with user rights for security reasons.  
@@ -106,15 +121,9 @@ image created above, you will now have to "individualize" each host to
 prevent odd things from happening:
 
    1. If not already there, log back into the system (still called
-`mn-basic`) as user `medianet`.
+`mn-basic-arm64`) as user `medianet`.
    1. Change into `/medianet/sbin/80-deployment` and execute the
 symlinks in numerical order using `sudo`.
-   1. If it's been a while, you might throw in an extra  
-      ```
-      sudo apt update
-      sudo apt upgrade
-      ```
-      before rebooting.
 
 ## Update the system
 After running your system for a while, you can update it by going through the
