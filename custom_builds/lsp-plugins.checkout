@@ -1,4 +1,4 @@
-from_git https://github.com/sadko4u/lsp-plugins.git lsp-plugins
+from_git https://github.com/sadko4u/lsp-plugins.git lsp-plugins ec6d54cd1f96611d7affad5f4cc08ed2e40b06c9
 from_package libcairo2-dev libsndfile1-dev libgl-dev liblilv-dev lilv-utils
 
 

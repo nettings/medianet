@@ -1,2 +1,5 @@
-CFLAGS=`platform_optimisations` make -j4 BUILD_MODULES='lv2'
-sudo DESTDIR=/medianet/overlay make install_lv2
+make clean
+make fetch
+CFLAGS=`platform_optimisations` make config FEATURES='lv2'
+CFLAGS=`platform_optimisations` make -j4
+sudo make install DESTDIR=/medianet/overlay
