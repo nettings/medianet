@@ -1,5 +1,4 @@
 CFLAGS=`platform_optimisations` make config FEATURES='lv2'
 make clean
-make fetch
 CFLAGS=`platform_optimisations` make -j4
 sudo make install DESTDIR=/medianet/overlay
