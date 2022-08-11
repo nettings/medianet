@@ -85,7 +85,7 @@ function create_script {
 set +e
 
 # rename default user and set password:
-FIRSTPASS='$(mkpasswd -m yescrypt --stdin <<< $CONF_USER)'
+FIRSTPASS="$1"
 /usr/lib/userconf-pi/userconf "$CONF_USER" "\$FIRSTPASS"
 
 # set default timezone:
@@ -244,8 +244,12 @@ done | indent
 echo -n "Mounting boot partition to ${MOUNTPOINT}..."
 mount "${PART[1]}" "$MOUNTPOINT" && success || bail
 
-echo -n "Create $FIRSTRUN to set user medianet pass medianet, set default tz DE and keyboard DE, and activate SSH login..."
-create_script > "${MOUNTPOINT}/${FIRSTRUN}" && success || bail
+echo -n "Encrypt default password \"medianet\"..."
+PASSWORD=$(mkpasswd -m yescrypt --stdin <<< $CONF_USER) && success || bail
+
+echo -n "Create $FIRSTRUN to set user/pass medianet, set default tz DE and keyboard DE, and activate SSH login..."
+
+create_script "$PASSWORD" > "${MOUNTPOINT}/${FIRSTRUN}" && success || bail
 
 echo -n "Make $FIRSTRUN executable..."
 chmod +x "/${MOUNTPOINT}/${FIRSTRUN}" && success || bail
