@@ -92,11 +92,10 @@ lrwxrwxrwx 1 root root   12 Aug 11 17:01 49 -> ../mn_reboot
 medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ sudo ./10
 ...
 ``` 
-    During package installation, you will be asked whether to configure
-Icecast2. Answer `no`.  
-   Then you will be asked whether to enable realtime privileges for JACK.
-Answer `yes`.
-   The final step of the first phase is to reboot the system.
+    
+> Small oddity: after executing ./35 (the sudo setup), you will have to log
+out and back in to be able to access sudo again so that you can run the
+remaining steps.
 1. Customization
    1. Log into the system as user *medianet* with the appropriate private
 key(s) that belong to the public key(s) you uploaded earlier.
