@@ -62,7 +62,7 @@ followed by a reboot.
 1. Log into the system as user *medianet* with default password *medianet* (this
 opens a window of vulnerability and should only be done on a trusted private
 network).  
-`ssh medianet@raspberrypi`
+`ssh -A medianet@raspberrypi`
 1. Basic setup
    1. Change into `/medianet/sbin/10-run_on_pi/` and execute the symlinks in
 numerical order using ```sudo```, carefully noting any error messages in the
@@ -92,13 +92,17 @@ medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ sudo ./10
 ...
 ``` 
     
-> **sudo and SSH keys:**
-After executing the sudo setup step, you may have to log
-out and back in to be able to access sudo again so that you can run the
-remaining steps. Make sure the sudo key you have specified before is
-available in your SSH key agent. If you're using PuTTY from Windows, you
-will need Pageant (the key agent) running, and enable "Allow agent
-forwarding" in your PuTTY configuration.
+> **Note on sudo and SSH keys:**
+>
+> After executing the sudo setup step, if you are being asked for a sudo
+> password, you may have to log out, make sure your SSH agent provides the
+> sudo key you configured earlier, and log back in, to be able to access
+> sudo again so that you can run the remaining steps. Make sure the sudo key
+> you have specified before is available in your SSH key agent.
+>
+> If you're using PuTTY from Windows, you will need Pageant (the key agent)
+> running, and enable "Allow agent forwarding" in your PuTTY configuration.
+
 1. Customization
    1. Log into the system as user *medianet* with the appropriate private
 key(s) that belong to the public key(s) you uploaded earlier.

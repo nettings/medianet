@@ -54,12 +54,12 @@ all necessary application config files are generated whenever it changes,
 by means of a systemd.path watcher. Outside of hastily introduced new features,
 this file comprises the entire state of the system.
 
-The JSON config file is currently very badly documented, and the only hints as
-to its syntax are to be found in the configuration updater script
-[mn_config_update](/overlay/usr/local/bin/mn_config_update). 
-
-An initial documentation effort can be found in
+A work-in-progress documentation effort can be found in
 [CONFIGURATION.md](/CONFIGURATION.md).
+
+The fearless are advised to look into the updater script
+[mn_config_update](/overlay/usr/local/bin/mn_config_update) for more
+information.
 
 ### File systems are read-only
 
@@ -124,6 +124,8 @@ with < 20ms latency either point-to-point or multicast)
 * Mike Brady's shairport-sync, an Apple AirPlay(tm) receiver
 
 #### Video
+> Due to the upstream switch from v4l2 to libcamera, v4l2rtspserver is currently
+> broken. Working on a fix.
 * Michel Promonet's v4l2rtspserver and a gstreamer-based low latency stream
 playback service, to be used as an affordable HDMI network extender in
 combination with a 30 € USB HDMI grabber, or to stream the Pi camera, with
