@@ -14,13 +14,10 @@ to any modern Linux on any architecture, and it will work (i.e. you don't need
 to run this on a Pi even though it's part of the medianet repository).
 The script will work without installing anything, but it needs a few shell
 include files from the repository, so don't just download the script alone.
-> Important: the default branch ("master") is still on Debian/RaspiOS Buster 
-> and will download a slightly out-of-date version. It works well.
->
-> If you want to use the most up-to-date  version based on bullseye, switch to
-> the "arm64" branch first:
+
+Now switch to the "bullseye" branch:
 ```
-git checkout arm64
+git checkout bullseye
 ```
 Make sure you have at least 14 GB free space in the output directory you are
 going to specify below. You need root to make the image, because it involves mounting
@@ -37,7 +34,7 @@ mn_make_image creates a [mn] medianet base image from a RaspiOS release.
 
 --image        a HTTP URL to download or a locally stored image to start
  -i            from; defaults to the latest known-good image, currently
-               http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip
+               https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2022-04-07/2022-04-04-raspios-bullseye-armhf-lite.img.xz
 
 --size         the size of the base image in bytes; needs to be big
  -s            enough to contain the original (unzipped) image plus an extra
@@ -105,9 +102,9 @@ forwarding" in your PuTTY configuration.
 1. Customization
    1. Log into the system as user *medianet* with the appropriate private
 key(s) that belong to the public key(s) you uploaded earlier.
-The host name is now "mn-basic-arm64". Use agent forwarding (`-A`) to make
+The host name is now "mn-basic". Use agent forwarding (`-A`) to make
 sudo work with SSH key authorization:  
-   `ssh -A -i $PATH_TO_YOURKEY medianet@mn-basic-arm64`
+   `ssh -A -i $PATH_TO_YOURKEY medianet@mn-basic`
    1. Change into `sbin/50-base_image/` and again execute the
 symlinks in numerical order using `sudo`, except for the checkout and build
 steps of custom software, those are done with user rights for security reasons.  
@@ -126,7 +123,7 @@ image created above, you will now have to "individualize" each host to
 prevent odd things from happening:
 
    1. If not already there, log back into the system (still called
-`mn-basic-arm64`) as user `medianet`.
+`mn-basic`) as user `medianet`.
    1. Change into `/medianet/sbin/80-deployment` and execute the
 symlinks in numerical order using `sudo`.
 

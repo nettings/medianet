@@ -1,7 +1,7 @@
 {
 	"product": "ø",
-	"description": "[mn] medianet base setup using built-in audio",
-	"hostname": "mn-basic-arm64",
+	"description": "[mn] medianet base setup using built-in audio, based on bullseye (armhf)",
+	"hostname": "mn-basic",
 	"location": "Frankenlab",
 	"version": "2022-04-24",
 	"bootConfig": {
