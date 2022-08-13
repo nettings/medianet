@@ -4,8 +4,8 @@ CONF_GROUP=medianet
 CONF_OTHERGROUPS="users,audio,video,gpio,input"
 CONF_HOME=/home/medianet
 
-RASPIOS_BASE_IMAGE="https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2022-04-07/2022-04-04-raspios-bullseye-armhf-lite.img.xz"
-RASPIOS_BASE_IMAGE_SHA256="34987327503fac1076e53f3584f95ca5f41a6a790943f1979262d58d62b04175"
+RASPIOS_BASE_IMAGE="https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-04-07/2022-04-04-raspios-bullseye-arm64-lite.img.xz"
+RASPIOS_BASE_IMAGE_SHA256="35f1d2f4105e01f4ca888ab4ced6912411e82a2539c53c9e4e6b795f25275a1f"
 RASPIOS_BASE_IMAGE_SIZE=6442450944
 
 SYSTEM_CONFIG_PATH=/etc/medianet
