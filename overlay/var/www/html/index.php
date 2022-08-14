@@ -12,10 +12,9 @@
   define('FEATURES_DIR', __DIR__ . '/medianet_features.d');
   define('HOSTNAME_TAG', '%HOSTNAME%');
   define('EOL_CHARS', "\r\n");
-  if ($feature_files = scandir(FEATURES_DIR)) {;
+  if ($feature_files = glob(FEATURES_DIR . '/mn_*[!~]')) {
     foreach($feature_files as $file) {
-      if ($file == '.' or $file == '..') continue;
-      if ($fp = fopen(FEATURES_DIR . "/$file", 'r')) {
+      if ($fp = fopen($file, 'r')) {
         $link = rtrim(
           str_replace(
             HOSTNAME_TAG,

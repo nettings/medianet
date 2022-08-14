@@ -1,2 +1,2 @@
-http://%HOSTNAME%/medianet/DSP
+https://%HOSTNAME%/medianet/DSP
 Generic DSP plugin interface
