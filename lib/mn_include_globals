@@ -106,7 +106,7 @@ CUSTOM_BUILD_GCCFLAGS[pi2]="-march=armv7-a -mfloat-abi=hard -mfpu=neon-vfpv4"
 # temporary fix for 64-bit builds, the nfpu and mfloat-abi flags are not supported.
 CUSTOM_BUILD_GCCFLAGS[pi3]="-march=armv8-a+crc -mtune=cortex-a53 -ftree-vectorize -O3"
 CUSTOM_BUILD_GCCFLAGS[pi3+]="${CUSTOM_BUILD_GCCFLAGS[PI3B]}"
-CUSTOM_BUILD_GCCFLAGS[pi3]="-march=armv8-a+crc -mtune=cortex-a72 -ftree-vectorize -O3"
+CUSTOM_BUILD_GCCFLAGS[pi4]="-march=armv8-a+crc -mtune=cortex-a72 -ftree-vectorize -O3"
 CUSTOM_BUILD_GCCFLAGS[pi400]="${CUSTOM_BUILD_GCCFLAGS[PI4B]}"
 CUSTOM_BUILD_GCCFLAGS[UNKNOWN]="-DMN_PLATFORM_UNKNOWN"
 
