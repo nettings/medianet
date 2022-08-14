@@ -5,6 +5,7 @@
 noroot
 
 DEFAULT_GITURI="git@github.com:nettings/medianet.git"
+
 function usage {
 cat << EOF
 $PROGNAME sets the system up for development.
@@ -26,6 +27,7 @@ while [[ -n "$1" ]] ; do
 	case $1 in
 		-h|--help)
 			usage
+			exit
 			;;
 		-u|--git-uri)
 			shift
@@ -74,7 +76,7 @@ fi
 
 if [[ -n "$GITMAIL" ]] ; then
 	echo -n "Changing global git mail address to $GITMAIL..."
-	git config --global user.mail "$GITMAIL" && success || failure
+	git config --global user.email "$GITMAIL" && success || failure
 fi
 
 cd "$OLDWD"
