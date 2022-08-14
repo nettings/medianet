@@ -35,6 +35,7 @@ SYSTEMD_UNIT_DIR=/etc/systemd/system
 SYSTEMD_DEFAULT_DISABLE="
 	apt-daily.timer
 	apt-daily-upgrade.timer
+	console-setup.service
 	cpufrequtils.service
 	dphys-swapfile.service 
 	hciuart.service
