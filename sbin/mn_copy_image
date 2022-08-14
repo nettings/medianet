@@ -67,7 +67,10 @@ if [[ -z "$USER" || -z "$HOST" || -z "$TARGET" ]] ; then
 	usage
 fi
 
-IMAGE=`$DATE -Idate`"-medianet.img"
+. /etc/os-release
+ARCH=$(uname -m)
+PLATFORM=$(get_platform)
+IMAGE=`$DATE -Idate`"-medianet-$ARCH-$PLATFORM.img"
 
 scream "Copying image from running system to ${USER}@${HOST}:${TARGET}/${IMAGE}."
 

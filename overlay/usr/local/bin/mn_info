@@ -8,7 +8,8 @@ echo -n " "
 "$FREE" --mega | "$SED" -n  -e 's/^Mem:[[:space:]]*\([0-9]*\).*/(\1 MB RAM)/p'
 echo
 . /etc/os-release
-echo "System software: $NAME $VERSION_ID ($VERSION_CODENAME)"
+ARCH=$("$UNAME" -m)
+echo "System software: $NAME $VERSION_ID ($VERSION_CODENAME) on $ARCH"
 echo -en "medianet overlay: "
 mn_get_version
 echo -e "${ESC_CLR}"
