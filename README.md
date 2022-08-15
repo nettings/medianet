@@ -17,6 +17,23 @@ re-established.
 System-critical partitions (`/boot` and `/`) are mounted read-only during
 normal operation, so the system will tolerate hard shutdowns well. 
 
+## 64-bit vs. 32-bit
+
+The default branch of the [mn] media**net** repository is `bullseye64`,
+which will create a 64-bit system based on the *aarch64* build of RaspiOS.
+This build is known to work on the Pi4B, Pi400 and Pi3B+, and should work on
+the Pi3B.
+
+If you prefer to run a 32-bit system, change to the 32-bit `bullseye` branch after
+checking out the repository:
+
+```
+git checkout bullseye
+```
+This branch should theoretically work on all older models down to the Pi1B,
+but this has not been tested.
+
+
 ## Installation
 
 The distribution provides a set of scripts and a file system overlay to turn

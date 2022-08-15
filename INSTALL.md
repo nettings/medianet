@@ -55,9 +55,13 @@ sudo dd if=medianet-base.img of=/dev/$CARDREADER bs=4M status=progress
 > `sudo fdisk -l`
 
 ## Bootstrap the system
-After booting the system image created above in a Raspberry Pi, it will have
-to be turned into a medianet system, which requires two remote logins each
-followed by a reboot.
+
+Now boot a Raspberry Pi with your new image. If all goes well, you will not
+need a screen and keyboard attached, all should work headless via SSH.
+
+> Please allow 2-3 minutes for the Pi to boot. The initial startup
+> requires the Pi to reboot multiple times. If you're impatient, you can
+> ping it and see the reboot breaks.
 
 1. Log into the system as user *medianet* with default password *medianet* (this
 opens a window of vulnerability and should only be done on a trusted private
