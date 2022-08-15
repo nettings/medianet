@@ -15,7 +15,7 @@ to run this on a Pi even though it's part of the medianet repository).
 The script will work without installing anything, but it needs a few shell
 include files from the repository, so don't just download the script alone.
 
-Now switch to the "bullseye64" branch:
+Now switch to the "bullseye" branch:
 ```
 git checkout bullseye
 ```
@@ -34,7 +34,7 @@ mn_make_image creates a [mn] medianet base image from a RaspiOS release.
 
 --image        a HTTP URL to download or a locally stored image to start
  -i            from; defaults to the latest known-good image, currently
-               https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-04-07/2022-04-04-raspios-bullseye-arm64-lite.img.xz
+               https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2022-04-07/2022-04-04-raspios-bullseye-armhf-lite.img.xz
 
 --size         the size of the base image in bytes; needs to be big
  -s            enough to contain the original (unzipped) image plus an extra
