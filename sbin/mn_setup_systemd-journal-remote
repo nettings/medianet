@@ -1,0 +1,192 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+
+# for systemd-journal-remote setup documentation, see
+# https://www.freedesktop.org/software/systemd/man/systemd-journal-upload.html
+
+KEYTYPE="rsa:4096"
+
+function begin_openssl {
+	echo -e "$ESC_YLW"
+}
+
+function end_openssl {
+	echo -e "$ESC_CLR"
+}
+
+
+CA_HOST="$CONFIG_HOSTNAME"
+CA_DIR="/etc/medianet/systemd-journal-remote/ca"
+CA_NAME="${CA_HOST}_ca"
+CA_CERT="${CA_DIR}/${CA_NAME}.pem"
+CA_KEY="${CA_DIR}/${CA_NAME}.key"
+CA_INDEX="${CA_DIR}/${CA_NAME}.index"
+CA_SERIAL="${CA_DIR}/${CA_NAME}.serial"
+CA_CONF="${CA_DIR}/${CA_NAME}.conf"
+
+scream "Create certificate authority $CA_NAME:"
+
+echo -n "Generating CA config $CA_CONF..."
+if [[ -f "$CA_CONF" ]] ; then
+	echo "exists - skipping."
+else
+	"$MKDIR" -p "$CA_DIR"
+	cat << EOF > "$CA_CONF" && success || failure
+default_ca = systemd-journal-remote
+
+[ systemd-journal-remote ]
+new_certs_dir = $CA_DIR
+certificate = $CA_CERT
+database = $CA_INDEX
+private_key = $CA_KEY
+serial = $CA_SERIAL
+default_days = 7300
+default_md = default
+policy = policy_sjr
+
+[ policy_sjr ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+EOF
+fi
+
+echo -n "Generating CA certificate $CA_CERT..."
+if [[ -f "$CA_CERT" ]] ; then
+	echo "exists - skipping."
+else
+	echo
+	begin_openssl
+	"$OPENSSL" req -newkey "$KEYTYPE" \
+		-days 7300 \
+		-x509 \
+		-nodes \
+		-out "$CA_CERT" \
+		-keyout "$CA_KEY" \
+		-subj "/CN=${CA_NAME} certificate authority/" \
+		&& success || failure
+	end_openssl
+	echo -n "Creating new index file $CA_INDEX..."
+	"$TOUCH" "$CA_INDEX" && success || failure
+	echo -n "Initializing serial numbering $CA_SERIAL..."
+	echo 0001 > "$CA_SERIAL" && success || failure
+fi
+
+
+
+
+SERVER_HOST="$CONFIG_HOSTNAME"
+SERVER_DIR="/etc/medianet/systemd-journal-remote/server"
+SERVER_CSR="${SERVER_DIR}/${SERVER_HOST}.csr"
+SERVER_CERT="${SERVER_DIR}/${SERVER_HOST}.pem"
+SERVER_KEY="${SERVER_DIR}/${SERVER_HOST}.key"
+
+scream "Create systemd-journal-remote server certificate for $SERVER_HOST:"
+
+echo -n "Generating server certificate $SERVER_CERT..."
+if [[ -f "$SERVER_CERT" ]] ; then
+	echo "exists - skipping."
+else
+	echo
+	"$MKDIR" -p "$SERVER_DIR"
+	echo "Creating certificate signing request $SERVER_CSR..."
+	begin_openssl
+	"$OPENSSL" req -newkey "$KEYTYPE" \
+		-nodes \
+		-out "$SERVER_CSR" \
+		-keyout "$SERVER_KEY" \
+		-subj "/CN=$SERVER_HOST/" \
+		&& success || failure
+	end_openssl
+	echo "[CA] Signing server certificate $SERVER_CERT..."
+	begin_openssl
+	"$OPENSSL" ca \
+		-batch \
+		-config "$CA_CONF" \
+		-notext \
+		-in "$SERVER_CSR" \
+		-out "$SERVER_CERT" \
+		&& success || failure
+	end_openssl
+fi
+
+
+
+
+SJR_CONF="/etc/systemd/journal-remote.conf"
+SJR_SERVICE="systemd-journal-remote.service"
+SJR_USER="systemd-journal-remote"
+
+scream "Set up systemd-journald-remote:"
+
+echo -n "Updating $SJR_CONF..."
+cat << EOF > "$SJR_CONF" && success || failure
+# [mn] medianet mn-logger settings:
+
+[Remote]
+
+Seal=false
+SplitMode=host
+ServerKeyFile=$SERVER_KEY
+ServerCertificateFile=$SERVER_CERT
+TrustedCertificateFile=$CA_CERT
+EOF
+
+echo -n "Changing ownership of $SERVER_KEY to $SJR_USER..."
+"$CHOWN" "$SJR_USER" "$SERVER_KEY" && success || failure
+
+echo -n "Activating $SJR_SERVICE..."
+"$SYSTEMCTL" enable --now "$SJR_SERVICE" && success || failure
+
+
+
+
+
+CLIENTS="example.com example.org"
+CLIENT_DIR="/etc/medianet/systemd-journal-remote/clients"
+
+scream "Create systemd-journal-upload client certificates for $CLIENTS:"
+
+"$MKDIR" -p "$CLIENT_DIR"
+
+for CLIENT in $CLIENTS ; do
+	CLIENT_CSR="${CLIENT_DIR}/${CLIENT}.csr"
+	CLIENT_KEY="${CLIENT_DIR}/${CLIENT}.key"
+	CLIENT_CERT="${CLIENT_DIR}/${CLIENT}.pem"
+	echo -n "Generating client certificate $CLIENT_CERT..."
+	if [[ -f "$CLIENT_CERT" ]] ; then
+		echo "exists - skipping."
+	else
+		echo "Creating client certificate signing request $CLIENT_CSR..."
+		begin_openssl
+		"$OPENSSL" req -newkey "$KEYTYPE" \
+			-nodes \
+			-out "$CLIENT_CSR" \
+			-keyout "$CLIENT_KEY" \
+			-subj "/CN=$CLIENT/" \
+			&& success || failure
+		end_openssl
+		echo "[CA] Signing client certificate $CLIENT_CERT..."
+		begin_openssl
+		"$OPENSSL" ca \
+			-batch \
+			-config "$CA_CONF" \
+			-notext \
+			-in "$CLIENT_CSR" \
+			-out "$CLIENT_CERT" \
+			&& success || failure
+		end_openssl
+	fi
+done
+
+
+
+
