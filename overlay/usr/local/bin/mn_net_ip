@@ -4,6 +4,7 @@
 
 THIS=$("$BASENAME" $0)
 
+IP_VERSION=4
 case "$1" in 
 	-h|--help)
 		echo -n "This tool prints out the "
@@ -22,33 +23,50 @@ case "$1" in
 		esac
 		echo " of the network device that has the default route"
 		echo "(usually the internet connection)."
+		echo
+		echo "-6	display IPv6 parameters (default is IPv4"
 		exit 1
+		;;
+	-6)
+		IP_VERSION=6
 		;;
 esac
 
-DEFAULT_ROUTE4=$("$IPBIN" route list | "$GREP" '^default')
-MY_IP4=$(echo "$DEFAULT_ROUTE4" | "$CUT" -d ' ' -f 9)
-MY_DEV4=$(echo "$DEFAULT_ROUTE4" | "$CUT" -d ' ' -f 5)
-MY_MASK4=$("$IPBIN" address | "$GREP" -oP "(?<=${MY_IP4})/[0-9]{1,2}" )
-
-MY_IP6=$MY_IP4
-MY_DEV6=$MY_DEV4
+case "$IP_VERSION" in
+	4)
+		DEFAULT_ROUTE=$("$IPBIN" route list | "$GREP" '^default')
+		MY_IP=$(echo "$DEFAULT_ROUTE" | "$CUT" -d ' ' -f 9)
+		MY_DEV=$(echo "$DEFAULT_ROUTE" | "$CUT" -d ' ' -f 5)
+		MY_MASK=$("$IPBIN" address | "$GREP" -oP "(?<=${MY_IP})/[0-9]{1,2}" )
+		;;
+	6)
+		DEFAULT_ROUTE=$("$IPBIN" -6 route list | "$GREP" '^default')
+		MY_IP_LIST=$("$IPBIN" -6 address)
+		MY_DEV=$(echo "$DEFAULT_ROUTE" | "$CUT" -d ' ' -f 5)
+		# for now, we only report scope local addresses:
+		MY_IP=$(echo "$MY_IP_LIST" | "$SED" -nE "s/^[[:space:]]*inet6 (fe80:[^/[:space:]]+).*/\1/p")
+		MY_MASK=$(echo "$MY_IP_LIST" | "$SED" -nE "s/^[[:space:]]*inet6 fe80:[0-9a-fA-F:]*(\/[0-9]{1,3}).*/\1/p")
+		# in the future, maybe also check global addresses:
+#		MY_GLOBAL_IP=$(echo $MY_IP_LIST | "$SED" -nE "s/^[[:space:]]*inet6 fe80:[^/[:space:]]+.*/\1/;s/^[[:space:]]*inet6 ([0-9a-fA-F]{1,4}:[^/[:space:]]+).*/\1/p")
+#		MY_GLOBAL_MASK=$(echo $MY_IP_LIST | "$SED" -nE "s/^[[:space:]]*inet6 fe80:[^/[:space:]]+.*//;s/^[[:space:]]*inet6 [0-9a-fA-F]{1,4}:[^/[:space:]]+(\/[0-9]{1,3}).*/\1/p")
+		;;
+esac
 
 case "$THIS" in
 	mn_net_ip)
-		echo "$MY_IP4"
+		echo "$MY_IP"
 		;;
 	mn_net_dev)
-		echo "$MY_DEV4"
+		echo "$MY_DEV"
 		;;
 	mn_net_mask)
-		echo "$MY_MASK4"
+		echo "$MY_MASK"
 		;;
 	mn_net_neighbours)
 		needroot
-#		"$NMAP" -sP "${MY_IP}${MY_MASK}"
-#		echo -e "\n\n\n"
-		"$NMAP" -sP "${MY_IP4}${MY_MASK4}" \
+		case "$IP_VERSION" in
+			4)
+		"$NMAP" -sP "${MY_IP}${MY_MASK}" \
 		| "$SED" -E "\
 			s/Starting Nmap.*//;\
 			s/Nmap scan report for ([A-Za-z][A-Za-z0-9-]+)?\.?[^[:blank:]]* ?\(?([0-9.]*]?)\)?.*/\1;\2;/;\
@@ -60,12 +78,11 @@ case "$THIS" in
 		| "$TR" '=' '\n' \
 		| "$SORT" -d -t ";"  -k 4 \
 		| column -t -s ";"
-
-		echo -e "\n\n\n"
-		
-		"$NMAP" -6 -e ${MY_DEV6} -sP \
+			;;
+			6)
+		"$NMAP" -6 -e ${MY_DEV} -sP \
 			$(\
-				ping -c 2 -6 -I ${MY_DEV6} ff02::1 2> /dev/null \
+				ping -c 2 -6 -I ${MY_DEV} ff02::1 2> /dev/null \
 				| "$SED" -E 's/.*(fe80:[a-f0-9:]+)%.*/\1/' \
 				| "$GREP" '^fe80' \
 				| "$TR" '\n' ' ' \
@@ -81,8 +98,8 @@ case "$THIS" in
 		| "$TR" '=' '\n' \
 		| "$SORT" -d -t ";"  -k 3 \
 		| column -t -s ";"
-
-			
+			;;
+		esac
 		;;				
 esac
 
