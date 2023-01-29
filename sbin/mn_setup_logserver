@@ -1,0 +1,137 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+. /medianet/lib/mn_logging
+
+needroot
+
+# for systemd-journal-remote setup documentation, see
+# https://www.freedesktop.org/software/systemd/man/systemd-journal-upload.html
+
+
+CA_HOST="$CONFIG_HOSTNAME"
+CA_NAME="${CA_HOST}_ca"
+CA_CERT="${LOG_CA_DIR}/${CA_NAME}.pem"
+CA_KEY="${LOG_CA_DIR}/${CA_NAME}.key"
+CA_INDEX="${LOG_CA_DIR}/${CA_NAME}.index"
+CA_SERIAL="${LOG_CA_DIR}/${CA_NAME}.serial"
+CA_CONF="${LOG_CA_DIR}/${CA_NAME}.conf"
+
+scream "Create certificate authority ${CA_NAME}:"
+
+echo -n "Generating CA config ${CA_CONF}..."
+if [[ -f "$CA_CONF" ]] ; then
+	echo "exists - skipping."
+else
+	"$MKDIR" -p "$LOG_CA_DIR"
+	cat << EOF > "$CA_CONF" && success || failure
+default_ca = systemd-journal-remote
+
+[ systemd-journal-remote ]
+new_certs_dir = $LOG_CA_DIR
+certificate = $CA_CERT
+database = $CA_INDEX
+private_key = $CA_KEY
+serial = $CA_SERIAL
+default_days = 7300
+default_md = default
+policy = policy_sjr
+
+[ policy_sjr ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+EOF
+fi
+
+echo -n "Generating CA certificate $CA_CERT..."
+if [[ -f "$CA_CERT" ]] ; then
+	echo "exists - skipping."
+else
+	echo
+	begin_openssl
+	"$OPENSSL" req -newkey "$LOG_KEYTYPE" \
+		-days 7300 \
+		-x509 \
+		-nodes \
+		-out "$CA_CERT" \
+		-keyout "$CA_KEY" \
+		-subj "/CN=${CA_NAME} certificate authority/" \
+		&& success || failure
+	end_openssl
+	echo -n "Creating new index file $CA_INDEX..."
+	"$TOUCH" "$CA_INDEX" && success || failure
+	echo -n "Initializing serial numbering $CA_SERIAL..."
+	echo 0001 > "$CA_SERIAL" && success || failure
+fi
+
+
+SERVER_HOST="$CONFIG_HOSTNAME"
+SERVER_CSR="${LOG_SERVER_DIR}/${SERVER_HOST}.csr"
+SERVER_CERT="${LOG_SERVER_DIR}/${SERVER_HOST}.pem"
+SERVER_KEY="${LOG_SERVER_DIR}/${SERVER_HOST}.key"
+
+scream "Create systemd-journal-remote server certificate for $SERVER_HOST:"
+
+echo -n "Generating server certificate $SERVER_CERT..."
+if [[ -f "$SERVER_CERT" ]] ; then
+	echo "exists - skipping."
+else
+	echo
+	"$MKDIR" -p "$LOG_SERVER_DIR"
+	echo "Creating certificate signing request $SERVER_CSR..."
+	begin_openssl
+	"$OPENSSL" req -newkey "$LOG_KEYTYPE" \
+		-nodes \
+		-out "$SERVER_CSR" \
+		-keyout "$SERVER_KEY" \
+		-subj "/CN=$SERVER_HOST/" \
+		&& success || failure
+	end_openssl
+	echo "[CA] Signing server certificate $SERVER_CERT..."
+	begin_openssl
+	"$OPENSSL" ca \
+		-batch \
+		-config "$CA_CONF" \
+		-notext \
+		-in "$SERVER_CSR" \
+		-out "$SERVER_CERT" \
+		&& success || failure
+	end_openssl
+fi
+
+SJR_CONF="/etc/systemd/journal-remote.conf"
+SJR_SERVICE="systemd-journal-remote.service"
+
+scream "Set up systemd-journal-remote:"
+
+echo -n "Updating $SJR_CONF..."
+cat << EOF > "$SJR_CONF" && success || failure
+# [mn] medianet log server configuration:
+
+[Remote]
+
+Seal=false
+SplitMode=host
+ServerKeyFile=$SERVER_KEY
+ServerCertificateFile=$SERVER_CERT
+TrustedCertificateFile=$CA_CERT
+EOF
+
+echo -n "Changing ownership of $SERVER_KEY to $LOG_SJR_USER..."
+"$CHOWN" "$LOG_SJR_USER" "$SERVER_KEY" && success || failure
+
+echo -n "Activating $SJR_SERVICE..."
+"$SYSTEMCTL" enable --now "$SJR_SERVICE" && success || failure
+
+echo -n "Creating CSR upload directory ${LOG_CSR_UPLOAD_DIR}..."
+if [[ -d "$LOG_CSR_UPLOAD_DIR" ]] ; then
+	echo " exists. Skipping."
+else
+	"$SUDO" -u "$CONF_USER" "$MKDIR" "$LOG_CSR_UPLOAD_DIR" && success || failure
+fi
+
