@@ -1,0 +1,15 @@
+LOG_CA_DIR="/etc/medianet/systemd-journal-remote/ca"
+LOG_SERVER_DIR="/etc/medianet/systemd-journal-remote/server"
+LOG_CLIENT_DIR="/etc/medianet/systemd-journal-remote/client"
+LOG_CSR_UPLOAD_DIR="${CONF_HOME}/systemd-journal-remote_csr_uploads"
+LOG_SJR_USER=systemd-journal-remote
+
+LOG_KEYTYPE="rsa:4096"
+
+function begin_openssl {
+        echo -e "$ESC_YLW"
+}
+
+function end_openssl {
+        echo -e "$ESC_CLR"
+}
