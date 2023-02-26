@@ -17,7 +17,9 @@ ffmpeg icecast2
 # gstreamer for video streaming
 gstreamer1.0-gl gstreamer1.0-alsa gst123 gstreamer1.0-tools gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 # debugging and performance tuning
-iptraf-ng iotop htop csvtool
+iptraf-ng iotop htop
+# network testing
+csvtool ieee-data nmap
 # updating / development
 git
 # kodi

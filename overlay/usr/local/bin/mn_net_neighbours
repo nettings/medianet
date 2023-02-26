@@ -43,10 +43,11 @@ time, you can *refresh* the connection cache (see below)
 				found, only the first one is shown (A records
 				are listed before local AAAA before global
 				AAAA).
-			MAC:	device MAC address
-			VNDR:	vendor name associated with MAC prefix
-			DEV:	via device
-			STAT:	the link state [router ](REACHABLE|STALE)
+			MAC:	Device MAC address
+			VNDR:	Vendor name associated with MAC prefix
+			DEV:	Link device
+			STAT:	Link state (REACHABLE|STALE). A router is
+				marked with (R).
 
 			The default is ${COLS[@]}.
 			The first column is the (alphanumerical) sort key.
@@ -183,6 +184,7 @@ while : ; do
 			# restart outer loop, to start with fresh ip neigh data:
 			continue 2
 		fi
+		STAT=$(echo "$STAT" | "$SED" -E 's/^router[[:space:]]+(.*)$/\1 (R)/')
 		N_STAT["$MAC"]="$STAT"
 		N_DEV["$MAC"]="$DEV"
 		# check IP address type
