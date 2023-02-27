@@ -99,8 +99,9 @@ function refresh {
 		fi
 		echo "done."
 	done
-	echo -n "Waiting 10s for ip entries to settle..."
-	"$SLEEP" 10 ; echo -e "done."
+	echo -n "Waiting 3s for neighbour data to settle... "
+	sleep 3
+	echo "done."
 }
 
 VERBOSE=0
@@ -175,29 +176,23 @@ declare -A \
 	N_VNDR
 
 # scan network neighbourhood for all address entries
-while : ; do
-	while read IP NULL DEV ERROR MAC STAT ; do
-		# check state of fourth field to catch incomplete IP entries:
-		if [[ "$ERROR" != 'lladdr' ]] ; then
-			echo -e "Warning: ip neighbour entry for $IP has status $ERROR. Waiting and retrying..."
-			sleep 5
-			# restart outer loop, to start with fresh ip neigh data:
-			continue 2
-		fi
-		STAT=$(echo "$STAT" | "$SED" -E 's/^router[[:space:]]+(.*)$/\1 (R)/')
-		N_STAT["$MAC"]="$STAT"
-		N_DEV["$MAC"]="$DEV"
-		# check IP address type
-		if [[ "$IP" =~ ^[0-9.]{7,}$ ]] ; then
-			N_IP4["$MAC"]="$IP"
-		elif [[ "$IP" =~ ^fe80:[0-9a-fA-F:]{3,}$ ]] ; then
-			N_IP6L["$MAC"]="$IP"
-		elif [[ "$IP" =~ ^[0-9a-fA-F:]{3,}$ ]] ; then
-			N_IP6G["$MAC"]="$IP"
-		fi
-	done <<< $("$IPBIN" neigh show)
-	break
-done
+while read IP NULL DEV ERROR MAC STAT ; do
+	# check state of fourth field to catch incomplete IP entries:
+	if [[ "$ERROR" != 'lladdr' ]] ; then
+		continue
+	fi
+	STAT=$(echo "$STAT" | "$SED" -E 's/^router[[:space:]]+(.*)$/\1 (R)/')
+	N_STAT["$MAC"]="$STAT"
+	N_DEV["$MAC"]="$DEV"
+	# check IP address type
+	if [[ "$IP" =~ ^[0-9.]{7,}$ ]] ; then
+		N_IP4["$MAC"]="$IP"
+	elif [[ "$IP" =~ ^fe80:[0-9a-fA-F:]{3,}$ ]] ; then
+		N_IP6L["$MAC"]="$IP"
+	elif [[ "$IP" =~ ^[0-9a-fA-F:]{3,}$ ]] ; then
+		N_IP6G["$MAC"]="$IP"
+	fi
+done <<< $("$IPBIN" neigh show)
 
 # now iterate over list of unique MAC addresses for the expensive lookups:
 for m in ${!N_STAT[@]} ; do
