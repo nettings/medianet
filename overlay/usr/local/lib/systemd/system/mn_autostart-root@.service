@@ -1,0 +1,16 @@
+[Unit]
+Description=[mn] execute shell command at startup as root [%I]
+
+[Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/mn_autostart-root@%i.service.d/mn_autostart-root@%i.service.conf
+# created by mn_config_update
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=root
+ExecStart=/bin/bash -c ${OPTIONS}
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
