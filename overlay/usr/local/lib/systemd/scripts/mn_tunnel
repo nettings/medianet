@@ -15,6 +15,7 @@ if [[ -f "$TUNNEL_STATEFILE" ]] ; then
         -o UserKnownHostsFile="$TUNNEL_HOST_FINGERPRINT" \
 	-o StrictHostKeyChecking=yes \
         -o ExitOnForwardFailure=yes \
+	-o ServerAliveInterval=60 \
 	-o IdentitiesOnly=yes \
         -p ${TUNNEL_PORT} \
         -l ${TUNNEL_USER} \
