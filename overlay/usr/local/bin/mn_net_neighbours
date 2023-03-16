@@ -1,0 +1,256 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+IEEE_OUI_DATA="/usr/share/ieee-data/oui.csv"
+
+THIS=$("$BASENAME" $0)
+
+
+
+NET_IP4_DEFAULTDEV=$("$IPBIN" -4 route | "$GREP" ^default | "$CUT" -d ' ' -f5)
+NET_IP4_ADDR=$("$IPBIN" -br -4 addr | "$SED" -En "s/^${NET_IP4_DEFAULTDEV}[[:space:]]+UP[[:space:]]+([0-9.]+\/[0-9]{1,2})/\1/p")
+
+NET_IP6_DEFAULTDEV=$("$IPBIN" -6 route | "$GREP" ^default | "$CUT" -d ' ' -f5)
+NET_IP6_ADDR_LIST=$("$IPBIN" -br -6 addr | "$SED" -En "s/^${NET_IP4_DEFAULTDEV}[[:space:]]+UP[[:space:]]+//p")
+NET_IP6L_ADDR=$(echo $NET_IP6_ADDR_LIST | "$SED" -En 's/.*(fe80:[0-9a-fA-F:]+)\/[0-9]+.*/\1/p')
+NET_IP6G_ADDR=$(echo $NET_IP6_ADDR_LIST | "$SED" -E 's/(fe80[0-9a-fA-F:]+\/[0-9]{1,3})//' | "$SED" -E 's/\/[0-9]{1,3}//')
+
+
+#'s/([0-9a-fA-F:]+)\/[0-9]{1,3}/\1/')
+
+
+declare -A COL_HEADERS=( [IP4]="IPv4 address" [IP6L]="IPv6 link-local address"  [IP6G]="IPv6 global address" [HOST]="Host name" [MAC]="MAC address" [VNDR]="Vendor" [DEV]="via device" [STAT]="Status" )
+declare -a COLS=( "MAC" "VNDR" "IP4" "IP6L" "IP6G" "HOST" "DEV" "STAT" )
+declare -a USER_COLS=( "VNDR" "HOST" "IP4" "IP6L" "STAT" )
+
+
+function help {
+	echo -en "\n${ESC_BLD}$THIS${ESC_CLR} "
+	cat << EOF
+prints an overview of the network neighbourhood cache based on 'ip neigh show',
+i.e. a list of all hosts that have been contacted recently over the local
+network devices. It's meant to quickly find hosts on the local net, and will not
+work well for routers or other devices with multiple subnets connected to them.
+Note that it operates on cached data - if the host has been idling for a long
+time, you can *refresh* the connection cache (see below)
+
+-o|--output-columns	Comma-separated list of
+			IP4: 	IPv4 address
+			IP6L:	IPv6 link-local address (fe80:)
+			IP6G:   IPv6 global address
+			HOST:   Host name. (+) indicates multiple records
+				found, only the first one is shown (A records
+				are listed before local AAAA before global
+				AAAA).
+			MAC:	Device MAC address
+			VNDR:	Vendor name associated with MAC prefix
+			DEV:	Link device
+			STAT:	Link state (REACHABLE|STALE). A router is
+				marked with (R).
+
+			The default is ${COLS[@]}.
+			The first column is the (alphanumerical) sort key.
+
+-r|--refresh		Update device data based on the required output cols.
+			For IP4, this will perform a ping sweep over the local
+			network.
+			Caution: if you are on a /16 network, this can take
+			many minutes despite massive parallelisation.
+			For IP6L, it will perform an all-hosts ping
+			from our link-local address.
+			For IP6G, we will use our global scope address.
+			Both IPv6 queries are fast.
+
+-v|--verbose		Print additional status information. Use twice for
+			helper program output.
+
+-h|--help		This help.
+EOF
+	exit 1
+}
+
+
+function refresh {
+	scream "Refreshing column data:"
+	for c in ${USER_COLS[@]} ; do
+		echo -ne "$c:\t"
+		case "$c" in
+			IP4)
+				CMD="${NMAP} -sn -T5 --min-parallelism 512 ${NET_IP4_ADDR}"
+										;;
+			IP6L)
+				CMD="${PING} -c 2 -6 -I ${NET_IP6_DEFAULTDEV} ff02::1"
+				;;
+			IP6G)
+				CMD="${PING} -c 2 -6 -I ${NET_IP6G_ADDR} ff02::1%${NET_IP6_DEFAULTDEV}"
+				;;
+			*)
+				echo "Nothing to do."
+				continue
+				;;
+
+		esac
+		echo -n "Running '$CMD'... "
+		if [[ "$VERBOSE" -gt 1 ]] ; then
+			$CMD
+		else
+			$CMD > /dev/null 2>&1
+		fi
+		echo "done."
+	done
+	echo -n "Waiting 3s for neighbour data to settle... "
+	sleep 3
+	echo "done."
+}
+
+VERBOSE=0
+REFRESH=0
+
+while [[ -n "$1" ]] ; do
+	case "$1" in
+
+		-o|--output-columns)
+			shift
+			if [[ -z "$1" || "$1" =~ ^- ]] ; then
+				echo "Error: -o requires a list of columns."
+				help
+			fi
+			USER_COLS=()
+			IFS=','
+			read -a COL_LIST <<< $1
+			unset IFS
+			for (( i=0; i<${#COL_LIST[@]}; i++ )) ; do
+				COL="${COL_LIST[$i]}"
+				if [[ ! " ${COLS[@]} " =~ " $COL " ]] ; then
+					echo "Skipped unknown column $COL."
+				else
+					USER_COLS[$i]=$COL
+				fi
+			done <<< $1
+			;;
+
+		-r|--refresh)
+			REFRESH=1
+			;;
+
+		-v|--verbose)
+			(( VERBOSE++ ))
+			;;
+
+		-h|--help|?*)
+			help
+			;;
+
+	esac
+	shift
+done
+
+if [[ "$VERBOSE" -gt 0 ]] ; then
+	scream "Local network data:"
+	echo "IPv4 default device: $NET_IP4_DEFAULTDEV"
+	echo "IPv4 address:        $NET_IP4_ADDR"
+	echo "IPv6 default device: $NET_IP6_DEFAULTDEV"
+	echo "IPv6 address list:   $NET_IP6_ADDR_LIST"
+	echo "IPv6 local address:  $NET_IP6L_ADDR"
+	echo "IPv6 global address: $NET_IP6G_ADDR"
+fi
+
+if [[ ! -f "$IEEE_OUI_DATA" ]] ; then
+	echo -e "${ESC_RED}${ESC_BLD}$THIS requires IEEE OUI MAC prefix data to be present at $IEEE_OUI_DATA.${ESC_CLR}"
+	exit 2
+fi
+
+if [[ "$REFRESH" -eq 1 ]] ; then
+	refresh
+fi
+
+declare -A \
+	N_HOST \
+	N_STAT \
+	N_DEV \
+	N_IP4 \
+	N_IP6L \
+	N_IP6G \
+	N_OUI \
+	N_VNDR
+
+# scan network neighbourhood for all address entries
+while read IP NULL DEV ERROR MAC STAT ; do
+	# check state of fourth field to catch incomplete IP entries:
+	if [[ "$ERROR" != 'lladdr' ]] ; then
+		continue
+	fi
+	STAT=$(echo "$STAT" | "$SED" -E 's/^router[[:space:]]+(.*)$/\1 (R)/')
+	N_STAT["$MAC"]="$STAT"
+	N_DEV["$MAC"]="$DEV"
+	# check IP address type
+	if [[ "$IP" =~ ^[0-9.]{7,}$ ]] ; then
+		N_IP4["$MAC"]="$IP"
+	elif [[ "$IP" =~ ^fe80:[0-9a-fA-F:]{3,}$ ]] ; then
+		N_IP6L["$MAC"]="$IP"
+	elif [[ "$IP" =~ ^[0-9a-fA-F:]{3,}$ ]] ; then
+		N_IP6G["$MAC"]="$IP"
+	fi
+done <<< $("$IPBIN" neigh show)
+
+# now iterate over list of unique MAC addresses for the expensive lookups:
+for m in ${!N_STAT[@]} ; do
+	# store vendor MAC prefix
+	N_OUI[$m]=$(echo "$m" | "$CUT" -s -d ':' -f 1-3 | "$TR" -d ':')
+	# look up hostname, start with IPv4
+	if [[ -n "${N_IP4[$m]}" ]] ; then
+		N_HOST[$m]=$(host -t A "${N_IP4[$m]}" | "$SED" -En 's/^.* domain name pointer ([^.]+)\..*$/\1/p')
+	# try local IPv6 lookup next
+	elif [[ -n "${N_IP6L[$m]}" ]] ; then
+		N_HOST[$m]+=$(host -t AAAA "${N_IP6L[$m]}" | "$SED" -En 's/^.* domain name pointer ([^.]+)\..*$/\1/p')
+	# try global IPv6
+	elif [[ -n "${N_IP6G[$m]}" ]] ; then
+		N_HOST[$m]+=$(host -t AAAA "${N_IP6G[$m]}" | "$SED" -En 's/^.* domain name pointer ([^.]+)\..*$/\1/p')
+	fi
+	# if multiple A/AAAA entries, only print the first and mark
+	if [[ "${N_HOST[$m]}" =~ $'\n'.+ ]] ; then
+		N_HOST[$m]=$(echo "${N_HOST[$m]}" | "$HEAD" -n 1)" (+)"
+	fi
+done
+
+# create regex to match all vendor MAC prefixes we've seen
+for m in ${N_OUI[@]} ; do
+	OUI_MATCH+="$m|"
+done
+OUI_MATCH="${OUI_MATCH%|}"
+# make shortlist of MAC prefixes from IEEE data
+OUI_ENTRIES=$("$GREP" -Ei "$OUI_MATCH" "$IEEE_OUI_DATA")
+# extract individual vendor names from shortlist
+for m in ${!N_STAT[@]} ; do
+	OUI=$("$GREP" -i "${N_OUI[$m]}" <<< "$OUI_ENTRIES")
+	VNDR=$("$CSVTOOL" col 3 - <<< "$OUI")
+	N_VNDR[$m]="$VNDR"
+done
+
+# prepare output
+HEADER="${ESC_BLD}"
+for c in "${USER_COLS[@]}" ; do
+	HEADER+="${COL_HEADERS[$c]};"
+done
+HEADER+=" ${ESC_CLR}"
+#echo ${USER_COLS[@]}
+# iterate over MACs (no duplicates!)
+for m in ${!N_STAT[@]} ; do
+	for COL in ${USER_COLS[@]} ; do
+		if [[ "$COL" == "MAC" ]] ; then
+			OUTPUT+="${m};"
+			continue
+		fi
+		VARNAME="N_${COL}[$m]"
+#		echo "VARNAME: $VARNAME - m: $m"
+		OUTPUT+="${!VARNAME};"
+	done
+	OUTPUT+="\n"
+done
+
+OUTPUT=$(echo -e "$OUTPUT" | "$SORT" -d -t ';' -k 1)
+OUTPUT="$HEADER\n$OUTPUT"
+echo
+echo -e "$OUTPUT" | "$COLUMN" -t -s ';'
+
