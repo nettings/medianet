@@ -48,7 +48,7 @@ sudo dd if=medianet-base.img of=/dev/$CARDREADER bs=4M status=progress
 ```
 > Be sure you know what you're doing. dd will happily write the image to your
 > data drives if you tell it to. You can find out your cardreader device with
-> `sudo fdisk -l` or 
+> `sudo fdisk -l` or `lsblk`.
 
 ## Bootstrap the system
 
