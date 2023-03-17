@@ -68,7 +68,6 @@ network).
 numerical order using ```sudo```, carefully noting any error messages in the
 output:
 ```
-
 medianet@raspberrypi:~ $ cd /medianet/sbin/10-run_on_pi
 medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ ls -al
 total 8
@@ -91,10 +90,15 @@ lrwxrwxrwx 1 root root   12 Aug 11 17:01 49 -> ../mn_reboot
 medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ sudo ./10
 ...
 ``` 
+> It is of course possible to run them all in one go, by doing something like
+> `$ for i in [1-9]?? ; do sudo $i ; done
+> but you are only doing this once, and you *really* want to see any error
+> messages at this point, so being lazy is not recommended when running the
+> process for the first time.
     
 > **Note on sudo and SSH keys:**
 >
-> After executing the sudo setup step, if you are being asked for a sudo
+> After executing the `mn_setup_sudo` step, if you are being asked for a sudo
 > password, you may have to log out, make sure your SSH agent provides the
 > sudo key you configured earlier, and log back in, to be able to access
 > sudo again so that you can run the remaining steps. Make sure the sudo key
@@ -112,7 +116,6 @@ sudo work with SSH key authorization:
    1. Change into `sbin/50-base_image/` and again execute the
 symlinks in numerical order using `sudo`, except for the checkout and build
 steps of custom software, those are done with user rights for security reasons.  
-   
 
 The next steps in this directory will guide you to create a medianet image
 file and copy it to a remote machine, which you can use to deploy different
