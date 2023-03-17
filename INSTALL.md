@@ -15,10 +15,6 @@ to run this on a Pi even though it's part of the medianet repository).
 The script will work without installing anything, but it needs a few shell
 include files from the repository, so don't just download the script alone.
 
-Now switch to the "bullseye64" branch:
-```
-git checkout bullseye
-```
 Make sure you have at least 14 GB free space in the output directory you are
 going to specify below. You need root to make the image, because it involves mounting
 it and altering its partition table.
