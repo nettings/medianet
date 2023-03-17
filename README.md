@@ -24,14 +24,15 @@ which will create a 64-bit system based on the *aarch64* build of RaspiOS.
 This build is known to work on the Pi4B, Pi400 and Pi3B+, and should work on
 the Pi3B.
 
-If you prefer to run a 32-bit system, change to the 32-bit `bullseye` branch after
+If you have to run a 32-bit system, change to the 32-bit `bullseye` branch after
 checking out the repository:
 
 ```
 git checkout bullseye
 ```
 This branch should theoretically work on all older models down to the Pi1B,
-but this has not been tested.
+but this has not been tested. Changes to the 64-bit branch are regularly backported,
+but expect the 32-bit branch to lag behind a bit.
 
 
 ## Installation
