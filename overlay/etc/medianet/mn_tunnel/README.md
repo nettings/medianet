@@ -8,7 +8,26 @@ In this case, you can instruct the machine to "phone home" to a public IP
 via SSH and open a remote tunnel that allows you to tunnel an SSH session
 back into it.
 
-## configuration
+## server
+
+On your public tunnel endpoint (a server with a known, static, public IP),
+add the following to the SSH server configuration (on my system, it's at
+`/etc/ssh/sshd_conf`), replacing the variables with the desired values
+(which have to match those from the client's `mn_tunnel.conf` ):
+```
+Match User $TUNNEL_USER
+	PermitListen localhost:$TUNNEL_PORT_ACCESS
+	PermitOpen localhost:$TUNNEL_PORT_CHECK
+	PermitTTY no
+	ClientAliveInterval 15
+	ClientAliveCountMax 4
+	RekeyLimit 1G 24h
+	ForceCommand echo 'Shell access not allowed for this user. Port forwarding only.'
+```
+
+## client
+
+### configuration
 
 Please check `mn_tunnel.conf` in this directory, it should be
 self-explanatory.
@@ -21,7 +40,7 @@ $ . /etc/medianet/mn_tunnel/mn_tunnel.conf \
 ```
 (The variables are explained in the config file.)
 
-## activation
+### activation
 
 The tunnel is activated by creating a magic file, and will thus persist
 across reboots unless you disable the underlying systemd services.
@@ -31,13 +50,13 @@ The location of said magic file is configurable and defaults to
 There is an example web interface at http://localhost//medianet/Tunnel/ that allows you
 (or a user of the machine) to control and verify the maintenance tunnel.
 
-## systemd services
+### systemd services
 
 The magic file is watched by `mn_tunnel_watch.path`, which in turn triggers
 `mn_tunnel_watch.service`, which restarts `mn_tunnel.service` on demand.
 The tunnel itself is a simple SSH session that is created whenever the user needs it. 
 
-## tunnel usage
+### tunnel usage
 
 From your $TUNNEL_HOST, you can access your medianet machine through the
 tunnel as follows:
