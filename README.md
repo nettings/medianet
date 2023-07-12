@@ -139,7 +139,7 @@ from JACK
 * zita-njbridge (to stream multichannel uncompressed audio on a local Ethernet
 with < 20ms latency either point-to-point or multicast)
 * zita-lrx, a Linkwitz-Riley multiband loudspeaker crossover
-* Mike Brady's shairport-sync, an Apple AirPlay(tm) receiver
+* Mike Brady's shairport-sync, an Apple AirPlay(tm) and AirPlay2(tm) receiver
 
 #### Video
 > Due to the upstream switch from v4l2 to libcamera, v4l2rtspserver is currently
