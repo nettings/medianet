@@ -3,6 +3,7 @@ Description=[mn] AirPlay Audio Receiver
 Requires=mn_jackd.service
 After=mn_jackd.service
 Requires=avahi-daemon.service
+Requires=mn_nqptp.service
 After=avahi-daemon.service
 Wants=network-online.target
 After=network-online.target

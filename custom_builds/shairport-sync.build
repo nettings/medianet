@@ -8,6 +8,7 @@ CFLAGS=`platform_optimisations` ./configure \
 	--with-soxr \
 	--with-metadata \
 	--with-apple-alac \
+	--with-airplay-2 \
 	--sysconfdir=/etc/medianet
 make -j4
 sudo ldconfig

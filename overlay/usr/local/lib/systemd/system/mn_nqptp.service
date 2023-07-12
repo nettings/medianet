@@ -1,0 +1,13 @@
+[Unit]
+Description=Mike Brady's NQPTP -- Not Quite PTP Airplay2 helper daemon
+Wants=network-online.target
+After=network.target network-online.target
+Before=mn_shairport-sync.service
+
+[Service]
+ExecStart=/usr/local/bin/nqptp
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

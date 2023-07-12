@@ -1,0 +1,4 @@
+autoreconf -i -f
+CFLAGS="`platform_optimisations`" ./configure
+make -j4
+sudo DESTDIR="/medianet/overlay/" make install
