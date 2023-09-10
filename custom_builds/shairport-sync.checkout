@@ -1,4 +1,4 @@
-from_git https://github.com/mikebrady/shairport-sync.git shairport-sync development
+from_git https://github.com/mikebrady/shairport-sync.git shairport-sync development d1524f2c85fb9908c22bf9b2a149309fc9e09544
 from_package autoconf automake libtool \
     libpopt-dev libconfig-dev libasound2-dev avahi-daemon libavahi-client-dev libssl-dev libsoxr-dev \
     libplist-dev libsodium-dev libavutil-dev libavcodec-dev libavformat-dev uuid-dev libgcrypt-dev xxd

@@ -1,4 +1,4 @@
-from_git https://github.com/x42/x42-plugins x42-plugins master 2078e75861703ec232c61a219b6a3223f34be0a8
+from_git https://github.com/x42/x42-plugins x42-plugins master c3e9890a65e423ac70d576fa03f8ca8493ba1f35 
 from_package \
 	libcairo2-dev libpango1.0-dev fonts-freefont-ttf \
 	libglu1-mesa-dev libgl1-mesa-dev libftgl-dev \
