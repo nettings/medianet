@@ -89,6 +89,7 @@ CUSTOM_BUILDS="
 	sm.lv2
 	mod-host
 	alac
+	nqptp
 	shairport-sync
 	x42-plugins
 	lsp-plugins
