@@ -80,7 +80,8 @@ function create_script {
 	cat << EOF
 #!/bin/bash
 
-# This code has been extracted from rpi-imager 2022-06-20.
+# This code has been extracted from rpi-imager 2022-06-20
+# and updated to reflect the move from /boot to /boot/firmware.
 
 set +e
 
@@ -107,10 +108,10 @@ dpkg-reconfigure -f noninteractive keyboard-configuration
 systemctl enable ssh
 
 # remove kernel command line modification, keep backup:
-cp /boot/$CMDLINE /boot/$CMDLINE.done
-sed -i 's| systemd.run.*||g' "/boot/$CMDLINE"
+cp /boot/firmware/$CMDLINE /boot/firmware/$CMDLINE.done
+sed -i 's| systemd.run.*||g' "/boot/firmware/$CMDLINE"
 # clean up after this script:
-mv "/boot/$FIRSTRUN" "/boot/$FIRSTRUN.done"
+mv "/boot/firmware/$FIRSTRUN" "/boot/firmware/$FIRSTRUN.done"
 exit 0
 EOF
 
