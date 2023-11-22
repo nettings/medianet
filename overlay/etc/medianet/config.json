@@ -1,9 +1,9 @@
 {
 	"product": "ø",
-	"description": "[mn] medianet base setup using built-in audio, based on bullseye (armhf)",
+	"description": "[mn] medianet base setup using built-in audio, based on bookworm (arm64)",
 	"hostname": "mn-basic",
 	"location": "Frankenlab",
-	"version": "2022-04-24",
+	"version": "2023-11-22",
 	"bootConfig": {
 		"dtparam" : [
 			"audio=on"
