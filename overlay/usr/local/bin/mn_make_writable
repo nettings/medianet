@@ -4,7 +4,7 @@
 
 needroot
 
-for i in "/" "/boot"; do
+for i in "$SYSTEM_PARTITION_ROOT" "$SYSTEM_PARTITION_FIRMWARE" ; do
   echo -n "Remounting $i read-write..."
   mount -oremount,rw "$i" && success || failure
 done
