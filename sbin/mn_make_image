@@ -112,7 +112,6 @@ cp /boot/firmware/$CMDLINE /boot/firmware/$CMDLINE.done
 sed -i 's| systemd.run.*||g' "/boot/firmware/$CMDLINE"
 # clean up after this script:
 mv "/boot/firmware/$FIRSTRUN" "/boot/firmware/$FIRSTRUN.done"
-exit 0
 EOF
 
 }
