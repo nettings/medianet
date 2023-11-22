@@ -20,7 +20,6 @@ CONF_FILE_JCONVOLVER="$SYSTEM_CONFIG_PATH"/jconvolver.conf
 CONF_FILE_MODHOST="$SYSTEM_CONFIG_PATH"/mod-host.conf
 CONF_FILE_MODHOST_STATE=/local/data/mod-host.state
 CONF_FILE_SHAIRPORT_SYNC="$SYSTEM_CONFIG_PATH"/shairport-sync.conf
-CONF_FILE_ZITALRX="$SYSTEM_CONFIG_PATH"/zita-lrx.conf
 CONF_FILE_BOOT=/boot/config.txt
 CONF_FILE_PACKAGES="$PREFIX"/lib/mn_packages
 CONF_FILE_PACKAGES_EARLY="$PREFIX"/lib/mn_packages_early
@@ -68,7 +67,6 @@ SYSTEMD_MEDIANET_UNITS="
 	mn_gpioctl.service
 	mn_icecast2.service
 	mn_jackd.service
-	mn_jackminimix.service
 	mn_jconvolver.service
 	mn_kodi.service
 	mn_listen.service
@@ -83,7 +81,6 @@ SYSTEMD_MEDIANET_UNITS="
 	mn_zita-a2j.service
 	mn_zita-j2a.service
 	mn_zita-j2n.service
-	mn_zita-lrx.service
 	mn_zita-n2j.service
 "
 
@@ -98,9 +95,6 @@ CUSTOM_BUILDS="
 	x42-plugins
 	lsp-plugins
 	lv2rdf2html
-	zita-lrx
-	zita-njbridge
-	v4l2rtspserver
 "
 
 declare -A CUSTOM_BUILD_GCCFLAGS

@@ -3,7 +3,7 @@ cpufrequtils exfat-fuse exfatprogs expect gpiod inotify-tools i2c-tools joe kpar
 # necessary for config.json handling:
 jq
 # basic audio packages
-libasound2-plugins jackd2 jackmeter jack-capture jconvolver zita-ajbridge
+libasound2-plugins jackd2 jackmeter jack-capture jconvolver zita-ajbridge zita-njbridge
 # lv2 plugins
 abgate calf-plugins fomp guitarix-lv2 invada-studio-plugins-lv2 mda-lv2 swh-lv2 zam-plugins
 # for mod-host (telnet for debugging only)
