@@ -5,7 +5,7 @@ CONF_OTHERGROUPS="users,audio,video,gpio,input"
 CONF_HOME=/home/medianet
 
 RASPIOS_BASE_IMAGE="https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-10-10/2023-10-10-raspios-bookworm-arm64-lite.img.xz"
-RASPIOS_BASE_IMAGE_SHA256="2b475c1b48b637e1a3c20357eaaf86cbf574d24f359c34bb7a6c23377c6ad705"
+RASPIOS_BASE_IMAGE_SHA256="26ef887212da53d31422b7e7ae3dbc3e21d09f996e69cbb44cc2edf9e8c3a5c9"
 RASPIOS_BASE_IMAGE_SIZE=7516192768
 
 SYSTEM_CONFIG_PATH=/etc/medianet
