@@ -1,5 +1,10 @@
 # [mn] medianet
 
+> This is an experimental port to the latest RaspiOS based on Debian
+> Bookworm. It is currently under construction and you cannot expect it to
+> deploy reliably. If you are just starting with this project, please use
+> the current default branch bullseye64.
+
 The [mn] media**net** distribution is a derivative of Debian Linux/RaspiOS.
 It was created to turn Raspberry Pis into reliable audio nodes, signal
 processors, and streaming endpoints.
