@@ -291,14 +291,3 @@ CONFIG="$NOEDIT\n\n$CONFIG"
 echo -n "Writing to $CONF_FILE_SHAIRPORT_SYNC..."
 echo -e "$CONFIG" > "$CONF_FILE_SHAIRPORT_SYNC" && success || failure
 
-# zita-lrx
-scream "Update zita-lrx configuration:"
-CONFIG=
-DATA=`cat "$CONFIG_FILE" | "$JQ" -r '.systemdUnits[]? | select(.unit == "mn_zita-lrx" and .enabled == 1) | .config[]?'`
-while read COMMAND ; do
-	CONFIG+="$COMMAND\n"
-done <<< "$DATA"
-echo -en "${CONFIG:-${NONE}}" | indent
-CONFIG="$NOEDIT\n\n$CONFIG"
-echo -n "Writing to $CONF_FILE_ZITALRX..."
-echo -e "$CONFIG" > "$CONF_FILE_ZITALRX" && success || failure
