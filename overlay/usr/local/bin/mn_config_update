@@ -129,7 +129,8 @@ fi
 CONFIG="$NOEDIT\n$CONFIG"
 echo -n "Writing $CONF_FILE_FSTAB..."
 echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
-
+# update systemd:
+"$SYSTEMCTL" daemon-reload
 
 # systemd unit status
 DATA=$( cat "$CONFIG_FILE" \
