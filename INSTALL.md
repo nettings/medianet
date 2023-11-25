@@ -20,35 +20,55 @@ going to specify below. You need root to make the image, because it involves mou
 it and altering its partition table.
 ```
 you@yourbigbox: $ sudo ./mn_make_image -h
+
 mn_make_image creates a [mn] medianet base image from a RaspiOS release.
+Usage: mn_make_image [options...]
 
 --help         displays this message
  -h
 
 --output-path  an output path where the downloaded RaspiOS image and
- -o            the medianet base image will be stored
+ -o            the medianet base image will be stored - make sure you have
+               enough space for the final image plus an intermediate copy,
+               i.e. more than 2x [size] below
 
 --image        a HTTP URL to download or a locally stored image to start
  -i            from; defaults to the latest known-good image, currently
-               https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-04-07/2022-04-04-raspios-bullseye-arm64-lite.img.xz
+               https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-10-10/2023-10-10-raspios-bookworm-arm64-lite.img.xz
 
 --size         the size of the base image in bytes; needs to be big
  -s            enough to contain the original (unzipped) image plus an extra
-               local partition - leave alone unless you know what you're doing;
-               defaults to 5368709120
+               local partition. Making it bigger will give you a bigger root
+               fs - the local partition is expanded to the size of the medium
+               anyways. Leave alone unless you know what you're doing.
+               Default is 7516192768.
+
+--hostname     set initial hostname
+ -H            (default is "mn-bootstrap")
+
+--password     set initial password for user "medianet"
+ -p            (default is "medianet")
+
 ```
-If the script does not work for you, please open an issue and paste the complete output,
-together with information about your distribution.
+Note the default password, which you will need to use during the initial
+bootstrapping process (also for `sudo` later on).
+
+> If the script does not work for you, please open an issue and paste the
+> complete output, together with information about your distribution.
 
 ## Create an SD card
-Now the image is ready to be written to a µ-SD card using the tool of your
-choice. Real men and women use dd:
+Now the image is ready to be written to a µ-SD card. The capacity of the card
+should be at least a couple Gigabytes more than the `size` setting used
+before, to leave some room for the writable `/local` partition.
+Real men and women use dd:
 ```
 sudo dd if=medianet-base.img of=/dev/$CARDREADER bs=4M status=progress
 ```
 > Be sure you know what you're doing. dd will happily write the image to your
 > data drives if you tell it to. You can find out your cardreader device with
 > `sudo fdisk -l` or `lsblk`.
+> If unsure, there are more user-friendly tools, such as [Balena
+> Etcher](https://etcher.balena.io/).
 
 ## Bootstrap the system
 
@@ -59,39 +79,44 @@ need a screen and keyboard attached, all should work headless via SSH.
 > requires the Pi to reboot multiple times. If you're impatient, you can
 > ping it and see the reboot breaks.
 
-1. Log into the system as user *medianet* with default password *medianet* (this
-opens a window of vulnerability and should only be done on a trusted private
-network).  
+1. Log into the system as user *medianet* with the password specified
+before.
 `ssh -A medianet@raspberrypi`
+
+>The default password is likewise *medianet*, and leaving it like
+>this opens a window of vulnerability until it is replaced by a key-based
+>login. So you should change it unless you are on a trusted private network
+>while bootstrapping.
+
 1. Basic setup
    1. Change into `/medianet/sbin/10-run_on_pi/` and execute the symlinks in
 numerical order using ```sudo```, carefully noting any error messages in the
 output:
 ```
 medianet@raspberrypi:~ $ cd /medianet/sbin/10-run_on_pi
-medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ ls -al
+medianet@mn-basic:/medianet/sbin/10-run_on_pi $ ls -al
 total 8
-drwxr-xr-x 2 root root 4096 Aug 11 19:53 .
-drwxr-xr-x 7 root root 4096 Aug 11 19:53 ..
-lrwxrwxrwx 1 root root   17 Aug 11 17:01 10 -> ../mn_mount_local
-lrwxrwxrwx 1 root root   22 Aug 11 17:01 15 -> ../mn_generate_locales
-lrwxrwxrwx 1 root root   22 Aug 11 17:01 19 -> ../mn_install_packages
-lrwxrwxrwx 1 root root   24 Aug 11 17:01 20 -> ../mn_set_owner_medianet
-lrwxrwxrwx 1 root root   21 Aug 11 17:01 21 -> ../mn_set_permissions
-lrwxrwxrwx 1 root root   20 Aug 11 17:01 25 -> ../mn_deploy_overlay
-lrwxrwxrwx 1 root root   28 Aug 11 17:01 27 -> ../mn_install_default_config
-lrwxrwxrwx 1 root root   44 Aug 11 17:01 29 -> ../../overlay/usr/local/bin/mn_config_update
-lrwxrwxrwx 1 root root   28 Aug 11 17:01 30 -> ../mn_upload_authorized_keys
-lrwxrwxrwx 1 root root   16 Aug 11 19:53 35 -> ../mn_setup_sudo
-lrwxrwxrwx 1 root root   23 Aug 11 17:01 37 -> ../mn_disable_autologin
-lrwxrwxrwx 1 root root   22 Aug 11 19:53 39 -> ../mn_disable_password
-lrwxrwxrwx 1 root root   18 Aug 11 17:01 40 -> ../mn_disable_swap
-lrwxrwxrwx 1 root root   12 Aug 11 17:01 49 -> ../mn_reboot
+drwxr-xr-x 2 root     root     4096 Nov 25 13:55 .
+drwxr-xr-x 7 root     root     4096 Nov 25 13:55 ..
+lrwxrwxrwx 1 medianet medianet   17 Nov 25 13:55 10 -> ../mn_mount_local
+lrwxrwxrwx 1 medianet medianet   22 Nov 25 13:55 15 -> ../mn_generate_locales
+lrwxrwxrwx 1 medianet medianet   22 Nov 25 13:55 19 -> ../mn_install_packages
+lrwxrwxrwx 1 medianet medianet   24 Nov 25 13:55 20 -> ../mn_set_owner_medianet
+lrwxrwxrwx 1 medianet medianet   21 Nov 25 13:55 21 -> ../mn_set_permissions
+lrwxrwxrwx 1 medianet medianet   20 Nov 25 13:55 25 -> ../mn_deploy_overlay
+lrwxrwxrwx 1 medianet medianet   28 Nov 25 13:55 27 -> ../mn_install_default_config
+lrwxrwxrwx 1 medianet medianet   44 Nov 25 13:55 29 -> ../../overlay/usr/local/bin/mn_config_update
+lrwxrwxrwx 1 medianet medianet   28 Nov 25 13:55 30 -> ../mn_upload_authorized_keys
+lrwxrwxrwx 1 medianet medianet   16 Nov 25 13:55 35 -> ../mn_setup_sudo
+lrwxrwxrwx 1 medianet medianet   23 Nov 25 13:55 37 -> ../mn_disable_autologin
+lrwxrwxrwx 1 medianet medianet   22 Nov 25 13:55 39 -> ../mn_disable_password
+lrwxrwxrwx 1 medianet medianet   18 Nov 25 13:55 40 -> ../mn_disable_swap
+lrwxrwxrwx 1 medianet medianet   12 Nov 25 13:55 49 -> ../mn_reboot
 medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ sudo ./10
 ...
 ``` 
 > It is of course possible to run them all in one go, by doing something like
-> `$ for i in [1-9]?? ; do sudo $i ; done
+> `$ for i in [1-9]?? ; do sudo $i ; done`
 > but you are only doing this once, and you *really* want to see any error
 > messages at this point, so being lazy is not recommended when running the
 > process for the first time.
@@ -103,25 +128,32 @@ medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ sudo ./10
 > sudo key you configured earlier, and log back in, to be able to access
 > sudo again so that you can run the remaining steps. Make sure the sudo key
 > you have specified before is available in your SSH key agent.
+> Alternatively, you can use the default password set earlier.
 >
 > If you're using PuTTY from Windows, you will need Pageant (the key agent)
 > running, and enable "Allow agent forwarding" in your PuTTY configuration.
 
 1. Customization
    1. Log into the system as user *medianet* with the appropriate private
-key(s) that belong to the public key(s) you uploaded earlier.
-The host name is now "mn-basic". Use agent forwarding (`-A`) to make
-sudo work with SSH key authorization:  
-   `ssh -A -i $PATH_TO_YOURKEY medianet@mn-basic`
-   1. Change into `sbin/50-base_image/` and again execute the
-symlinks in numerical order using `sudo`, except for the checkout and build
-steps of custom software, those are done with user rights for security reasons.  
+      key(s) that belong to the public key(s) you uploaded earlier.
+      The host name is now "mn-basic". Use agent forwarding (`-A`) to make
+      sudo work with SSH key authorization:
+      `ssh -A -i $PATH_TO_YOURKEY medianet@mn-basic`
+   1. Change into `sbin/50-base_image/` and again execute the symlinks in
+      numerical order using `sudo`, except for the checkout and build steps
+      of custom software, those are done with user rights for security
+      reasons.
 
 The next steps in this directory will guide you to create a medianet image
 file and copy it to a remote machine, which you can use to deploy different
 medianet systems. Make sure you have 8G free on the target machine.
 
 Now is a good time to fetch a coffee.
+
+> Note that at this point and when first booting a new system from the
+> images you just created, there will be tons of errors in the syslog.
+> They stem from a missing host key for lighttpd, which will be created in
+> the next step.
 
 ## Deploy the system
 Whether you just continue on your first system which you used for the native
@@ -134,9 +166,20 @@ prevent odd things from happening:
    1. Change into `/medianet/sbin/80-deployment` and execute the
 symlinks in numerical order using `sudo`.
 
+> As soon as you reboot the system afterwards, there should be no errors
+> anymore and all services should deploy without problems. Use `systemctl
+> status` to check. If you choose to leave the example configuration
+> unchanged, you should hear some Ambient music from Soma FM web radio on
+> the headphones output about 45s after booting, assuming your Pi is
+> connected to the internet. 
+> Now you can customize the [configuration](CONFIGURATION.md) to suit your
+> needs.
+
 ## Update the system
 After running your system for a while, you can update it by going through the
 steps in `sbin/110-update`. All steps except the updating of
 your local git repository require `sudo`. The scripts will tell you if you get
 it wrong.
 
+> Some future changes might require individual configuration steps to be
+> re-run. Watch the issue tracker for information.

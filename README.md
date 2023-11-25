@@ -203,11 +203,13 @@ in place.
 ## File system structure
 
 * [custom_builds/](/custom_builds) contains checkout and build instructions for
-third-party packages that are being built from source, because they are either unavailable
-or too old in Debian upstream
-* [lib/](/lib) contains BASH script includes and system-wide constants that are used in all
-medianet-related tools. You might be interested in tweaking some of them.
-* [overlay/](/overlay) mimics the system directory structure. Its contents will be symlinked
-into the running base system. This is the runtime stuff that makes up the medianet distribution.
-* [sbin/](/sbin) contains scripts that are only used during initial system bootstrapping,
-maintenance, or upgrade.
+  third-party packages that are being built from source, because they are either
+  unavailable or too old in Debian upstream
+* [lib/](/lib) contains BASH script includes and system-wide constants that
+  are used in all medianet-related tools. You might be interested in tweaking
+  some of them.
+* [overlay/](/overlay) mimics the system directory structure. Its contents
+  will be symlinked into the running base system. This is the runtime stuff
+  that makes up the medianet distribution.
+* [sbin/](/sbin) contains scripts that are only used during initial system
+  bootstrapping, maintenance, or upgrade.
