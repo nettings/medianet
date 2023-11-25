@@ -1,3 +1,3 @@
-from_git https://github.com/moddevices/mod-host.git mod-host master 5a5ef65593a617976bf1cc34e78477eff5adfc3a
+from_git https://github.com/moddevices/mod-host.git mod-host master 2b7fee0772dfcf11ff129f00bd9ab1de2a7f4af9
 from_package libjack-jackd2-dev liblilv-dev lilv-utils libreadline-dev
 
