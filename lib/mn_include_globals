@@ -39,7 +39,6 @@ SYSTEMD_DEFAULT_DISABLE="
 	apt-daily.timer
 	apt-daily-upgrade.timer
 	console-setup.service
-	cpufrequtils.service
 	dphys-swapfile.service 
 	hciuart.service
 	man-db.timer
@@ -64,6 +63,7 @@ SYSTEMD_DEFAULT_ENABLE="
 SYSTEMD_MEDIANET_UNITS="
 	mn_autostart.service
 	mn_cpufreq.service
+	mn_cpupower.service
 	mn_gpioctl.service
 	mn_icecast2.service
 	mn_jackd.service

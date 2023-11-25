@@ -1,8 +1,6 @@
 [Unit]
-Description=[mn] set CPU frequency range
+Description=[mn] set CPU frequency range with cpupower
 After=sound.target
-Requires=loadcpufreq.service
-After=loadcpufreq.service
 
 [Service]
 # we read Environment= from a drop-in file
@@ -10,7 +8,6 @@ After=loadcpufreq.service
 # created by mn_config_update
 Type=oneshot
 RemainAfterExit=yes
-ExecStartPre=/usr/bin/logger "mn_cpufreq.service is deprecated! Please replace with mn_cpupower.service."
 ExecStart=/usr/bin/cpupower frequency-set $OPTIONS
 
 [Install]
