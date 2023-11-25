@@ -2,6 +2,7 @@
 Description=[mn] JACK Audio Connection Kit
 
 # make sure we have a well defined cpu core frequency:
+After=mn_cpupower.service
 After=mn_cpufreq.service
 
 # if we're running on actual hardware, make sure we're after:
