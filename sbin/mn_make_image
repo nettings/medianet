@@ -10,6 +10,8 @@ BASEDIR=`realpath -- "${THISPATH}/.."`
 LOCAL_BASE_SIZE=134217728
 
 FIRSTRUN="firstrun.sh"
+CONF_PASSWORD="$CONF_USER"
+CONF_HOSTNAME="mn-bootstrap"
 CONF_TIMEZONE="Europe/Berlin"
 CONF_XKBMODEL="pc105"
 CONF_XKBLAYOUT="de"
@@ -25,6 +27,7 @@ needroot
 
 function usage {
 	cat << EOF
+
 $PROGNAME creates a [mn] medianet base image from a RaspiOS release.
 Usage: $PROGNAME [options...]
 
@@ -46,6 +49,13 @@ Usage: $PROGNAME [options...]
                fs - the local partition is expanded to the size of the medium
                anyways. Leave alone unless you know what you're doing. 
                Default is $IMAGE_SIZE.
+
+--hostname     set initial hostname
+ -H            (default is "$CONF_HOSTNAME")
+
+--password     set initial password for user "$CONF_USER"
+ -p            (default is "$CONF_PASSWORD")
+
 EOF
 	exit
 }
@@ -107,6 +117,9 @@ dpkg-reconfigure -f noninteractive keyboard-configuration
 # enable secure shell server:
 systemctl enable ssh
 
+# set default hostname:
+echo "$CONF_HOSTNAME" > /etc/hostname
+
 # remove kernel command line modification, keep backup:
 cp /boot/firmware/$CMDLINE /boot/firmware/$CMDLINE.done
 sed -i 's| systemd.run.*||g' "/boot/firmware/$CMDLINE"
@@ -148,6 +161,23 @@ while [[ -n "$1" ]] ; do
 			else
 				bail "Size must be a number!"
 			fi
+			;;
+		-H|--hostname)
+			shift
+			if [[ "$1" =~ ^[a-zA-Z0-9][a-zA-Z0-9-]*$ ]] ; then
+				CONF_HOSTNAME="$1"
+			else
+				bail "'$1' is not a valid hostname."
+			fi
+			;;
+		-p|--password)
+			shift
+			if [[ "$1" = "--" ]] then
+				shift
+			elif [[ "$1" =~ ^-.*$ ]] ; then
+				bail "Your password looks like an option, because it starts with a '-' character. If you want this, prepend it with ' -- '."
+			fi
+			CONF_PASSWORD="$1"
 			;;
 		*)
 			bail "Unknown option '$1'."
@@ -245,10 +275,10 @@ echo -n "Mounting boot partition to ${MOUNTPOINT}..."
 mount "${PART[1]}" "$MOUNTPOINT" && success || bail
 
 echo -n "Encrypt default password \"medianet\"..."
-PASSWORD=$(mkpasswd -m yescrypt --stdin <<< $CONF_USER) && success || bail
+ENC_PWD=$(mkpasswd -m yescrypt --stdin <<< $CONF_PASSWORD) && success || bail
 
 echo -n "Create $FIRSTRUN to set user/pass medianet, set default tz DE and keyboard DE, and activate SSH login..."
-create_script "$PASSWORD" > "${MOUNTPOINT}/${FIRSTRUN}" && success || bail
+create_script "$ENC_PWD" > "${MOUNTPOINT}/${FIRSTRUN}" && success || bail
 
 echo -n "Make $FIRSTRUN executable..."
 chmod +x "/${MOUNTPOINT}/${FIRSTRUN}" && success || bail
