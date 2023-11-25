@@ -1,9 +1,17 @@
 # [mn] medianet
 
 > This is an experimental port to the latest RaspiOS based on Debian
-> Bookworm. It is currently under construction and you cannot expect it to
-> deploy reliably. If you are just starting with this project, please use
-> the current default branch bullseye64.
+> Bookworm. It is now deploying correctly and reaching basic functionality
+> with the example configuration, but hasn't seen much testing on top of
+> that.
+> Also, it appears that some services we used are being phased out, such as
+> cpufrequtils. We need to research the current way of doing things, and
+> review and update all overlay configurations, particularly in cases where
+> we needlessly overwrite a whole file when we might be able to drop a
+> conf.d/00-medianet-foo.conf file more surgically.
+>
+> If you are just starting with this project or want to get anything useful
+> done, please use the current default branch bullseye64.
 
 The [mn] media**net** distribution is a derivative of Debian Linux/RaspiOS.
 It was created to turn Raspberry Pis into reliable audio nodes, signal
@@ -24,20 +32,10 @@ normal operation, so the system will tolerate hard shutdowns well.
 
 ## 64-bit vs. 32-bit
 
-The default branch of the [mn] media**net** repository is `bullseye64`,
-which will create a 64-bit system based on the *aarch64* build of RaspiOS.
-This build is known to work on the Pi4B, Pi400 and Pi3B+, and should work on
-the Pi3B.
+As of RaspiOS *Bookworm*, there is no longer a 32-bit image or branch. If 
+you need one, backporting should not be too complicated.
 
-If you have to run a 32-bit system, change to the 32-bit `bullseye` branch after
-checking out the repository:
-
-```
-git checkout bullseye
-```
-This branch should theoretically work on all older models down to the Pi1B,
-but this has not been tested. Changes to the 64-bit branch are regularly backported,
-but expect the 32-bit branch to lag behind a bit.
+You are welcome to get in touch for help, e.g. by creating an issue.
 
 
 ## Installation
@@ -143,16 +141,15 @@ from JACK
 * zita-ajbridge (to access a second sound card with an unsynchronized clock)
 * zita-njbridge (to stream multichannel uncompressed audio on a local Ethernet
 with < 20ms latency either point-to-point or multicast)
-* zita-lrx, a Linkwitz-Riley multiband loudspeaker crossover
 * Mike Brady's shairport-sync, an Apple AirPlay(tm) and AirPlay2(tm) receiver
 
 #### Video
-> Due to the upstream switch from v4l2 to libcamera, v4l2rtspserver is currently
-> broken. Working on a fix.
-* Michel Promonet's v4l2rtspserver and a gstreamer-based low latency stream
-playback service, to be used as an affordable HDMI network extender in
-combination with a 30 € USB HDMI grabber, or to stream the Pi camera, with
-latency significantly below .5 seconds
+> There are some gstreamer-based video streaming services included, but they
+> are still in alpha and have not been tested with bookworm. Video
+> functionality is expected to improve, though, especially since the
+> Raspberry Pi 5 is likely to be able to sustain full-HD streaming without
+> artifacts, possibly even using NDI. So we might get inspired by dicaffeine
+> eventually.
 
 #### Other tools
 * cpufreq to set min and max core frequencies and governor (great to save power)
