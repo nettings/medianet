@@ -21,7 +21,7 @@
 			"options" : "sleep 45 && mn_test_mpv && sleep infinity"
 		},
 		{
-			"unit"    : "mn_cpufreq",
+			"unit"    : "mn_cpupower",
 			"type"    : "service",
 			"enabled" : 1,
 			"options" : "-g performance --min 600MHz --max 1500MHz"
