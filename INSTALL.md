@@ -115,8 +115,9 @@ lrwxrwxrwx 1 medianet medianet   12 Nov 25 13:55 49 -> ../mn_reboot
 medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ sudo ./10
 ...
 ``` 
+
 > It is of course possible to run them all in one go, by doing something like
-> `$ for i in [1-9]?? ; do sudo $i ; done`
+> `$ for i in [0-9]* ; do sudo $i ; done`
 > but you are only doing this once, and you *really* want to see any error
 > messages at this point, so being lazy is not recommended when running the
 > process for the first time.
@@ -147,6 +148,11 @@ medianet@raspberrypi:/medianet/sbin/10-run_on_pi $ sudo ./10
 The next steps in this directory will guide you to create a medianet image
 file and copy it to a remote machine, which you can use to deploy different
 medianet systems. Make sure you have 8G free on the target machine.
+
+> If you want to learn more about how the medianet overlay works, or you want
+> to work on improving it, skip the step to clean backup files. You can then
+> see all modifications applied to the base system by the presence of backup
+> files or folders ending in `.mn_`, and compare what has been changed.
 
 Now is a good time to fetch a coffee.
 

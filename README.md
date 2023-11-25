@@ -4,17 +4,15 @@
 > Bookworm. It is now deploying correctly and reaching basic functionality
 > with the example configuration, but hasn't seen much testing on top of
 > that.
-> Also, it appears that some services we used are being phased out, such as
-> cpufrequtils. We need to research the current way of doing things, and
-> review and update all overlay configurations, particularly in cases where
-> we needlessly overwrite a whole file when we might be able to drop a
-> conf.d/00-medianet-foo.conf file more surgically.
+> cpufrequtils are being phased out in favor of cpupower - the config
+> settings should be backwards compatible for now, but do watch the log for
+> deprecation notices.
 >
 > If you are just starting with this project or want to get anything useful
 > done, please use the current default branch bullseye64.
 
 The [mn] media**net** distribution is a derivative of Debian Linux/RaspiOS.
-It was created to turn Raspberry Pis into reliable audio nodes, signal
+It was created to turn Raspberry Pis into reliable media players, signal
 processors, and streaming endpoints.
 
 The audio system is built around the JACK Audio Connection Kit, complemented
@@ -36,7 +34,6 @@ As of RaspiOS *Bookworm*, there is no longer a 32-bit image or branch. If
 you need one, backporting should not be too complicated.
 
 You are welcome to get in touch for help, e.g. by creating an issue.
-
 
 ## Installation
 
@@ -61,8 +58,13 @@ The user has full sudo rights, but they are protected by the
 pam_ssh_agent_auth mechanism, i.e. you can only execute sudo commands if the
 correct private key is present in your ssh agent. This improves operational
 security such that if `medianet` is ever compromised, the attacker does not
-automatically have root access.
+immediately have root access.
 Again, you are prompted for the respective public key during bootstrapping.
+
+> Note that, if the attacker can run software as the medianet user, it is
+> trivial for her to also take over the contents of your SSH agent. So if
+> you suspect an intruder, isolate the system or refrain from using agent
+> forwarding when logging in.
 
 Depending on your usecase, and if your privilege separation requirements are
 not that strict, you can re-use the same key for both purposes.
