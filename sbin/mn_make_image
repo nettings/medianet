@@ -3,7 +3,7 @@
 THISPATH=`realpath -- $0`
 THISPATH=`dirname -- $THISPATH`
 
-BASEDIR="${THISPATH}/.."
+BASEDIR=`realpath -- "${THISPATH}/.."`
 . "$BASEDIR/lib/mn_includes"
 
 # initial size of /local partition in bytes, will be expanded after deployment!
@@ -278,7 +278,10 @@ git clone https://github.com/nettings/medianet.git "$MOUNTPOINT/medianet" && suc
 echo -n "Determining current branch "
 GITOWNER=$(stat -c "%U" "$BASEDIR"/.git)
 echo -n "(owned by $GITOWNER)...: "
+OLDWD=$(pwd)
+cd "$BASEDIR"
 GITBRANCH=$(sudo -u "$GITOWNER" git symbolic-ref --short HEAD)
+cd "$OLDWD"
 echo "$GITBRANCH"
 
 echo -n "Checking out $GITBRANCH..."
