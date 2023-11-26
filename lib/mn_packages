@@ -12,6 +12,8 @@ netcat-openbsd telnet
 lighttpd lighttpd-mod-openssl php php-cgi php-fpm
 # local mpv and remote control
 mpv socat
+# vlc player
+vlc vlc-plugin-jack
 # local monitoring
 ffmpeg icecast2
 # gstreamer for video streaming
