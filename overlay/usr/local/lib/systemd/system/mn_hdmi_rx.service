@@ -1,7 +1,7 @@
 [Unit]
 Description=[mn] HDMI stream receiver
 Requires=network-online.target
-After=mn_jackd
+After=mn_jackd.service
 
 [Service]
 # we read Environment= from a drop-in file
