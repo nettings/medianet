@@ -9,7 +9,7 @@ PREFIX=${PREFIX:-$BASEDIR}
 
 # dynamic helper variables
 # don't barf if \$0 starts with dash (as for login shell)
-PROGNAME=$("$BASENAME" -- $("$REALPATH" "$0"))
+PROGNAME=$("$BASENAME" -- $("$REALPATH" -- "$0"))
 
 # make config variables available
 if [[ -f "$CONFIG_INCLUDE" ]] ; then
