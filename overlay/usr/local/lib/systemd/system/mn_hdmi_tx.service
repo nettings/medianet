@@ -1,0 +1,18 @@
+[Unit]
+Description=[mn] HDMI stream sender
+Requires=network-online.target
+After=mn_jackd
+
+[Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/mn_hdmi_tx.service.d/mn_hdmi_tx.service.conf
+# created by mn_config_update
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+ExecStart=/usr/local/lib/systemd/scripts/mn_hdmi_tx $OPTIONS
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

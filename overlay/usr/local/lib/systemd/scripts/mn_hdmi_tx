@@ -1,0 +1,60 @@
+#!/bin/bash
+
+if [[ -z "$1" ]] ; then
+	echo "Usage:    $0 [video-device] [target IP] [target port]"
+	echo "Example:  $0 /dev/video0 239.192.17.43 29999"
+	exit
+fi
+
+DEVICE=$1
+TARGET=$2
+PORT=$3
+
+function stream_mjpeg_h264 {
+
+gst-launch-1.0 v4l2src device="$DEVICE" \
+	! 'image/jpeg, width=(int)1920, height=(int)1080, pixel-aspect-ratio=(fraction)1/1, framerate=(fraction)30/1' \
+	! tee name=encoded \
+	! queue \
+	! rtpjpegpay mtu=32748 perfect-rtptime=true pt=26 \
+	! udpsink host="$TARGET" port="$PORT" multicast-iface=medianet0 buffer-size=32748 \
+encoded. \
+	! queue \
+	! jpegparse \
+	! v4l2jpegdec \
+	! v4l2h264enc \
+	! 'video/x-h264,profile=(string)high,level=(string)4' \
+	! rtph264pay config-interval=-1 perfect-rtptime=true pt=96 \
+	! udpsink host="$TARGET" port="$PORT" multicast-iface=medianet0 buffer-size=4096
+
+}
+
+
+function stream_mjpeg {
+
+gst-launch-1.0 v4l2src device="$DEVICE" \
+	! 'image/jpeg, width=(int)1920, height=(int)1080, pixel-aspect-ratio=(fraction)1/1, framerate=(fraction)30/1' \
+	! queue \
+	! rtpjpegpay mtu=32748 perfect-rtptime=true pt=26 \
+	! udpsink host="$TARGET" port="$PORT" multicast-iface=medianet0 buffer-size=32748 \
+
+}
+
+
+function stream_h264 {
+
+gst-launch-1.0 v4l2src device="$DEVICE" \
+	! 'image/jpeg, width=(int)1920, height=(int)1080, pixel-aspect-ratio=(fraction)1/1, framerate=(fraction)30/1' \
+	! queue \
+	! jpegparse \
+	! v4l2jpegdec \
+	! v4l2h264enc \
+	! 'video/x-h264,profile=(string)high,level=(string)4' \
+	! rtph264pay config-interval=-1 perfect-rtptime=true pt=96 \
+	! udpsink host="$TARGET" port="$PORT" multicast-iface=medianet0 buffer-size=4096
+
+}
+
+#stream_mjpeg_h264
+stream_mjpeg
+#stream_h264
