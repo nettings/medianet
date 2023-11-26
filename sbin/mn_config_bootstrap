@@ -1,0 +1,8 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+"$BASEDIR"/overlay/usr/local/bin/mn_config_bootstrap
+
