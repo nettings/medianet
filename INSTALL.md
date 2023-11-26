@@ -8,6 +8,14 @@ First, check out the [mn] medianet github repository on a Linux machine:
 ```
 git clone https://github.com/nettings/medianet.git
 ```
+Then, switch to the branch that you want to build from:
+```
+git checkout bookworm
+```
+> The current stable, recommended branch is `bullseye64`. The 32-bit version
+> `bullseye` has not been updated in a while - if you need a 32-bit system,
+> check out bullseye64 and specify a RaspiOS 32-bit base image below.
+
 You will find a script `mn_make_image` in `sbin/`.
 Since the image creation process is all BASH code, you can check out this repo 
 to any modern Linux on any architecture, and it will work (i.e. you don't need
@@ -15,7 +23,7 @@ to run this on a Pi even though it's part of the medianet repository).
 The script will work without installing anything, but it needs a few shell
 include files from the repository, so don't just download the script alone.
 
-Make sure you have at least 14 GB free space in the output directory you are
+Make sure you have at least 16 GB free space in the output directory you are
 going to specify below. You need root to make the image, because it involves mounting
 it and altering its partition table.
 ```
