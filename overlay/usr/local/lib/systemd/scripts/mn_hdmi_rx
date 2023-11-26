@@ -1,0 +1,33 @@
+#!/bin/bash
+
+if [[ -z "$1" ]] ; then
+	echo "Usage:    $0 [source IP] [source port]"
+	echo "Example:  $0 239.192.17.43 29999"
+	exit
+fi
+
+SOURCE=$1
+PORT=$2
+
+function stream_mjpeg {
+
+gst-launch-1.0 udpsrc \
+	mtu=32768 \
+	address="$SOURCE" \
+	port="$PORT" \
+	buffer-size=131072 \
+	! application/x-rtp, media=video, clock-rate=90000, payload=26 \
+	! rtpjpegdepay \
+	! v4l2jpegdec \
+	! v4l2convert \
+	! queue \
+	! kmssink \
+		driver-name=vc4 \
+		sync=false \
+		blocksize=131072 \
+		force-modesetting=true \
+		processing-deadline=33000000 \
+		max-lateness=333333
+}
+
+stream_mjpeg
