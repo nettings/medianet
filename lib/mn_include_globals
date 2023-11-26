@@ -40,6 +40,7 @@ SYSTEMD_DEFAULT_DISABLE="
 	apt-daily-upgrade.timer
 	console-setup.service
 	dphys-swapfile.service 
+	fake-hwclock.service
 	hciuart.service
 	man-db.timer
 	ModemManager.service

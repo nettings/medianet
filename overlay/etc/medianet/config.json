@@ -3,7 +3,7 @@
 	"description": "[mn] medianet base setup using built-in audio, based on bookworm (arm64)",
 	"hostname": "mn-basic",
 	"location": "Frankenlab",
-	"version": "2023-11-22",
+	"version": "2023-11-26",
 	"bootConfig": {
 		"dtparam" : [
 			"audio=on"
@@ -18,7 +18,7 @@
 			"unit"    : "mn_autostart",
 			"type"    : "service",
 			"enabled" : 1,
-			"options" : "sleep 45 && mn_test_mpv && sleep infinity"
+			"options" : "while [[ ! -S /run/mpv/mpv-player_1.socket ]] ; do sleep 1 ; done ; mn_wait_jack effect_0:in1 effect_0:in2 ; mn_test_mpv && sleep infinity"
 		},
 		{
 			"unit"    : "mn_cpupower",

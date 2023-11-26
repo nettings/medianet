@@ -1,39 +1,79 @@
 # [mn] medianet
 
-> This is an experimental port to the latest RaspiOS based on Debian
-> Bookworm. It is now deploying correctly and reaching basic functionality
-> with the example configuration, but hasn't seen much testing on top of
-> that.
-> cpufrequtils are being phased out in favor of cpupower - the config
-> settings should be backwards compatible for now, but do watch the log for
-> deprecation notices.
->
-> If you are just starting with this project or want to get anything useful
-> done, please use the current default branch bullseye64.
-
 The [mn] media**net** distribution is a derivative of Debian Linux/RaspiOS.
 It was created to turn Raspberry Pis into reliable media players, signal
 processors, and streaming endpoints.
 
-The audio system is built around the JACK Audio Connection Kit, complemented
-with the mod-host to run LV2 plugins, the zita-njbridge to provide clock
-decoupled uncompressed network audio streaming, and many other open-source
-audio tools.
+The audio signal chain is built around the JACK Audio Connection Kit,
+complemented with the mod-host to run LV2 plugins, the zita-njbridge to
+provide clock decoupled uncompressed network audio streaming, and many other
+open-source audio tools.
 
-The system is meant to run headless and unattended. All parts of the audio
-signal chain are run as systemd services, and in the unlikely event that one
-process crashes, it will be restarted automatically and its connections
-re-established.
+The system is designed to run headless and unattended, and to be controlled
+via SSH.
+
+All parts of the audio signal chain are run as systemd services, and in the
+unlikely event that one process crashes, it will be restarted automatically
+and its JACK connections re-established.
 
 System-critical partitions (`/boot` and `/`) are mounted read-only during
 normal operation, so the system will tolerate hard shutdowns well. 
 
+## Changes in RaspiOS "Bookworm"
+
+> This is an experimental port to the latest RaspiOS based on Debian
+> Bookworm. It is now deploying correctly and reaching basic functionality
+> with the example configuration, but hasn't seen much testing on top of
+> that. If you need to deploy a reliable system quickly and don't need to
+> use the latest Pi5 hardware, it is recommended to stick to the `bullseye64`
+> branch for now.
+
+### /boot is now /boot/firmware
+The bootfs partition is now mounted under /boot/firmware, which means that
+the kernel images, initrds and other stuff now reside on the main system
+partition. Only the bootloaders and device trees remain.
+
+> Upgrading between major releases has never been supported really. As
+> usual, you are much better off taking your configuration file off your old
+> system and dropping it into a fresh one.
+
+### cpufrequtils is deprecated
+If you are using `mn_cpufreq.service`, please replace it with
+`mn_cpupower.service`. The old service will likely be removed with the next
+major Debian update.
+
+### zita-njbridge is now up to date upstream
+We no longer have to make our own custom build, and the .checkout and .build
+scripts have therefore been removed.
+
+### zita-lrx has been removed
+If you have been relying on the speaker crossover functionality of zita-lrx,
+please consider moving to the LSP crossover plugin - you can add it to
+mod-host via the LV2 URL http://lsp-plug.in/plugins/lv2/crossover_stereo.
+
+### jackminimix has been removed
+Nobody ever used it, and the x42 matrix mixer is a suitable replacement (its
+LV2 URL is http://gareus.org/oss/lv2/matrixmixer#i12o10).
+
+### mod-host is again tracking HEAD
+With a more up-to-date jackd in Bookworm, we can finally track the latest
+mod-host development again after having to freeze it for most of bullseye.
+
+### more surgical configuration
+Where possible, we are now no longer replacing the distro config files, but
+using drop-ins as much as possible. This allows us to apply the changes we
+need, and still benefit from baseline configuration updates provided by
+upstream. This affects `lighttpd`, `systemd-logind`, and `systemd-journald`.
+
 ## 64-bit vs. 32-bit
 
 As of RaspiOS *Bookworm*, there is no longer a 32-bit image or branch. If 
-you need one, backporting should not be too complicated.
+you need one, backporting should not be too complicated - actually,
+following the steps under [Installation](#installation) below on a 32-bit
+image of RaspiOS Bookworm should get you there.
 
-You are welcome to get in touch for help, e.g. by creating an issue.
+You are welcome to get in touch for help, e.g. by creating an issue, and
+please report your progress.
 
 ## Installation
 
@@ -104,12 +144,20 @@ writable. After the next reboot, the system will again be read-only.
 
 ### Web interfaces
 
-By default, you can reach a few web interfaces at `http://localhost:10080`, 
-assuming you have forwarded the http port through your ssh connection, like
-this:
+The medianet distribution comes with a few web interfaces to help control some
+aspects of the system. By default, they are firewalled off, so you will have
+to forward them through your SSH connection as follows:
 ```
 user@your-bigbox:~ $ ssh -L 10080:localhost:80 medianet@your-pi
 ```
+
+Alternatively, you can open the web port(s) to the outside world, but you
+should only do this on a trusted private network, as there is no
+authentication at all:
+```
+medianet@yourpi:~ sudo ufw allow https
+```
+
 The most immediately useful is an auto-generated simple web GUI to set the
 parameters of your DSP plugins.
 
@@ -121,29 +169,33 @@ you can start/stop your maintenance tunnel and check its state at
 
 If you have configured a local Icecast2 server to create a stream from your
 JACK signal graph, you will find a corresponding link here as well (which
-will require port 8000 to be forwarded as well).
+will require port 8000 to be forwarded as well). 
+
+> Port 8000 is open to the outside by default so that people can access the 
+> stream.
 
 ### Features
 
-As of June 2020, the medianet distribution integrates the following
+As of November 2023, the medianet distribution integrates the following
 applications ready-to-use:
 
 #### Audio
 * the JACK audio connection kit
 * gpioctl, a quick and very dirty tool to use buttons and rotary encoders to
-affect ALSA mixer settings or generate JACK MIDI, can be multicast to several
-medianet nodes
+  affect ALSA mixer settings or generate JACK MIDI, can be multicast to several
+  medianet nodes
 * mod-host by falkTX and the MOD team (to run LV2 plugins for signal processing)
 * a large collection of LV2 plugins, among them the latest x42 plugin set by
-Robin Gareus and Vladimir Sadovnikov's lsp-plugins, all automatically built from
-source
+  Robin Gareus and Vladimir Sadovnikov's lsp-plugins, all automatically built from
+  source
+* Mike Brady's shairport-sync, an Apple AirPlay(tm) and AirPlay2(tm) receiver
 * Icecast2 and an ffmpeg-based encoder to stream Opus-encoded audio over http
-from JACK
-* Fons Adriaensen's zita-convolver convolution engine, to apply FIR filters to loudspeakers
+  from JACK
 * zita-ajbridge (to access a second sound card with an unsynchronized clock)
 * zita-njbridge (to stream multichannel uncompressed audio on a local Ethernet
-with < 20ms latency either point-to-point or multicast)
-* Mike Brady's shairport-sync, an Apple AirPlay(tm) and AirPlay2(tm) receiver
+  with < 20ms latency either point-to-point or multicast)
+* Fons Adriaensen's zita-convolver convolution engine, useful to apply FIR
+  filters to loudspeakers
 
 #### Video
 > There are some gstreamer-based video streaming services included, but they
@@ -154,11 +206,15 @@ with < 20ms latency either point-to-point or multicast)
 > eventually.
 
 #### Other tools
-* cpufreq to set min and max core frequencies and governor (great to save power)
+* cpupower to set min and max core frequencies and governor (great to save power)
 * lv2rdf2html to generate a simple but useful web UI for all the lv2 plugins you
-configured to run in mod-host
-* an SSH-based maintenance tunnel with "phone home" capability that will survive
-reboots
+  configured to run in mod-host
+* a persistent SSH-based maintenance tunnel with "phone home" capability
+  that can help you traverse multiple layers of NAT (network address translation,
+  aka home routers), very useful for museum deployments and the like
+* a somewhat hacky `mn_autostart` service that basically allows you to plug in any
+  bash commands and have systemd look after them (see the example
+  configuration for a use case)
 
 Other services can be added easily if you don't mind dealing with a JSON parser
 written in BASH (but using JQ, so it's not that bad).
