@@ -4,6 +4,14 @@
 
 needroot
 
+MODE_BOOTSTRAP=
+
+# if we're bootstrapping, don't start services just yet, to avoid flooding
+# the log with errors
+if [[ $("$BASENAME" $0) == mn_config_bootstrap ]] ; then
+	MODE_BOOTSTRAP=1
+fi
+
 if [[ -n "$1" ]] ; then
 	CONFIG_FILE="$1"
 else
@@ -131,6 +139,13 @@ echo -n "Writing $CONF_FILE_FSTAB..."
 echo -en "$CONFIG" > "$CONF_FILE_FSTAB" && success || failure
 # update systemd:
 "$SYSTEMCTL" daemon-reload
+
+
+# skip the rest if we're in early bootstrap:
+if [[ "$MODE_BOOTSTRAP" -eq 1 ]] ; then
+	exit 0
+fi
+
 
 # systemd unit status
 DATA=$( cat "$CONFIG_FILE" \
