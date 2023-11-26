@@ -66,6 +66,7 @@ SYSTEMD_MEDIANET_UNITS="
 	mn_cpufreq.service
 	mn_cpupower.service
 	mn_gpioctl.service
+	mn_hdmi_tx.service
 	mn_icecast2.service
 	mn_jackd.service
 	mn_jconvolver.service
