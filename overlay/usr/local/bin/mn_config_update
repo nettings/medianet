@@ -14,7 +14,11 @@ if [[ ! -e "$CONFIG_FILE" ]] ; then
 	bail "$CONFIG_FILE does not exist."
 fi
 
-NOEDIT="# automatically created by $PROGNAME from $CONFIG_FILE, do not edit!"
+NOEDIT_PREFIX="# automatically created by "
+NOEDIT_DYNAMIC="$PROGNAME from $CONFIG_FILE, "
+NOEDIT_SUFFIX="do not edit!"
+NOEDIT="${NOEDIT_PREFIX}${NOEDIT_DYNAMIC}${NOEDIT_SUFFIX}"
+
 NONE="[none]\n"
 
 
@@ -102,12 +106,8 @@ while read VALUE ; do
 done <<< "$DATA"
 echo -en "${CONFIG:-${NONE}}" | indent
 echo -n "Updating $CONF_FILE_BOOT..."
-# We need to replace everything after our $NOEDIT line.
-# First, escape everything in that line that might confuse sed:
-# Put every character in its own character class except ^, then
-# escape ^ and spaces. The chainsaw approach :o)
-NOEDIT_ESCAPED=$("$SED" 's/[^^]/[&]/g; s/\^/\\^/g; s/ /\\ /g;' <<< "$NOEDIT")
-SYSCONFIG=$("$SED" "/$NOEDIT_ESCAPED/Q" < "$CONF_FILE_BOOT")
+# We need to replace everything after our $NOEDIT line. Search for the prefix:
+SYSCONFIG=$("$SED" "/^${NOEDIT_PREFIX}/Q" < "$CONF_FILE_BOOT")
 CONFIG="$SYSCONFIG\n$NOEDIT\n$CONFIG"
 echo -en "$CONFIG" > "$CONF_FILE_BOOT" && success || failure
 
