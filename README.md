@@ -4,6 +4,11 @@ The [mn] media**net** distribution is a derivative of Debian Linux/RaspiOS.
 It was created to turn Raspberry Pis into reliable audio nodes, signal
 processors, and streaming endpoints.
 
+> There is now a still experimental but quite usable newer version
+> in the `bookworm` branch. Use that if you're feeling lucky or you need to
+> deploy on a Raspberry Pi 5. If you are looking for a well-tested version, 
+> stick with this one.
+
 The audio system is built around the JACK Audio Connection Kit, complemented
 with the mod-host to run LV2 plugins, the zita-njbridge to provide clock
 decoupled uncompressed network audio streaming, and many other open-source
