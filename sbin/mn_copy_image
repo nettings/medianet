@@ -62,8 +62,8 @@ while [[ -n "$1" ]] ; do
 	shift
 done
 
-if [[ -z "$USER" || -z "$HOST" || -z "$TARGET" ]] ; then
-	failure "You must specify user, host, and target."
+if [[ -z "$HOST" || -z "$TARGET" ]] ; then
+	failure "You must specify host and target."
 	usage
 fi
 
@@ -105,6 +105,11 @@ NBLOCKS=$((${END_OF_P3} / ${BLOCKSIZE} + 1))
 echo " $END_OF_P3 bytes (${NBLOCKS} blocks of ${BLOCKSIZE} bytes)"
 
 echo "Transferring data to ${USER}@${HOST}:${TARGET}/${IMAGE}..."
+# SSH options suppress host key error when home is read-only (as it should be)
 "$DD" if="$DEVICE" bs="$BLOCKSIZE" count="$NBLOCKS" status=progress \
-	| "$SSH" "$USER"@"$HOST" "cat > \"${TARGET}/${IMAGE}\"" \
+	| "$SSH" \
+		-o UserKnownHostsFile=/dev/null \
+		-o StrictHostKeyChecking=no \
+		"$USER"@"$HOST" \
+		"cat > \"${TARGET}/${IMAGE}\"" \
 	&& success || failure
