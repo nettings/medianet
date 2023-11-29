@@ -23,6 +23,7 @@ GIT=/usr/bin/git
 GREP=/bin/grep
 GROUPADD=/usr/sbin/groupadd
 GSTLAUNCH=/usr/bin/gst-launch-1.0
+HOST=/usr/bin/host
 HOSTNAMEBIN=/bin/hostname
 HEAD=/usr/bin/head
 INOTIFYWAIT=/usr/bin/inotifywait
