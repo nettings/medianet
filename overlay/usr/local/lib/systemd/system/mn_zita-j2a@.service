@@ -1,0 +1,20 @@
+[Unit]
+Description=[mn] resampling JACK-to-ALSA bridge [%I]
+Requires=mn_jackd.service
+After=mn_jackd.service
+
+[Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/zita-j2a@.service.d/zita-j2a@.service.conf
+# created by mn_config_update
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+User=medianet
+ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
+ExecStart=/usr/local/bin/mn_silencer "Starting synchronisation." /usr/bin/zita-j2a -j "${JACKNAME}" $OPTIONS
+ExecStartPost=-/usr/local/bin/mn_connect %n
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
