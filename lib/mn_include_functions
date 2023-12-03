@@ -5,6 +5,8 @@ ESC_BLU="\033[1;34m"
 ESC_BLD="\033[1m"
 ESC_CLR="\033[0m"
 
+ERR_TIMEOUT=2
+
 function scream {
   echo
   echo -e "\033[1;1m$@\033[0m"
@@ -12,6 +14,14 @@ function scream {
 
 function success {
   echo  -e " ${ESC_GRN}succeeded.${ESC_CLR}"
+}
+
+function verbose {
+         ((VERBOSE == 1)) && echo -e "$1"
+}
+
+function error {
+	echo -e "$1" >&2
 }
 
 # $@: error message
@@ -25,7 +35,7 @@ function failure {
 	if [[ $ERR != 0 ]] ; then
 		ERRMSG+=" (return code $ERR)"
 	fi
-	echo -e " ${ESC_RED}${ERRMSG}${ESC_CLR}"
+	error " ${ESC_RED}${ERRMSG}${ESC_CLR}"
 }
 
 # $@: error message
@@ -39,7 +49,7 @@ function bail {
 	if [[ $ERR != 0 ]] ; then
 		ERRMSG+=" (return code $ERR)"
 	fi
-	echo -e " ${ESC_RED}${ESC_BLD}${ERRMSG}${ESC_CLR}"
+	error " ${ESC_RED}${ESC_BLD}${ERRMSG}${ESC_CLR}"
 	exit 1
 }
 
