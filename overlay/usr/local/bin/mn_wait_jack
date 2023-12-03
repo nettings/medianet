@@ -4,70 +4,106 @@
 
 function help {
 	cat << EOF
-$PROGNAME [-t seconds] [jack port search string[ ...]]
 
-blocks until a JACK port to match each of the search strings
-has been found, or until the (optional) timeout has expired.
+$PROGNAME blocks until a JACK port to match each of the search strings has
+been found. You can use it to make sure a certain JACK port is available
+before performing other tasks.
+
+Usage: $PROGNAME [-t seconds] [jack port search string[ ...]]
+
+	--help		This help
+	 -h
+
+	--interval n	The interval between re-tests in seconds. The default
+	 -i		is $INTERVAL.
+
+	--timeout n	A timeout in seconds. If it expires, terminate
+	 -t		with return value $ERR_TIMEOUT. Default is no timeout.
+
+	--verbose	Write messages to stdout.
+	 -v
 
 EOF
-	exit 1;
+exit 0
 }
 
 
-TIMEOUT=-1
-SEARCH=
+declare -a SEARCH
 NSEARCH=0
+INTERVAL=5
+TIMEOUT=-1
+VERBOSE=0
 
 while [[ -n "$1" ]] ; do
 	case $1 in 
-	-t)
+	-h|--help)
+		help
+		;;
+	-i|--interval)
+		if [[ "$2" =~ [0-9]+ ]] ; then
+			shift
+			INTERVAL="$1"
+		else
+			bail "--interval requires a numerical argument (time to next test in seconds)"
+		fi
+		;;
+	-t|--timeout)
 		if [[ "$2" =~ [0-9]+ ]] ; then
 			shift 
 			TIMEOUT="$1"
 		else
-			help
+			bail "--timeout requires a numerical argument (timeout in seconds)"
 		fi
 		;;		
-	-h)
-		help
+	-v|--verbose)
+		VERBOSE=1
+		;;
+	-*)
+		bail "unknown option $1"
 		;;
 	*)
 		# build search term array
 		SEARCH[$NSEARCH]="$1"
-#		echo -e "SEARCH[$NSEARCH]\t= ${SEARCH[$NSEARCH]}."
+		# echo "SEARCH[$NSEARCH]\t= ${SEARCH[$NSEARCH]}."
 		((NSEARCH++))
 		;;
 	esac
 	shift
 done
 
-while [[ -n ${SEARCH[0]} ]] ; do
+# round timeout to nearest higher multiple of intervals:
+(( TIMEOUT = (1 + TIMEOUT / INTERVAL) * INTERVAL))
+while (( TIMEOUT != 0 )) ; do
+	# echo "Round $((ROUND++)): TIMEOUT $TIMEOUT"
 	JACKPORTS=`/usr/bin/jack_lsp 2> /dev/null`
-	# check each port in list
-	for (( i=0 ; i < $NSEARCH ; i++ )) ; do
-#		echo "SEARCH[$i] is ${SEARCH[$i]}."
-		if "$GREP" -q ${SEARCH[$i]} <<< "$JACKPORTS"; then
-			# delete from list by overwriting with last item
-			((NSEARCH--))
-#			echo "  Exists. Overwriting with $NSEARCH:${SEARCH[$NSEARCH]}"
+	i=0
+	while (( i < NSEARCH )) ; do
+		# check each port in list
+		MATCH=$("$GREP" --max-count 1 "${SEARCH[$i]}" <<< "$JACKPORTS")
+		if [[ -n "$MATCH" ]]; then
+			(( NSEARCH-- ))
+			verbose "$MATCH matches ${SEARCH[$i]}, ${NSEARCH} items left" | indent
+			# delete from list by replacing with last item
 			SEARCH[$i]=${SEARCH[$NSEARCH]}
 			# clear last item
 			SEARCH[$NSEARCH]=
-#			echo "  $NSEARCH items left."
-			((i--))
+		else
+			verbose "No match for ${SEARCH[$i]}." | indent
+			(( i++ ))
 		fi
 	done
-	if (($TIMEOUT > 0)) ; then
-#		echo "    Timeout is $TIMEOUT."
-		((TIMEOUT--))
-	elif (($TIMEOUT == 0)) ; then
-		echo -n "$PROGNAME: timeout expired while still waiting for" >&2
-		for (( i=0 ; i < $NSEARCH ; i++ )) ; do
-			echo -n " '${SEARCH[$i]}'" >&2
-		done
-		echo "." >&2
-		exit 127
-		break
+	if [[ "$NSEARCH" -eq 0 ]] ; then
+		verbose "All ports found."
+		exit 0
 	fi
-#	sleep 0.1
+	"$SLEEP" "$INTERVAL"
+	(( TIMEOUT -= INTERVAL ))
 done
+
+MSG="Timeout expired while waiting for"
+for (( i=0 ; i < $NSEARCH ; i++ )) ; do
+	MSG+=" '${SEARCH[$i]}'"
+done
+MSG+="."
+error "$MSG"
+exit "$ERR_TIMEOUT"
