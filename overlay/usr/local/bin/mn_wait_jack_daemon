@@ -4,7 +4,6 @@
 . /medianet/lib/mn_includes
 
 JACK_SOCKET_PATH=/dev/shm
-ERR_TIMEOUT=2
 
 function help {
 	cat << EOF
@@ -25,27 +24,21 @@ Usage: $PROGNAME -t 5 && echo "found JACK!" || echo "Timeout expired."
 	 -v
 
 EOF
+exit 0
 }
 
-function message {
-	if [[ -n "$VERBOSE" ]] ; then
-		echo $1
-	fi
-}
-
-TIMEOUT=
+TIMEOUT=-1
 VERBOSE=
 
 while [[ -n "$1" ]] ; do
 	case "$1" in
 	-h|--help)
 		help
-		exit 254
 		;;
 	-t|--timeout)
 		if [[ "$2" =~ [0-9]+ ]] ; then
-			TIMEOUT=$2
 			shift
+			TIMEOUT="$1"
 		else
 			bail "--timeout requires a numerical argument (timeout in seconds)"
 		fi
@@ -64,7 +57,7 @@ while [[ -n "$1" ]] ; do
 done
 
 JACK_SOCKET=
-while [[ $((TIMEOUT--)) -gt 0 ]] ; do
+while (( TIMEOUT-- != 0 )) ; do
 	JACK_SOCKET=$( \
 		"$FIND" "$JACK_SOCKET_PATH" \
 			-type s \
@@ -73,10 +66,10 @@ while [[ $((TIMEOUT--)) -gt 0 ]] ; do
 			-exec ls -1 {} \; 2> /dev/null \
 	)
 	if [[ -n "$JACK_SOCKET" ]] ; then
-		message "Found $JACK_SOCKET. JACK server is ready!"
+		verbose "Found $JACK_SOCKET. JACK server is ready!"
 		exit 0
 	fi
 	sleep 1
 done
-message "Timeout expired."
+verbose "Timeout expired."
 exit $ERR_TIMEOUT
