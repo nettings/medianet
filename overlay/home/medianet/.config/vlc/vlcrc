@@ -1,0 +1,6 @@
+# medianet-specific VLC settings
+[core]
+video-title-show=0
+osd=0
+play-and-exit=1
+fullscreen=1
