@@ -11,7 +11,7 @@ before performing other tasks.
 
 Usage: $PROGNAME [-t seconds] [jack port search string[ ...]]
 
-	--help		This help
+	--help		This help.
 	 -h
 
 	--interval n	The interval between re-tests in seconds. The default
