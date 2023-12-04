@@ -17,7 +17,9 @@ function success {
 }
 
 function verbose {
-         ((VERBOSE == 1)) && echo -e "$1"
+        if [[ $VERBOSE -eq 1 ]] ; then
+		echo -e "$@"
+	fi
 }
 
 function error {
