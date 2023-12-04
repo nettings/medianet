@@ -2,43 +2,142 @@
 
 . /medianet/lib/mn_includes
 
-. /etc/systemd/system/$1.d/$1.connections
 
-PORTS=
-echo -n "$1 waiting for own ports "
-# parse outgoing connections, we are first
-while read PORT; do
-	if [[ ! "$PORT" ]] ; then break ; fi
-	echo -n "$PORT "
-	PORTS+="$PORT\n"
-	read FOREIGNPORT
+function help {
+	cat << EOF
+
+$PROGNAME tries to connect all JACK ports belonging to systemd service FOO.
+It is meant to be called by systemd service files for JACK clients.
+The connections are read from the FOO.service.$CONNECTIONS_SUFFIX file in
+$SYSTEMD_PATH/FOO.service.d/
+
+Usage: $PROGNAME FOO.service
+
+	--help		This help.
+         -h
+
+	--interval n	The interval between connection retrials in seconds.
+	 -i		Default is $INTERVAL.
+
+	--timeout n	A timeout in seconds. Default is no timeout.
+	 -t
+
+	--verbose	Write messages to stdout.
+	 -v
+
+EOF
+	exit 0
+}
+
+declare -a OUTPORTS
+declare -a INPORTS
+NCONNECTIONS=0
+INTERVAL=5
+TIMEOUT=-1
+VERBOSE=0
+SERVICE=
+SYSTEMD_PATH=/etc/systemd/system/
+CONNECTIONS_SUFFIX=.connections
+
+while [[ -n "$1" ]] ; do
+        case $1 in
+        -h|--help)
+                help
+                ;;
+        -i|--interval)
+                if [[ "$2" =~ [0-9]+ ]] ; then
+                        shift
+                        INTERVAL="$1"
+                else
+                        bail "--interval requires a numerical argument (time to next test in seconds)"
+                fi
+                ;;
+        -t|--timeout)
+                if [[ "$2" =~ [0-9]+ ]] ; then
+                        shift
+                        TIMEOUT="$1"
+                else
+                        bail "--timeout requires a numerical argument (timeout in seconds)"
+                fi
+                ;;
+        -v|--verbose)
+                VERBOSE=1
+                ;;
+        -*)
+                bail "unknown option $1"
+                ;;
+        *)
+		if [[ -z "$SERVICE" && "$1" =~ .*\.service ]] ; then
+			SERVICE="$1"
+		else
+	                bail "unknown argument $1"
+	        fi
+                ;;
+        esac
+        shift
+done
+
+CONNECTIONS_FILE="${SYSTEMD_PATH}/${SERVICE}.d/${SERVICE}.connections"
+
+. "$CONNECTIONS_FILE" 2> /dev/null || bail "$CONNECTIONS_FILE for service $SERVICE could not be loaded."
+
+while read OUTPORT ; do
+	if [[ -z "$OUTPORT" ]] ; then break ; fi
+	read INPORT || bail "Failed to read target port for $OUTPORT. The $SERVICE.connections file may be corrupted."
+	OUTPORTS[$NCONNECTIONS]="$OUTPORT"
+	INPORTS[$NCONNECTIONS]="$INPORT"
+	(( NCONNECTIONS++ ))
 done <<< "$CONNECTIONS_OUT"
-# parse incoming connections, we are second
-while read FOREIGNPORT; do
-	read PORT
-	if [[ ! "$PORT" ]] ; then break ; fi
-	echo -n "$PORT "
-	PORTS+="$PORT\n"
+while read OUTPORT ; do
+	if [[ -z "$OUTPORT" ]] ; then break ; fi
+	read INPORT || bail "Failed to read target port for $OUTPORT. The $SERVICE.connections file may be corrupted."
+	OUTPORTS[$NCONNECTIONS]="$OUTPORT"
+	INPORTS[$NCONNECTIONS]="$INPORT"
+	(( NCONNECTIONS++ ))
 done <<< "$CONNECTIONS_IN"
 
-echo -e "$PORTS" \
-	| "$XARGS" -d '\n' /usr/local/bin/mn_wait_jack \
-	&& echo " - all found."
-
-N=0
-while read OUTPORT ; do
-	if [[ ! "$OUTPORT" ]] ; then break ; fi
-	read INPORT
-	/usr/local/bin/mn_wait_jack "$INPORT" "$OUTPORT"
-	echo -n "$1 [$((N++))] connecting $OUTPORT -> $INPORT... "
-	{
-		RES=`jack_connect "$OUTPORT" "$INPORT" 2>&1`
-		if [[ -z "$RES" ]] ; then 
-			success
-		elif $GREP -q "already connected" <<< "$RES" ; then
-			echo "already connected."
+# round timeout to nearest higher multiple of intervals:
+if (( TIMEOUT > 0 )) ; then
+	(( TIMEOUT = (1 + TIMEOUT / INTERVAL) * INTERVAL))
+fi
+while (( TIMEOUT != 0 )) ; do
+	i=0
+	while (( i < NCONNECTIONS )) ; do
+		# try first connection in list
+		RES=$(jack_connect "${OUTPORTS[$i]}" "${INPORTS[$i]}" 2>&1)
+		if [[ -n "$RES" ]] ; then
+			verbose -n "$SERVICE ${OUTPORTS[$i]} -> ${INPORTS[$i]} "
+			if "$GREP" -q "already connected" <<< "$RES" ; then
+				verbose "already connected."
+			else
+				verbose "$RES. Continuing."
+				(( i++ ))
+				continue
+			fi
 		else
-			echo "failed ($RES). Continuing."
+			echo -n "$SERVICE connected ${OUTPORTS[$i]} - ${INPORTS[$i]}..."
+			success
 		fi
-	} 
-done <<< "$CONNECTIONS_IN $CONNECTIONS_OUT"
+		(( NCONNECTIONS-- ))
+		# delete from list by replacing with last item
+		OUTPORTS[$i]=${OUTPORTS[$NCONNECTIONS]}
+		INPORTS[$i]=${INPORTS[$NCONNECTIONS]}
+		# clear last item
+		OUTPORTS[$NCONNECTIONS]=
+		INPORTS[$NCONNECTIONS]=
+	done
+	if (( NCONNECTIONS == 0 )) ; then
+		echo "$SERVICE: all ports connected."
+		exit 0
+	fi
+	"$SLEEP" "$INTERVAL"
+	(( TIMEOUT -= INTERVAL ))
+done
+
+MSG="$SERVICE: timeout expired while trying to connect\n"
+for (( i=0 ; i < NCONNECTIONS ; i++ )) ; do
+	MSG+="  [${OUTPORTS[$i]} - ${INPORTS[$i]}]\n"
+done
+error "$MSG"
+exit "$ERR_TIMEOUT"
+
