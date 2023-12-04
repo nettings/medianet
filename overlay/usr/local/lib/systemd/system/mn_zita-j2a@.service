@@ -10,9 +10,8 @@ After=mn_jackd.service
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
 ExecStart=/usr/local/bin/mn_silencer "Starting synchronisation." /usr/bin/zita-j2a -j "${JACKNAME}" $OPTIONS
-ExecStartPost=-/usr/local/bin/mn_connect %n
+ExecStartPost=-/usr/local/bin/mn_connect %n --timeout 30 --interval 5
 RestartSec=5
 Restart=always
 

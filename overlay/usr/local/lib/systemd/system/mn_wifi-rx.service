@@ -12,10 +12,8 @@ Type=exec
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-# this is a player (source), hence no upstream connections
-#ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
 ExecStart=/usr/bin/mpv --quiet --ao="jack" --vo=null --jack-name="${JACKNAME}" --jack-connect="no" --profile="low-latency" --audio-buffer=0.1 $OPTIONS
-ExecStartPost=-/usr/local/bin/mn_connect %n
+ExecStartPost=-/usr/local/bin/mn_connect %n --timeout 30 --interval 5
 ExecStop=-/usr/local/bin/mn_disconnect %n
 RestartSec=1
 Restart=always
