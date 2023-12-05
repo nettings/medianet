@@ -184,16 +184,26 @@ choice now, but we're stuck with it for the time being:
 ```
 
 ### JACK connection management
+The automatic configuration updater (or a manual call to `mn_config_update`) 
+will read the JACK connection graph fron the `config.json` file and write each
+service's incoming and outgoing connections to
+`/etc/systemd/system/foo.service.d/foo.service.connections`.
 
-The system tries to connect all JACK clients on startup according to the
-connections specified in `config.json`. If a client dies and is restarted,
-both its up- and downstream connections are reconnected automatically.
+Each service performs
+```
+ExecStartPost=-/usr/local/bin/mn_connect foo.service --timeout 30 --interval 5
+```
+as part of its post-startup routine, which will attempt to connect all ports
+as quickly as possible, and keep retrying to connect failed ports (e.g. to
+clients who might still be starting up) every 5 seconds for a total of 30
+seconds. The call is prepended with a `-` (minus) sign, which means the
+service will not fail even if some connection could not be made.
 
-If a connection fails, the service will fail after a timeout, and attempt to
-restart. This sometimes leads to undesired behaviour, where it would be
-better to keep a service running in a degraded state with one or more
-failed connections rather than attempting restarts. The heuristic for the
-port connections may change in the future.
+> This behaviour has changed - previously, a failed JACK client could cause
+> connection timeouts in others and force them to restart.
+> The idea behind the new behaviour is to leave core services (such as
+> `mn_mod-host`) running unhindered, even if a peripheral service (a frequent
+> culprit was `mn_listen` due to an icecast2 issue) has failed.
 
 ## example configuration snippets
 
@@ -268,8 +278,8 @@ Ways to force-hotplug the hardware to always provide this device and to
 enable up to 8 channel playback for surround sound applications are
 currently under investigation.
 
-### jackd using the HifiBerry DAC+ADC
-
+### jackd using Hifiberry products
+#### HifiBerry DAC+ADC
 To enable the driver for this card, add
 ```
 bootConfig : [
@@ -308,9 +318,15 @@ bootConfig : [
 	]
 }
 ```
+If you need lower latency, it is possible to run Hifiberry cards at `-p 128`
+without any problems.
+#### other Hifiberry products
+The JACK settings generally remain the same. Just add the correct overlay as
+per the Hifiberry documentation, and for devices without inputs, use `-P` 
+("playback only") instead of `-D` ("duplex") in JACK options, and leave the
+`inPorts` array empty.
 
 ### mod-host
-
 mod-host provides an easy way to run a DSP chain of LV2 plugins on the Pi.
 Its setup is slightly tricky because each plugin running in mod-host
 presents as a separate JACK client called effect_N, where N is an index set
@@ -418,22 +434,25 @@ docroot.
 ```
 
 ### streaming audio to other [mn] medianet hosts
-
 The zita-njbridge package will enable you to stream very low-latency,
 uncompressed audio between hosts running JACK with unsynchronised sample
 clocks, using very-high-quality dynamic resampling.
-
 #### source configuration
-
 This snippet will send audio from the local JACK graph onto an
 administratively-scoped IPv4 multicast group, where it can be picked up by
 an arbitrary number of receivers on the local network.
 
-Be careful: dumb switches that do not support IGMP snooping will just
-duplicate multicast traffic to all ports, no matter whether the client
-behind that ports wants it or not. Using more than a few multicast streams
-under such conditions will quickly degrate network performance.
+> Be careful: dumb switches that do not support IGMP snooping will just
+> duplicate multicast traffic to all ports, no matter whether the client
+> behind that ports wants it or not. Using more than a few multicast streams
+> under such conditions will quickly degrate network performance.
 
+If your network addresses are stable and known in advance, *and* you only 
+want to send audio to one receiver, it's better to use a normal unicast IPv4
+address.
+
+Stick to port 30000 - `mn_config_update` will automatically open that port in
+the firewall when it detects an active zita-njbridge service.
 ```
 {
 	"unit"    : "mn_zita-j2n",
@@ -451,9 +470,7 @@ under such conditions will quickly degrate network performance.
 	]
 }
 ```
-
 #### sink configuration
-
 This snippet will receive audio from an administratively-scoped IPv4
 multicast group and make it available to the local JACK graph. Because the
 zita-n2j client has to perform dynamic resampling, its CPU load is
@@ -488,18 +505,18 @@ automatically punch a hole in the firewall for you.
 ```
 
 ### providing an AirPlay sink with shairport-sync
-
 Thanks to Mike Brady and his helpful attitude towards accepting a JACK
-backend to shairport-sync, AirPlay audio can now be fully integrated into a
-medianet audio system. You do not need an Apple device to use this audio
-source - a number of free Android apps are available to stream AirPlay, and
-it is also supported by PulseAudio with its RAOP sink and source.
+backend to shairport-sync, AirPlay and Airplay2 audio can now be fully
+integrated into a medianet audio system. 
 
+You do not need an Apple device to use this audio source - a number of
+free Android apps are available to stream AirPlay, and it is also
+supported by PulseAudio with its RAOP sink and source.
 ```
 {
 	"unit"    : "mn_shairport-sync",
 	"type"    : "service",
-	"enabled" : 0,
+	"enabled" : 1,
 	"jackName": "shairport-sync",
 	"inPorts" : [],
 	"outPorts": [
@@ -534,5 +551,71 @@ it is also supported by PulseAudio with its RAOP sink and source.
 		"  statistics = \"no\";",
 		"}"
 	]
+}
+```   
+
+### HDMI over IP
+With two Raspberry Pi 4B and a cheap HDMI USB2 grabber, it is possible
+to create a cheap HDMI over IP extender with reasonable, although not
+perfect, quality. Video is grabbed by a `gstreamer` chain and forwarded
+as quickly as possible, and received without buffer or resynchronisation
+by another gstreamer chain on the sink.
+The audio is transmitted independently via `zita-njbridge` and resampled
+to the sink's JACK clock.
+
+> Again, you can opt for multicasting, which is easy to configure and will
+> allow multiple sinks without extra costs, but it will rapidly congest
+> your network if you have switches that do not do IGMP snooping.
+#### source configuration
+```
+{
+	"unit"    : "mn_hdmi_tx",
+        "type"    : "service",
+        "enabled" : 1,
+        "options" : "/dev/video0 239.192.17.43 29999"
+},
+{
+        "unit"    : "mn_zita-j2n@hdmi",
+        "type"    : "service",
+        "enabled" : 1,
+        "jackName": "hdmi_sender",
+        "options" : "--chan 2 239.192.17.44 30000 medianet0",
+        "inPorts": [
+                {
+                        "portName" : "in_1"
+                },
+                {
+                        "portName" : "in_2"
+                }
+        ]
+}
+```
+#### sink configuration
+```
+{
+        "unit"    : "mn_hdmi_rx",
+        "type"    : "service",
+        "enabled" : 1,
+        "options" : "239.192.17.43 29999"
+},
+{
+        "unit"    : "mn_zita-n2j@hdmi",
+        "type"    : "service",
+         "enabled" : 1,
+        "jackName": "zita-n2j",
+        "options" : "--chan 1,2 --buff 30 239.192.17.44 30000 me
+        "inPorts" : [],
+        "outPorts": [
+                {
+                        "portName"   : "out_1",
+                        "targetUnit" : "mn_mod-host",
+                        "targetPort" : 4
+                },
+                {
+                        "portName"   : "out_2",
+                        "targetUnit" : "mn_mod-host",
+                        "targetPort" : 5
+                }
+        ]
 }
 ```   
