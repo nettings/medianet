@@ -566,6 +566,11 @@ to the sink's JACK clock.
 > Again, you can opt for multicasting, which is easy to configure and will
 > allow multiple sinks without extra costs, but it will rapidly congest
 > your network if you have switches that do not do IGMP snooping.
+> Alternatively, you can insert a (fixed) IPv4 address.
+
+> mn_hdmi-[tx|rx] will also accept a local hostname (which will be looked
+> up and replaced by an IP address before calling gstreamer). This needs to
+> be implemented for zita-njbridge as well.
 #### source configuration
 ```
 {
