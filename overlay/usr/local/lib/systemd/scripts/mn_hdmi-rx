@@ -3,10 +3,17 @@
 if [[ -z "$1" ]] ; then
 	echo "Usage:    $0 [source IP] [source port]"
 	echo "Example:  $0 239.192.17.43 29999"
+	echo "If [source IP] does not start with 239.192,"
+	echo "it will be replaced with our external IP address."
 	exit
 fi
 
-SOURCE=$1
+if [[ "$1" =~ ^239\.192.*$ ]] ; then
+	SOURCE=$1
+else
+	SOURCE=$(/usr/local/bin/mn_net_ip)
+	echo "Replacing $1 with $SOURCE."
+fi
 PORT=$2
 
 function stream_mjpeg {
