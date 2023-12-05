@@ -569,7 +569,7 @@ to the sink's JACK clock.
 #### source configuration
 ```
 {
-	"unit"    : "mn_hdmi_tx",
+	"unit"    : "mn_hdmi-tx",
         "type"    : "service",
         "enabled" : 1,
         "options" : "/dev/video0 239.192.17.43 29999"
@@ -593,7 +593,7 @@ to the sink's JACK clock.
 #### sink configuration
 ```
 {
-        "unit"    : "mn_hdmi_rx",
+        "unit"    : "mn_hdmi-rx",
         "type"    : "service",
         "enabled" : 1,
         "options" : "239.192.17.43 29999"
