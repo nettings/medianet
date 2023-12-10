@@ -633,7 +633,12 @@ assumed that you have a 5.1 amplifier that is connected via HDMI, or (in my
 case), an HDMI audio extractor connected to an active 5.1 speaker set.
 The JACK server can run in dummy mode or on any other sound device, such as
 the built-in mini-jack via the PWM device. `zita-j2a` will resample your
-audio to play nicely over the HDMI output. 
+audio to play nicely over the HDMI output.
+
+> The settings below will add about 10 ms of latency, around a quarter frame
+> for cinema content and well below tolerance thresholds. If it bothers you, 
+> you can adjust it via the settings icon in the KODI player. Remember to
+> make it the default for all media. 
 ```
 {
 	"unit"    : "mn_kodi",
@@ -824,7 +829,7 @@ audio to play nicely over the HDMI output.
 	"type"    : "service",
 	"enabled" : 1,
 	"jackName": "zita-j2a",
-	"options" : "-d hdmi:vc4hdmi0 -p 1024 -n 3 -r 48000 -c 8",
+	"options" : "-d hdmi:vc4hdmi0 -p 256 -n 2 -r 48000 -c 8",
 	"inPorts" : [
 		{
 			"portName" : "playback_1"
