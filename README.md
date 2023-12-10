@@ -203,12 +203,8 @@ applications ready-to-use:
   filters to loudspeakers
 
 #### Video
-> There are some gstreamer-based video streaming services included, but they
-> are still in alpha and have not been tested with bookworm. Video
-> functionality is expected to improve, though, especially since the
-> Raspberry Pi 5 is likely to be able to sustain full-HD streaming without
-> artifacts, possibly even using NDI. So we might get inspired by dicaffeine
-> eventually.
+* mn_hdmi-[tx|rx], GStreamer-based HDMI-over-IP extender
+* the KODI media center
 
 #### Other tools
 * cpupower to set min and max core frequencies and governor (great to save power)

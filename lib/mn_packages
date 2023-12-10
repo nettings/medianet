@@ -25,7 +25,7 @@ csvtool ieee-data nmap bind9-dnsutils
 # updating / development
 git
 # kodi
-# glew-utils kodi libaudio2
+glew-utils kodi libaudio2
 
 # lirc (disabled for now)
 # lirc

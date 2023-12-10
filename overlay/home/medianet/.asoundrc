@@ -1,0 +1,25 @@
+pcm.jack_kodi {
+        type jack
+        playback_ports {
+                0 effect_0:in1
+                1 effect_0:in2
+                2 effect_0:in5
+                3 effect_0:in6
+                4 effect_0:in3
+                5 effect_0:in4
+        }
+        capture_ports {
+        }
+        hint {
+                show {
+                        @func refer
+                        name defaults.namehint.basic
+                }
+                description "KODI to JACK 5.1 sink"
+        }
+}
+
+ctl.jack_kodi {
+	type hw
+	card vc4hdmi0
+}

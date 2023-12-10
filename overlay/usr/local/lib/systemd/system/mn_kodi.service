@@ -1,21 +1,22 @@
 [Unit]
-Description = Kodi Media Center
-Requires= mn_jackd.service
-After = mn_jackd.service
-Requires = mn_mod-host.service
-After = remote-fs.target
-Wants = network-online.target
-After = network-online.target 
+Description=Kodi Media Center
+Requires=mn_jackd.service
+After=mn_jackd.service
+Requires=mn_mod-host.service
+After=remote-fs.target
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
-User = medianet
-Group = medianet
-Type = simple
-ExecStart = /usr/bin/kodi --standalone $OPTIONS
-Restart = always
-RestartSec = 5
+User=medianet
+Group=medianet
+Type=simple
+Environment="KODI_AE_SINK=ALSA"
+ExecStart=/usr/lib/aarch64-linux-gnu/kodi/kodi.bin --standalone -fs
+Restart=always
+RestartSec=5
 
 [Install]
-WantedBy = multi-user.target
+WantedBy=multi-user.target

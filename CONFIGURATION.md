@@ -624,3 +624,260 @@ to the sink's JACK clock.
         ]
 }
 ```   
+### KODI
+This snippet will help you integrate KODI into your medianet setup. It is
+assumed that you have a 5.1 amplifier that is connected via HDMI, or (in my
+case), an HDMI audio extractor connected to an active 5.1 speaker set.
+The JACK server can run in dummy mode or on any other sound device, such as
+the built-in mini-jack via the PWM device. `zita-j2a` will resample your
+audio to play nicely over the HDMI output. 
+```
+
+{
+	"unit"    : "mn_mod-host",
+	"type"    : "service",
+	"enabled" : 1,
+	"jackName": "mod-host",
+	"options" : "",
+	"inPorts" : [
+		{
+			"portName"   : "effect_0:in1"
+		},
+		{
+			"portName"   : "effect_0:in2"
+		},
+		{
+			"portName"   : "effect_0:in3"
+		},
+		{
+			"portName"   : "effect_0:in4"
+		},
+		{
+			"portName"   : "effect_0:in5"
+		},
+		{
+			"portName"   : "effect_0:in6"
+		},
+		{
+			"portName"   : "effect_0:in7"
+		},
+		{
+			"portName"   : "effect_0:in8"
+		},
+		{
+			"portName"   : "effect_0:in9"
+		},
+		{
+			"portName"   : "effect_0:in10"
+		},
+		{
+			"portName"   : "effect_0:in11"
+		},
+		{
+			"portName"   : "effect_0:in12"
+		}
+	],
+	"outPorts": [
+		{
+			"portName"   : "effect_19:outL",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 0
+		},{
+			"portName"   : "effect_19:outR",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 1
+		},{
+			"portName"   : "effect_39:out",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 3
+		},{
+			"portName"   : "effect_49:out",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 2
+		},{
+			"portName"   : "effect_59:outL",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 4
+		},{
+			"portName"   : "effect_59:outR",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 5
+		},{
+			"portName"   : "effect_0:out9",
+			"targetUnit" : "mn_listen",
+			"targetPort" : 0
+		},{
+			"portName"   : "effect_0:out10",
+			"targetUnit" : "mn_listen",
+			"targetPort" : 1
+		}
+	],
+	"config": [
+		"add http://gareus.org/oss/lv2/matrixmixer#i12o10 0",
+		"add http://gareus.org/oss/lv2/fil4#stereo 11",
+		"add http://stackingdwarves.net/lv2/sm#stereo 14",
+		"add http://gareus.org/oss/lv2/dpl#stereo 19",
+		"add http://gareus.org/oss/lv2/fil4#mono 31",
+		"add http://stackingdwarves.net/lv2/sm#stereo 34",
+		"add http://gareus.org/oss/lv2/dpl#mono 39",
+		"add http://gareus.org/oss/lv2/fil4#mono 41",
+		"add http://gareus.org/oss/lv2/dpl#mono 49",
+		"add http://gareus.org/oss/lv2/fil4#stereo 51",
+		"add http://stackingdwarves.net/lv2/sm#stereo 54",
+		"add http://gareus.org/oss/lv2/dpl#stereo 59",
+		"connect effect_0:out1 effect_11:inL",
+		"connect effect_0:out2 effect_11:inR",
+		"connect effect_11:outL effect_14:inL",
+		"connect effect_11:outR effect_14:inR",
+		"connect effect_14:outL effect_19:inL",
+		"connect effect_14:outR effect_19:inR",
+		"connect effect_0:out3 effect_31:in",
+		"connect effect_0:out4 effect_41:in",
+		"connect effect_31:out effect_34:inL",
+		"connect effect_41:out effect_34:inR",
+		"connect effect_34:outL effect_39:in",
+		"connect effect_34:outR effect_49:in",
+		"connect effect_0:out5 effect_51:inL",
+		"connect effect_0:out6 effect_51:inR",
+		"connect effect_51:outL effect_54:inL",
+		"connect effect_51:outR effect_54:inR",
+		"connect effect_54:outL effect_59:inL",
+		"connect effect_54:outR effect_59:inR",
+		"param_set 0 mix_1_1 1",
+		"param_set 0 mix_2_2 1",
+		"param_set 0 mix_3_3 1",
+		"param_set 0 mix_4_4 1",
+		"param_set 0 mix_5_5 1",
+		"param_set 0 mix_6_6 1",
+		"param_set 0 mix_7_7 0",
+		"param_set 0 mix_8_8 0",
+		"param_set 0 mix_9_9 0",
+		"param_set 0 mix_10_10 0",
+		"param_set 14 gain -20.0000",
+		"param_set 34 gain -10.0000",
+		"param_set 34 attL -10.0000",
+		"param_set 34 delayL 0.6000",
+		"param_set 34 attR -6.0000",
+		"param_set 34 delayR 0.6000",
+		"param_set 54 gain -20.0000",
+		"param_set 54 delayL 10.0000",
+		"param_set 54 delayR 10.0000",
+		"param_set 79 gain -2",
+		"param_set 79 threshold -2",
+		"param_set 99 gain -2",
+		"param_set 99 threshold -2",
+		"param_set 109 gain -2",
+		"param_set 109 threshold -2",
+		"param_set 119 gain -2",
+		"param_set 119 threshold -2"
+	]
+},
+{
+	"unit"    : "mn_shairport-sync",
+	"type"    : "service",
+	"enabled" : 1,
+	"jackName": "shairport-sync",
+	"inPorts" : [],
+	"outPorts": [
+		{
+			"portName"   : "out_L",
+			"targetUnit" : "mn_mod-host",
+			"targetPort" : 8
+		},
+		{
+			"portName"   : "out_R",
+			"targetUnit" : "mn_mod-host",
+			"targetPort" : 9
+		}
+	],
+	"config"  : [
+		"general = {",
+		"  name = \"[mn] %h\";",
+		"  interpolation = \"soxr\";",
+		"  output_backend = \"jack\";",
+		"  drift_tolerance_in_seconds = 0.015;",
+		"  ignore_volume_control = \"no\";",
+		"  interface = \"medianet0\";",
+		"}",
+		"jack = {",
+		"  soxr_resample_quality = \"very high\"",
+		"}",
+		"sessioncontrol = {",
+		"//  run_this_before_play_begins = \"/usr/local/bin/mn_disconnect zita-n2j.service\";",
+		"//  run_this_after_play_ends = \"/usr/local/bin/mn_connect zita-n2j.service\";",
+		"}",
+		"diagnostics = {",
+		"  statistics = \"yes\";",
+		"  log_verbosity = 1",
+		"}"
+	]
+},
+{
+	"unit"    : "mn_zita-j2a",
+	"type"    : "service",
+	"enabled" : 1,
+	"jackName": "zita-j2a",
+	"options" : "-d hdmi:vc4hdmi0 -p 1024 -n 3 -r 48000 -c 8",
+	"inPorts" : [
+		{
+			"portName" : "playback_1"
+		},
+		{
+			"portName" : "playback_2"
+		},
+		{
+			"portName" : "playback_3"
+		},
+		{
+			"portName" : "playback_4"
+		},
+		{
+			"portName" : "playback_5"
+		},
+		{
+			"portName" : "playback_6"
+		},
+		{
+			"portName" : "playback_7"
+		},
+		{
+			"portName" : "playback_8"
+		}
+	]
+}
+```
+Since KODI does not support JACK natively, the signal flow is a bit
+convoluted:
+
+* The `mn_kodi.service` file will force ALSA output by setting
+  `KODI_AE_SINK=ALSA`.
+* In the KODI system settings under *AUDIO*, you have to choose the `KODI to
+JACK 5.1 sink`.
+* In `/home/medianet/, an `.asoundrc` file provides the following:
+```
+pcm.jack_kodi {
+        type jack
+        playback_ports {
+                0 effect_0:in1
+                1 effect_0:in2
+                2 effect_0:in5
+                3 effect_0:in6
+                4 effect_0:in3
+                5 effect_0:in4
+        }
+        capture_ports {
+        }
+        hint {
+                show {
+                        @func refer
+                        name defaults.namehint.basic
+                }
+                description "KODI to JACK 5.1 sink"
+        }
+}
+
+ctl.jack_kodi {
+	type hw
+	card vc4hdmi0
+}
+```
