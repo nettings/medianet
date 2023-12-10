@@ -31,7 +31,7 @@ Unfortunately, this precludes the use of multiline strings, which would
 sometimes improve readability.
 * All keys are case sensitive.
 
-### top level structure
+### Top level structure
 
 The outer framework of top-level elements is as follows:
 ```
@@ -205,9 +205,9 @@ service will not fail even if some connection could not be made.
 > `mn_mod-host`) running unhindered, even if a peripheral service (a frequent
 > culprit was `mn_listen` due to an icecast2 issue) has failed.
 
-## example configuration snippets
+## Configuration examples
 
-### jackd using the RPi 4b's built-in PWM minijack output
+### JACK using the RPi 4b's built-in PWM minijack output
 
 ```
 {
@@ -252,7 +252,7 @@ Due to a minor bug in jackd, the audio device will only open successfully if
 we additionally specify zero input channels and two output channels (`-i`
 and `-o`), although this should be implied by `-P` already.
 
-### jackd using the RPi 4B's HDMI output
+### JACK using the RPi 4B's HDMI output
 
 ```
 {
@@ -278,7 +278,10 @@ Ways to force-hotplug the hardware to always provide this device and to
 enable up to 8 channel playback for surround sound applications are
 currently under investigation.
 
-### jackd using Hifiberry products
+> For an alternative approach, check out the [KODI section](#kodi), which uses
+> `zita-j2a` for the job and has performed reliably in a few installations.
+
+### JACK using Hifiberry products
 #### HifiBerry DAC+ADC
 To enable the driver for this card, add
 ```
@@ -320,7 +323,7 @@ bootConfig : [
 ```
 If you need lower latency, it is possible to run Hifiberry cards at `-p 128`
 without any problems.
-#### other Hifiberry products
+#### Other Hifiberry products
 The JACK settings generally remain the same. Just add the correct overlay as
 per the Hifiberry documentation, and for devices without inputs, use `-P` 
 ("playback only") instead of `-D` ("duplex") in JACK options, and leave the
@@ -433,7 +436,7 @@ docroot.
 }
 ```
 
-### streaming audio to other [mn] medianet hosts
+### Streaming audio to other [mn] medianet hosts
 The zita-njbridge package will enable you to stream very low-latency,
 uncompressed audio between hosts running JACK with unsynchronised sample
 clocks, using very-high-quality dynamic resampling.
@@ -504,7 +507,7 @@ automatically punch a hole in the firewall for you.
 }
 ```
 
-### providing an AirPlay sink with shairport-sync
+### Providing an AirPlay/AirPlay2 sink with shairport-sync
 Thanks to Mike Brady and his helpful attitude towards accepting a JACK
 backend to shairport-sync, AirPlay and Airplay2 audio can now be fully
 integrated into a medianet audio system. 
@@ -632,7 +635,11 @@ The JACK server can run in dummy mode or on any other sound device, such as
 the built-in mini-jack via the PWM device. `zita-j2a` will resample your
 audio to play nicely over the HDMI output. 
 ```
-
+{
+	"unit"    : "mn_kodi",
+	"type"    : "service",
+	"enabled" : 1
+},
 {
 	"unit"    : "mn_mod-host",
 	"type"    : "service",
@@ -853,7 +860,7 @@ convoluted:
   `KODI_AE_SINK=ALSA`.
 * In the KODI system settings under *AUDIO*, you have to choose the `KODI to
 JACK 5.1 sink`.
-* In `/home/medianet/, an `.asoundrc` file provides the following:
+* In `/home/medianet/, an `.asoundrc` file provides the matching endpoints:
 ```
 pcm.jack_kodi {
         type jack
