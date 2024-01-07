@@ -1,12 +1,12 @@
 [Unit]
-Description=[mn] resampling Network-to-JACK bridge
+Description=[mn] resampling Network-to-JACK bridge [%I]
 Requires=mn_jackd.service
 After=mn_jackd.service
 After=network-online.target
 
 [Service]
 # we read Environment= from a drop-in file
-# /etc/systemd/system/zita-n2j.service.d/zita-n2j.service.conf
+# /etc/systemd/system/zita-n2j@.service.d/zita-n2j@.service.conf
 # created by mn_config_update
 User=medianet
 LimitRTPRIO=85

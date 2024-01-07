@@ -11,8 +11,6 @@ LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
 RuntimeDirectory=mpv
-# this is a player (source), hence no upstream connections
-#ExecStartPre=/usr/local/bin/mn_wait_for_upstream %n
 ExecStart=/usr/bin/mpv \
 	--ao="jack" \
 	--jack-name="mpv-%i" \

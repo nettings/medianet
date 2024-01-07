@@ -1,22 +1,20 @@
 [Unit]
-Description=[mn] resampling Network-to-JACK bridge
+Description=[mn] resampling ALSA-to-JACK bridge [%I]
 Requires=mn_jackd.service
 After=mn_jackd.service
-After=network-online.target
 
 [Service]
 # we read Environment= from a drop-in file
-# /etc/systemd/system/zita-n2j.service.d/zita-n2j.service.conf
+# /etc/systemd/system/zita-a2j@.service.d/zita-a2j@.service.conf
 # created by mn_config_update
-User=medianet
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
-ExecStartPre=/usr/local/bin/mn_wait_net medianet0
-ExecStart=/usr/bin/zita-n2j --jname "${JACKNAME}" $OPTIONS
+User=medianet
+ExecStart=/usr/local/bin/mn_silencer "Starting synchronisation." /usr/bin/zita-a2j -j "${JACKNAME}" $OPTIONS
 ExecStartPost=-/usr/local/bin/mn_connect %n --timeout 30 --interval 5
 RestartSec=5
 Restart=always
-# zita-n2j will repeat its last buffer on shutdown, which sounds ugly.
+# zita-a2j will repeat its last buffer on shutdown, which sounds ugly.
 # disconnect first, then kill
 ExecStop=-/usr/local/bin/mn_disconnect %n
 

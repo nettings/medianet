@@ -21,12 +21,17 @@ normal operation, so the system will tolerate hard shutdowns well.
 
 ## Changes in RaspiOS "Bookworm"
 
-> This is an experimental port to the latest RaspiOS based on Debian
-> Bookworm. It is now deploying correctly and reaching basic functionality
-> with the example configuration, but hasn't seen much testing on top of
-> that. If you need to deploy a reliable system quickly and don't need to
-> use the latest Pi5 hardware, it is recommended to stick to the `bullseye64`
-> branch for now.
+> This is a quite fresh port to the latest RaspiOS based on Debian
+> Bookworm. It is now deploying correctly and should have the same 
+> level of functionality with the example configuration.
+> Additionally, it has vastly better video performance and a much
+> simplified, faster and more robust JACK connection management.
+
+### Known issues
+The built-in sound (PCM device through the TRRS mini-jack connector) does
+not work reliably under all circumstances. You might find you're hearing
+massive crackles and distortion. It is recommended to use a proper soundcard
+for now. Working on a fix.
 
 ### /boot is now /boot/firmware
 The bootfs partition is now mounted under /boot/firmware, which means that
@@ -198,12 +203,8 @@ applications ready-to-use:
   filters to loudspeakers
 
 #### Video
-> There are some gstreamer-based video streaming services included, but they
-> are still in alpha and have not been tested with bookworm. Video
-> functionality is expected to improve, though, especially since the
-> Raspberry Pi 5 is likely to be able to sustain full-HD streaming without
-> artifacts, possibly even using NDI. So we might get inspired by dicaffeine
-> eventually.
+* mn_hdmi-[tx|rx], GStreamer-based HDMI-over-IP extender
+* the KODI media center
 
 #### Other tools
 * cpupower to set min and max core frequencies and governor (great to save power)

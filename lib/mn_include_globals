@@ -66,8 +66,8 @@ SYSTEMD_MEDIANET_UNITS="
 	mn_cpufreq.service
 	mn_cpupower.service
 	mn_gpioctl.service
-	mn_hdmi_tx.service
-	mn_hdmi_rx.service
+	mn_hdmi-tx.service
+	mn_hdmi-rx.service
 	mn_icecast2.service
 	mn_jackd.service
 	mn_jconvolver.service
@@ -76,9 +76,6 @@ SYSTEMD_MEDIANET_UNITS="
 	mn_mod-host.service
 	mn_mpv.service
 	mn_shairport-sync.service
-	mn_v4l2rtspserver.service
-	mn_video_rx.service
-	mn_video_tx.service
 	mn_wifi-rx.service
 	mn_wifi-tx.service
 	mn_zita-a2j.service

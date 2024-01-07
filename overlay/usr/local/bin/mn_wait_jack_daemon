@@ -3,9 +3,73 @@
 
 . /medianet/lib/mn_includes
 
-JACK_SOCKET=
-while [[ -z "$JACK_SOCKET" ]] ; do
-	JACK_SOCKET=`"$FIND" /dev/shm -type s -regextype posix-extended -regex '/dev/shm/jack_[[:alnum:]]+_[0-9]+_[0-9]+' -exec ls -1 {} \;`
-	sleep 0.5
+JACK_SOCKET_PATH=/dev/shm
+
+function help {
+	cat << EOF
+
+${PROGNAME} blocks until a JACK socket appears in $JACK_SOCKET_PATH.
+You can use it to make sure a JACK server is available before performing
+other tasks.
+
+Usage: $PROGNAME -t 5 && echo "found JACK!" || echo "Timeout expired."
+
+	--help		This help.
+	 -h
+
+	--timeout n	A timeout in seconds. If it expires, terminate
+	 -t		with return value $ERR_TIMEOUT.
+
+	--verbose	Write messages to stdout.
+	 -v
+
+EOF
+exit 0
+}
+
+TIMEOUT=-1
+VERBOSE=
+
+while [[ -n "$1" ]] ; do
+	case "$1" in
+	-h|--help)
+		help
+		;;
+	-t|--timeout)
+		if [[ "$2" =~ [0-9]+ ]] ; then
+			shift
+			TIMEOUT="$1"
+		else
+			bail "--timeout requires a numerical argument (timeout in seconds)"
+		fi
+		;;
+	-v|--verbose)
+		VERBOSE=1
+		;;
+	-*)
+		bail "Unknown option $1."
+		;;
+	*)
+		bail "Unknown argument $1."
+		;;
+	esac
+	shift
 done
-echo "Found $JACK_SOCKET. JACK server is ready!"
+
+JACK_SOCKET=
+while (( TIMEOUT-- != 0 )) ; do
+	JACK_SOCKET=$( \
+		"$FIND" "$JACK_SOCKET_PATH" \
+			-type s \
+			-regextype posix-extended \
+			-regex '/dev/shm/jack_[[:alnum:]]+_[0-9]+_[0-9]+' \
+			-exec ls -1 {} \; 2> /dev/null \
+	)
+	if [[ -n "$JACK_SOCKET" ]] ; then
+		verbose "Found $JACK_SOCKET. JACK server is ready!"
+		exit 0
+	fi
+	sleep 1
+done
+verbose "Timeout expired."
+exit $ERR_TIMEOUT

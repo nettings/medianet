@@ -1,21 +1,19 @@
 [Unit]
-Description=[mn] Wifi RTP stream receiver
+Description=[mn] JACK-to-Network bridge [%I]
 Requires=mn_jackd.service
 After=mn_jackd.service
 After=network-online.target
 
 [Service]
-Type=exec
 # we read Environment= from a drop-in file
-# /etc/systemd/system/wifi-rx.service.d/wifi-rx.service.conf
+# /etc/systemd/system/zita-j2n@.service.d/zita-j2n@.service.conf
 # created by mn_config_update
 LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
-ExecStart=/usr/bin/mpv --quiet --ao="jack" --vo=null --jack-name="${JACKNAME}" --jack-connect="no" --profile="low-latency" --audio-buffer=0.1 $OPTIONS
+ExecStart=/usr/bin/zita-j2n --jname "${JACKNAME}" $OPTIONS
 ExecStartPost=-/usr/local/bin/mn_connect %n --timeout 30 --interval 5
-ExecStop=-/usr/local/bin/mn_disconnect %n
-RestartSec=1
+RestartSec=5
 Restart=always
 
 [Install]

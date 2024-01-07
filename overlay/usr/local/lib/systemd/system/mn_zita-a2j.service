@@ -11,7 +11,7 @@ LimitRTPRIO=85
 LimitMEMLOCK=700000000
 User=medianet
 ExecStart=/usr/local/bin/mn_silencer "Starting synchronisation." /usr/bin/zita-a2j -j "${JACKNAME}" $OPTIONS
-ExecStartPost=-/usr/local/bin/mn_connect %n
+ExecStartPost=-/usr/local/bin/mn_connect %n --timeout 30 --interval 5
 RestartSec=5
 Restart=always
 # zita-a2j will repeat its last buffer on shutdown, which sounds ugly.

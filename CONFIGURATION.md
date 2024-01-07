@@ -31,7 +31,7 @@ to other common configuration file formats:
   which would sometimes improve readability.
 * All keys are case sensitive.
 
-### top level structure
+### Top level structure
 
 The outer framework of top-level elements is as follows:
 ```
@@ -184,20 +184,30 @@ choice now, but we're stuck with it for the time being:
 ```
 
 ### JACK connection management
+The automatic configuration updater (or a manual call to `mn_config_update`) 
+will read the JACK connection graph fron the `config.json` file and write each
+service's incoming and outgoing connections to
+`/etc/systemd/system/foo.service.d/foo.service.connections`.
 
-The system tries to connect all JACK clients on startup according to the
-connections specified in `config.json`. If a client dies and is restarted,
-both its up- and downstream connections are reconnected automatically.
+Each service performs
+```
+ExecStartPost=-/usr/local/bin/mn_connect foo.service --timeout 30 --interval 5
+```
+as part of its post-startup routine, which will attempt to connect all ports
+as quickly as possible, and keep retrying to connect failed ports (e.g. to
+clients who might still be starting up) every 5 seconds for a total of 30
+seconds. The call is prepended with a `-` (minus) sign, which means the
+service will not fail even if some connection could not be made.
 
-If a connection fails, the service will fail after a timeout, and attempt to
-restart. This sometimes leads to undesired behaviour, where it would be
-better to keep a service running in a degraded state with one or more
-failed connections rather than attempting restarts. The heuristic for the
-port connections may change in the future.
+> This behaviour has changed - previously, a failed JACK client could cause
+> connection timeouts in others and force them to restart.
+> The idea behind the new behaviour is to leave core services (such as
+> `mn_mod-host`) running unhindered, even if a peripheral service (a frequent
+> culprit was `mn_listen` due to an icecast2 issue) has failed.
 
-## example configuration snippets
+## Configuration examples
 
-### jackd using the RPi 4b's built-in PWM minijack output
+### JACK using the RPi 4b's built-in PWM minijack output
 
 ```
 {
@@ -242,7 +252,7 @@ Due to a minor bug in jackd, the audio device will only open successfully if
 we additionally specify zero input channels and two output channels (`-i`
 and `-o`), although this should be implied by `-P` already.
 
-### jackd using the RPi 4B's HDMI output
+### JACK using the RPi 4B's HDMI output
 
 ```
 {
@@ -268,8 +278,11 @@ Ways to force-hotplug the hardware to always provide this device and to
 enable up to 8 channel playback for surround sound applications are
 currently under investigation.
 
-### jackd using the HifiBerry DAC+ADC
+> For an alternative approach, check out the [KODI section](#kodi), which uses
+> `zita-j2a` for the job and has performed reliably in a few installations.
 
+### JACK using Hifiberry products
+#### HifiBerry DAC+ADC
 To enable the driver for this card, add
 ```
 bootConfig : [
@@ -308,9 +321,15 @@ bootConfig : [
 	]
 }
 ```
+If you need lower latency, it is possible to run Hifiberry cards at `-p 128`
+without any problems.
+#### Other Hifiberry products
+The JACK settings generally remain the same. Just add the correct overlay as
+per the Hifiberry documentation, and for devices without inputs, use `-P` 
+("playback only") instead of `-D` ("duplex") in JACK options, and leave the
+`inPorts` array empty.
 
 ### mod-host
-
 mod-host provides an easy way to run a DSP chain of LV2 plugins on the Pi.
 Its setup is slightly tricky because each plugin running in mod-host
 presents as a separate JACK client called effect_N, where N is an index set
@@ -417,23 +436,26 @@ docroot.
 }
 ```
 
-### streaming audio to other [mn] medianet hosts
-
+### Streaming audio to other [mn] medianet hosts
 The zita-njbridge package will enable you to stream very low-latency,
 uncompressed audio between hosts running JACK with unsynchronised sample
 clocks, using very-high-quality dynamic resampling.
-
 #### source configuration
-
 This snippet will send audio from the local JACK graph onto an
 administratively-scoped IPv4 multicast group, where it can be picked up by
 an arbitrary number of receivers on the local network.
 
-Be careful: dumb switches that do not support IGMP snooping will just
-duplicate multicast traffic to all ports, no matter whether the client
-behind that ports wants it or not. Using more than a few multicast streams
-under such conditions will quickly degrate network performance.
+> Be careful: dumb switches that do not support IGMP snooping will just
+> duplicate multicast traffic to all ports, no matter whether the client
+> behind that ports wants it or not. Using more than a few multicast streams
+> under such conditions will quickly degrate network performance.
 
+If your network addresses are stable and known in advance, *and* you only 
+want to send audio to one receiver, it's better to use a normal unicast IPv4
+address.
+
+Stick to port 30000 - `mn_config_update` will automatically open that port in
+the firewall when it detects an active zita-njbridge service.
 ```
 {
 	"unit"    : "mn_zita-j2n",
@@ -451,9 +473,7 @@ under such conditions will quickly degrate network performance.
 	]
 }
 ```
-
 #### sink configuration
-
 This snippet will receive audio from an administratively-scoped IPv4
 multicast group and make it available to the local JACK graph. Because the
 zita-n2j client has to perform dynamic resampling, its CPU load is
@@ -487,19 +507,19 @@ automatically punch a hole in the firewall for you.
 }
 ```
 
-### providing an AirPlay sink with shairport-sync
-
+### Providing an AirPlay/AirPlay2 sink with shairport-sync
 Thanks to Mike Brady and his helpful attitude towards accepting a JACK
-backend to shairport-sync, AirPlay audio can now be fully integrated into a
-medianet audio system. You do not need an Apple device to use this audio
-source - a number of free Android apps are available to stream AirPlay, and
-it is also supported by PulseAudio with its RAOP sink and source.
+backend to shairport-sync, AirPlay and Airplay2 audio can now be fully
+integrated into a medianet audio system. 
 
+You do not need an Apple device to use this audio source - a number of
+free Android apps are available to stream AirPlay, and it is also
+supported by PulseAudio with its RAOP sink and source.
 ```
 {
 	"unit"    : "mn_shairport-sync",
 	"type"    : "service",
-	"enabled" : 0,
+	"enabled" : 1,
 	"jackName": "shairport-sync",
 	"inPorts" : [],
 	"outPorts": [
@@ -623,5 +643,342 @@ unnecessary traffic on dumb switches that do not implement IGMP snooping.
 		"targetPort" : 5
 		}
 	]
+}
+```
+
+### HDMI over IP
+With two Raspberry Pi 4B and a cheap HDMI USB2 grabber, it is possible
+to create a cheap HDMI over IP extender with reasonable, although not
+perfect, quality. Video is grabbed by a `gstreamer` chain and forwarded
+as quickly as possible, and received without buffer or resynchronisation
+by another gstreamer chain on the sink.
+The audio is transmitted independently via `zita-njbridge` and resampled
+to the sink's JACK clock.
+
+> Again, you can opt for multicasting, which is easy to configure and will
+> allow multiple sinks without extra costs, but it will rapidly congest
+> your network if you have switches that do not do IGMP snooping.
+> Alternatively, you can insert a (fixed) IPv4 address.
+
+> mn_hdmi-[tx|rx] will also accept a local hostname (which will be looked
+> up and replaced by an IP address before calling gstreamer). This needs to
+> be implemented for zita-njbridge as well.
+#### source configuration
+```
+{
+	"unit"    : "mn_hdmi-tx",
+        "type"    : "service",
+        "enabled" : 1,
+        "options" : "/dev/video0 239.192.17.43 29999"
+},
+{
+        "unit"    : "mn_zita-j2n@hdmi",
+        "type"    : "service",
+        "enabled" : 1,
+        "jackName": "hdmi_sender",
+        "options" : "--chan 2 239.192.17.44 30000 medianet0",
+        "inPorts": [
+                {
+                        "portName" : "in_1"
+                },
+                {
+                        "portName" : "in_2"
+                }
+        ]
+}
+```
+#### sink configuration
+```
+{
+        "unit"    : "mn_hdmi-rx",
+        "type"    : "service",
+        "enabled" : 1,
+        "options" : "239.192.17.43 29999"
+},
+{
+        "unit"    : "mn_zita-n2j@hdmi",
+        "type"    : "service",
+         "enabled" : 1,
+        "jackName": "zita-n2j",
+        "options" : "--chan 1,2 --buff 30 239.192.17.44 30000 me
+        "inPorts" : [],
+        "outPorts": [
+                {
+                        "portName"   : "out_1",
+                        "targetUnit" : "mn_mod-host",
+                        "targetPort" : 4
+                },
+                {
+                        "portName"   : "out_2",
+                        "targetUnit" : "mn_mod-host",
+                        "targetPort" : 5
+                }
+        ]
+}
+```   
+### KODI
+This snippet will help you integrate KODI into your medianet setup. It is
+assumed that you have a 5.1 amplifier that is connected via HDMI, or (in my
+case), an HDMI audio extractor connected to an active 5.1 speaker set.
+The JACK server can run in dummy mode or on any other sound device, such as
+the built-in mini-jack via the PWM device. `zita-j2a` will resample your
+audio to play nicely over the HDMI output.
+
+> The settings below will add about 10 ms of latency, around a quarter frame
+> for cinema content and well below tolerance thresholds. If it bothers you, 
+> you can adjust it via the settings icon in the KODI player. Remember to
+> make it the default for all media. 
+```
+{
+	"unit"    : "mn_kodi",
+	"type"    : "service",
+	"enabled" : 1
+},
+{
+	"unit"    : "mn_mod-host",
+	"type"    : "service",
+	"enabled" : 1,
+	"jackName": "mod-host",
+	"options" : "",
+	"inPorts" : [
+		{
+			"portName"   : "effect_0:in1"
+		},
+		{
+			"portName"   : "effect_0:in2"
+		},
+		{
+			"portName"   : "effect_0:in3"
+		},
+		{
+			"portName"   : "effect_0:in4"
+		},
+		{
+			"portName"   : "effect_0:in5"
+		},
+		{
+			"portName"   : "effect_0:in6"
+		},
+		{
+			"portName"   : "effect_0:in7"
+		},
+		{
+			"portName"   : "effect_0:in8"
+		},
+		{
+			"portName"   : "effect_0:in9"
+		},
+		{
+			"portName"   : "effect_0:in10"
+		},
+		{
+			"portName"   : "effect_0:in11"
+		},
+		{
+			"portName"   : "effect_0:in12"
+		}
+	],
+	"outPorts": [
+		{
+			"portName"   : "effect_19:outL",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 0
+		},{
+			"portName"   : "effect_19:outR",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 1
+		},{
+			"portName"   : "effect_39:out",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 3
+		},{
+			"portName"   : "effect_49:out",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 2
+		},{
+			"portName"   : "effect_59:outL",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 4
+		},{
+			"portName"   : "effect_59:outR",
+			"targetUnit" : "mn_zita-j2a",
+			"targetPort" : 5
+		},{
+			"portName"   : "effect_0:out9",
+			"targetUnit" : "mn_listen",
+			"targetPort" : 0
+		},{
+			"portName"   : "effect_0:out10",
+			"targetUnit" : "mn_listen",
+			"targetPort" : 1
+		}
+	],
+	"config": [
+		"add http://gareus.org/oss/lv2/matrixmixer#i12o10 0",
+		"add http://gareus.org/oss/lv2/fil4#stereo 11",
+		"add http://stackingdwarves.net/lv2/sm#stereo 14",
+		"add http://gareus.org/oss/lv2/dpl#stereo 19",
+		"add http://gareus.org/oss/lv2/fil4#mono 31",
+		"add http://stackingdwarves.net/lv2/sm#stereo 34",
+		"add http://gareus.org/oss/lv2/dpl#mono 39",
+		"add http://gareus.org/oss/lv2/fil4#mono 41",
+		"add http://gareus.org/oss/lv2/dpl#mono 49",
+		"add http://gareus.org/oss/lv2/fil4#stereo 51",
+		"add http://stackingdwarves.net/lv2/sm#stereo 54",
+		"add http://gareus.org/oss/lv2/dpl#stereo 59",
+		"connect effect_0:out1 effect_11:inL",
+		"connect effect_0:out2 effect_11:inR",
+		"connect effect_11:outL effect_14:inL",
+		"connect effect_11:outR effect_14:inR",
+		"connect effect_14:outL effect_19:inL",
+		"connect effect_14:outR effect_19:inR",
+		"connect effect_0:out3 effect_31:in",
+		"connect effect_0:out4 effect_41:in",
+		"connect effect_31:out effect_34:inL",
+		"connect effect_41:out effect_34:inR",
+		"connect effect_34:outL effect_39:in",
+		"connect effect_34:outR effect_49:in",
+		"connect effect_0:out5 effect_51:inL",
+		"connect effect_0:out6 effect_51:inR",
+		"connect effect_51:outL effect_54:inL",
+		"connect effect_51:outR effect_54:inR",
+		"connect effect_54:outL effect_59:inL",
+		"connect effect_54:outR effect_59:inR",
+		"param_set 0 mix_1_1 1",
+		"param_set 0 mix_2_2 1",
+		"param_set 0 mix_3_3 1",
+		"param_set 0 mix_4_4 1",
+		"param_set 0 mix_5_5 1",
+		"param_set 0 mix_6_6 1",
+		"param_set 0 mix_7_7 0",
+		"param_set 0 mix_8_8 0",
+		"param_set 0 mix_9_9 0",
+		"param_set 0 mix_10_10 0",
+		"param_set 14 gain -20.0000",
+		"param_set 34 gain -10.0000",
+		"param_set 34 attL -10.0000",
+		"param_set 34 delayL 0.6000",
+		"param_set 34 attR -6.0000",
+		"param_set 34 delayR 0.6000",
+		"param_set 54 gain -20.0000",
+		"param_set 54 delayL 10.0000",
+		"param_set 54 delayR 10.0000",
+		"param_set 79 gain -2",
+		"param_set 79 threshold -2",
+		"param_set 99 gain -2",
+		"param_set 99 threshold -2",
+		"param_set 109 gain -2",
+		"param_set 109 threshold -2",
+		"param_set 119 gain -2",
+		"param_set 119 threshold -2"
+	]
+},
+{
+	"unit"    : "mn_shairport-sync",
+	"type"    : "service",
+	"enabled" : 1,
+	"jackName": "shairport-sync",
+	"inPorts" : [],
+	"outPorts": [
+		{
+			"portName"   : "out_L",
+			"targetUnit" : "mn_mod-host",
+			"targetPort" : 8
+		},
+		{
+			"portName"   : "out_R",
+			"targetUnit" : "mn_mod-host",
+			"targetPort" : 9
+		}
+	],
+	"config"  : [
+		"general = {",
+		"  name = \"[mn] %h\";",
+		"  interpolation = \"soxr\";",
+		"  output_backend = \"jack\";",
+		"  drift_tolerance_in_seconds = 0.015;",
+		"  ignore_volume_control = \"no\";",
+		"  interface = \"medianet0\";",
+		"}",
+		"jack = {",
+		"  soxr_resample_quality = \"very high\"",
+		"}",
+		"sessioncontrol = {",
+		"//  run_this_before_play_begins = \"/usr/local/bin/mn_disconnect zita-n2j.service\";",
+		"//  run_this_after_play_ends = \"/usr/local/bin/mn_connect zita-n2j.service\";",
+		"}",
+		"diagnostics = {",
+		"  statistics = \"yes\";",
+		"  log_verbosity = 1",
+		"}"
+	]
+},
+{
+	"unit"    : "mn_zita-j2a",
+	"type"    : "service",
+	"enabled" : 1,
+	"jackName": "zita-j2a",
+	"options" : "-d hdmi:vc4hdmi0 -p 256 -n 2 -r 48000 -c 8",
+	"inPorts" : [
+		{
+			"portName" : "playback_1"
+		},
+		{
+			"portName" : "playback_2"
+		},
+		{
+			"portName" : "playback_3"
+		},
+		{
+			"portName" : "playback_4"
+		},
+		{
+			"portName" : "playback_5"
+		},
+		{
+			"portName" : "playback_6"
+		},
+		{
+			"portName" : "playback_7"
+		},
+		{
+			"portName" : "playback_8"
+		}
+	]
+}
+```
+Since KODI does not support JACK natively, the signal flow is a bit
+convoluted:
+
+* The `mn_kodi.service` file will force ALSA output by setting
+  `KODI_AE_SINK=ALSA`.
+* In the KODI system settings under *AUDIO*, you have to choose the `KODI to
+JACK 5.1 sink`.
+* In `/home/medianet/, an `.asoundrc` file provides the matching endpoints:
+```
+pcm.jack_kodi {
+        type jack
+        playback_ports {
+                0 effect_0:in1
+                1 effect_0:in2
+                2 effect_0:in5
+                3 effect_0:in6
+                4 effect_0:in3
+                5 effect_0:in4
+        }
+        capture_ports {
+        }
+        hint {
+                show {
+                        @func refer
+                        name defaults.namehint.basic
+                }
+                description "KODI to JACK 5.1 sink"
+        }
+}
+
+ctl.jack_kodi {
+	type hw
+	card vc4hdmi0
 }
 ```

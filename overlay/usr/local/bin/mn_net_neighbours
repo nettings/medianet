@@ -200,13 +200,13 @@ for m in ${!N_STAT[@]} ; do
 	N_OUI[$m]=$(echo "$m" | "$CUT" -s -d ':' -f 1-3 | "$TR" -d ':')
 	# look up hostname, start with IPv4
 	if [[ -n "${N_IP4[$m]}" ]] ; then
-		N_HOST[$m]=$(host -t A "${N_IP4[$m]}" | "$SED" -En 's/^.* domain name pointer ([^.]+)\..*$/\1/p')
+		N_HOST[$m]=$("$HOST" -t A "${N_IP4[$m]}" | "$SED" -En 's/^.* domain name pointer ([^.]+)\..*$/\1/p')
 	# try local IPv6 lookup next
 	elif [[ -n "${N_IP6L[$m]}" ]] ; then
-		N_HOST[$m]+=$(host -t AAAA "${N_IP6L[$m]}" | "$SED" -En 's/^.* domain name pointer ([^.]+)\..*$/\1/p')
+		N_HOST[$m]+=$("$HOST" -t AAAA "${N_IP6L[$m]}" | "$SED" -En 's/^.* domain name pointer ([^.]+)\..*$/\1/p')
 	# try global IPv6
 	elif [[ -n "${N_IP6G[$m]}" ]] ; then
-		N_HOST[$m]+=$(host -t AAAA "${N_IP6G[$m]}" | "$SED" -En 's/^.* domain name pointer ([^.]+)\..*$/\1/p')
+		N_HOST[$m]+=$("$HOST" -t AAAA "${N_IP6G[$m]}" | "$SED" -En 's/^.* domain name pointer ([^.]+)\..*$/\1/p')
 	fi
 	# if multiple A/AAAA entries, only print the first and mark
 	if [[ "${N_HOST[$m]}" =~ $'\n'.+ ]] ; then

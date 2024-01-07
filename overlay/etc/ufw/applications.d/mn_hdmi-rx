@@ -1,0 +1,4 @@
+[mn_hdmi-rx]
+title=mn_hdmi-rx
+description=[mn] HDMI over IP receiver
+ports=29999/udp

@@ -1,0 +1,4 @@
+[mn_kodi]
+title=mn_kodi
+description=[mn] KODI media server
+ports=8080/tcp|9090/tcp

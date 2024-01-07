@@ -1,4 +1,0 @@
-[mn_video_tx]
-title=[mn] mn_video_tx
-description=Low latency HD video stream source
-ports=29999/udp
