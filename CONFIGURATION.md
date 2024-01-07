@@ -26,9 +26,9 @@ automated deployment tools. It does however have a few differences compared
 to other common configuration file formats:
 * You cannot use comments.
 * You cannot use tab or other meta characters inside string literals (the
-JSON structure itself may well be formatted with tabs for better readability).
-Unfortunately, this precludes the use of multiline strings, which would
-sometimes improve readability.
+  JSON structure itself may well be formatted with tabs for better
+  readability). Unfortunately, this precludes the use of multiline strings,
+  which would sometimes improve readability.
 * All keys are case sensitive.
 
 ### top level structure
@@ -536,3 +536,92 @@ it is also supported by PulseAudio with its RAOP sink and source.
 	]
 }
 ```   
+### streaming low-latency video between two Pis
+
+This recipe essentially lets you create a HDMI over IP extender.
+The source Pi needs a USB HDMI grabber that can output 1080p at 30 frames
+per second, and the sink Pi just needs to be connected to a screen or
+projector. 
+
+The video is streamed in frame-by-frame MJPEG format, because
+that's what usually comes out of these USB gadgets. Since no further codecs
+are involved, the latency is low, but the bandwidth requirements can be
+substantial (peaking at 80-100 Mbit/s). Note that the video quality is
+ultimately limited by the USB grabber. Slight color banding in skies or dark
+areas and the occasional movement glich cannot be ruled out.
+
+Audio is handled by zita-njbridge via JACK as usual. The streams usually
+arrive reasonably synchronized, but you may have to double-check and adjust
+delays depending on your network.
+
+This example uses IP multicasting for audio and video. The big advantage is
+that it's easy to find and you can distribute the content to multiple sinks
+at no extra cost. The big downside is that this creates massive amounts of
+unnecessary traffic on dumb switches that do not implement IGMP snooping.
+
+#### source (sender)
+```
+{
+	"unit"    : "mn_hdmi_tx",
+	"type"    : "service",
+	"enabled" : 1,
+	"options" : "/dev/video0 239.192.17.43 29999"
+},
+{
+        "unit"    : "mn_zita-j2n",
+        "type"    : "service",
+        "enabled" : 1,
+        "jackName": "hdmi_sender",
+                        "options" : "--chan 2 239.192.17.44 30000 medianet0",
+                        "inPorts": [
+                                {
+                                        "portName" : "in_1"
+                                },
+                                {
+                                        "portName" : "in_2"
+                                }
+                        ]
+                },
+                {
+                        "unit"    : "mn_zita-a2j",
+                        "type"    : "service",
+                        "enabled" : 1,
+                        "jackName": "hdmi_grabber",
+                        "options" : "-d hw:MS2109 -c 2 -r 48000 -p 256 -n 3",
+                        "outPorts": [
+                                {
+                                        "portName"   : "capture_1",
+                                        "targetUnit" : "mn_zita-j2n",
+                                        "targetPort" : 0
+                                },
+                                {
+                                        "portName" : "capture_2",
+                                        "targetUnit" : "mn_zita-j2n",
+                                        "targetPort" : 1
+                                },
+
+
+```
+
+#### sink (receiver)
+{
+	"unit"    : "mn_zita-n2j",
+	"type"    : "service",
+	"enabled" : 1,
+	"jackName": "hdmi_receiver",
+	"options" : "--chan 1,2 --buff 20 239.192.1.1 30000 medianet0",
+	"inPorts" : [],
+	"outPorts": [
+		{
+		"portName"   : "out_1",
+		"targetUnit" : "mn_mod-host",
+		"targetPort" : 4
+		},
+		{
+		"portName"   : "out_2",
+		"targetUnit" : "mn_mod-host",
+		"targetPort" : 5
+		}
+	]
+}
+```
