@@ -79,6 +79,8 @@ function get_platform {
 	                echo -n "pi4"
 	        elif [[ "$HW" =~ ^Raspberry\ Pi\ 400\ Rev ]] ; then
 			echo -n "pi400"
+		elif [[ "$HW" =~ ^Raspberry\ Pi\ 5\ Model\ B\ Rev ]] ; then
+			echo -n "pi5"
 		else
 			echo -n UNKNOWN
 		fi
