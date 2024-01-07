@@ -87,6 +87,11 @@ need a screen and keyboard attached, all should work headless via SSH.
 > requires the Pi to reboot multiple times. If you're impatient, you can
 > ping it and see the reboot breaks.
 
+> As of Bookworm, it seems that the initial automatic reboot fails - if you 
+> see your Pi idling without any LED activity on the board and Ethernet socket,
+> just unplug and reconnect the power - the system should now come up as
+> expected.
+
 1. Log into the system as user *medianet* with the password specified
 before.
 `ssh -A medianet@raspberrypi`
