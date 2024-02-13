@@ -483,7 +483,6 @@ An additional buffer setting of 20 ms is conservative and may be reduced to
 
 If you stick to the default port of 30000, mn_config_update will
 automatically punch a hole in the firewall for you.
-
 ```
 {
 	"unit"    : "mn_zita-n2j",
@@ -624,6 +623,7 @@ unnecessary traffic on dumb switches that do not implement IGMP snooping.
 ```
 
 #### sink (receiver)
+```
 {
 	"unit"    : "mn_zita-n2j",
 	"type"    : "service",
@@ -663,6 +663,7 @@ to the sink's JACK clock.
 > mn_hdmi-[tx|rx] will also accept a local hostname (which will be looked
 > up and replaced by an IP address before calling gstreamer). This needs to
 > be implemented for zita-njbridge as well.
+
 #### source configuration
 ```
 {
@@ -687,6 +688,7 @@ to the sink's JACK clock.
         ]
 }
 ```
+
 #### sink configuration
 ```
 {
@@ -716,6 +718,7 @@ to the sink's JACK clock.
         ]
 }
 ```   
+
 ### KODI
 This snippet will help you integrate KODI into your medianet setup. It is
 assumed that you have a 5.1 amplifier that is connected via HDMI, or (in my
