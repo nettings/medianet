@@ -6,3 +6,6 @@ from_package \
 	libsndfile1-dev libsamplerate0-dev \
 	libzita-convolver-dev \
 	libltc-dev 
+cd x42-plugins
+  make -f Makefile.git
+cd ..
