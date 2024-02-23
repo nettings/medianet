@@ -1,5 +1,3 @@
-# System-wide .bashrc file for interactive bash(1) shells.
-
 # To enable the settings / commands in this file for login shells as well,
 # this file has to be sourced in /etc/profile.
 
@@ -64,3 +62,7 @@ alias rm="rm -i"
 
 # set custom prompt with writable warning
 PROMPT_COMMAND='/usr/local/bin/mn_is_writable && PS1="$SHELLPROMPT_WRITABLE" || PS1="$SHELLPROMPT"'
+
+/usr/local/bin/mn_info
+sudo /usr/local/bin/mn_identify
+

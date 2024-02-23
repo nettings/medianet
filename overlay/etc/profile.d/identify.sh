@@ -1,1 +1,0 @@
-sudo mn_identify
