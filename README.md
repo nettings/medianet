@@ -27,12 +27,6 @@ normal operation, so the system will tolerate hard shutdowns well.
 > Additionally, it has vastly better video performance and a much
 > simplified, faster and more robust JACK connection management.
 
-### Known issues
-The built-in sound (PCM device through the TRRS mini-jack connector) does
-not work reliably under all circumstances. You might find you're hearing
-massive crackles and distortion. It is recommended to use a proper soundcard
-for now. Working on a fix.
-
 ### /boot is now /boot/firmware
 The bootfs partition is now mounted under /boot/firmware, which means that
 the kernel images, initrds and other stuff now reside on the main system
