@@ -131,7 +131,7 @@
 'overlay/home/medianet' root:root 755
 'overlay/local' root:root 755
 'overlay/local/data' medianet:medianet 700
-'overlay/local/data/kodi' root:root 755
+'overlay/local/data/kodi' medianet:medianet 755
 'overlay/local/lib' root:root 755
 'overlay/local/lib/mn_tunnel' www-data:www-data 755
 'overlay/local/lib/alsa' root:root 755
