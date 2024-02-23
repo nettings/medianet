@@ -1,0 +1,5 @@
+[Match]
+Driver=macb
+[Link]
+Name=medianet0
+MACAddressPolicy=persistent
