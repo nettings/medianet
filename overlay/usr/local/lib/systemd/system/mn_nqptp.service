@@ -6,8 +6,8 @@ Before=mn_shairport-sync.service
 
 [Service]
 ExecStart=/usr/local/bin/nqptp
-User=root
-Group=root
+DynamicUser=yes
+AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 [Install]
 WantedBy=multi-user.target

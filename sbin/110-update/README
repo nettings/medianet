@@ -11,3 +11,10 @@ Key handling needs to be specified and implemented.
 
 If you're reading this on Github: sorry the link targets are not displayed. Clone
 the repo and read it in your sandbox, and it will all magically make sense.
+
+## Changelog
+
+#### 2024-02-23
+* deploy shairport-sync with non-root nqptp, requires updating and rerunning the
+  `custom_builds`
+
