@@ -1,7 +1,7 @@
 [Unit]
-Description=[mn] periodically log undervoltage and temperature events
+Description=[mn] periodically log temperature and undervoltage events
 
 [Service]
 Type=exec
 User=root
-ExecStart=/usr/local/bin/mn_core_state --short --temp
+ExecStart=/usr/local/lib/systemd/scripts/mn_core_state

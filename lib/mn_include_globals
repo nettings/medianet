@@ -50,6 +50,7 @@ SYSTEMD_DEFAULT_DISABLE="
 	wpa_supplicant.service
 	triggerhappy.service
 	triggerhappy.socket
+	mn_core_state.timer
 "
 SYSTEMD_DEFAULT_ENABLE="
 	ufw.service
@@ -57,12 +58,12 @@ SYSTEMD_DEFAULT_ENABLE="
 	mn_config.path
 	mn_tunnel.service
 	mn_tunnel_watch.path
-	mn_core_state.timer
 "
 
 # all units which are governed by medianet.json
 SYSTEMD_MEDIANET_UNITS="
 	mn_autostart.service
+	mn_core_state.service
 	mn_cpufreq.service
 	mn_cpupower.service
 	mn_gpioctl.service

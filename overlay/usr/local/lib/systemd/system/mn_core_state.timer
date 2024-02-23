@@ -2,7 +2,7 @@
 Description=[mn] mn_get_throttled timer
 
 [Timer]
-OnCalendar=*-*-* *:0,10,20,30,40,50:00
+OnCalendar=
 
 [Install]
 WantedBy=multi-user.target
