@@ -652,6 +652,21 @@ to the sink's JACK clock.
 }
 ```   
 
+### Clearing local console 
+If you are using the HDMI output for media display, you may want to prevent
+your audience from seeing system messages or the Linux command prompt:
+```
+{
+	"unit"    : "mn_autostart_root@clear_console",
+	"type"    : "service",
+	"enabled" : 1,
+	"options" : "/usr/local/bin/mn_console --blank"
+}
+```
+To see the console again, issue `sudo mn_console --unblank`. You might also
+have to hit a key locally and/or kill the agetty process to get back to the
+initial view.
+
 ### KODI
 
 This snippet will help you integrate KODI into your medianet setup. It is

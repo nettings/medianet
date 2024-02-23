@@ -1,0 +1,79 @@
+#!/bin/bash
+
+. /medianet/lib/mn_includes
+
+needroot
+
+SETTERM=/usr/bin/setterm
+LOGGER=/usr/bin/logger
+TERM=linux 
+TTY=/dev/tty0
+
+function help {
+	cat << EOF
+
+$PROGNAME$ blanks or unblanks the console on tty0. This is useful if the Pi's
+output is projected on a screen, to prevent viewers from seeing system
+messages or a command prompt before or after actual content is being
+displayed.
+
+	--help	This help.
+	 -h
+	 
+	--blank Set foreground color to black, turn off cursor, erase screen.
+	 -b
+	 
+	--unblank Set foreground color back to default, turn cursor on.	 
+	 -u
+EOF
+}
+
+MODE=
+while [[ -n "$1" ]] ; do
+	case "$1" in
+	--help|-h)
+		help
+		exit	
+		;;
+	--blank|-b)
+		MODE=blank
+		;;
+	--unblank|-u)
+		MODE=unblank
+		;;
+	-*)
+		echo "Unknown option $1."
+		help
+		exit 2
+		;;
+	*)
+		echo "Unknown argument $1."
+		help
+		exit 2
+		;;
+	esac
+	shift
+done
+
+
+case "$MODE" in
+	blank)
+		"$SETTERM" --foreground=black > "$TTY"
+		"$SETTERM" --clear=all >"$TTY"
+		"$SETTERM" --cursor=off > "$TTY"
+		"$LOGGER" "$PROGNAME blanked the console on tty0."
+		;;
+	unblank)
+		"$SETTERM" --foreground=default > "$TTY"
+		"$SETTERM" --cursor=on > "$TTY"
+		"$LOGGER" "$PROGNAME unblanked the console on tty0."
+		echo "..." > "$TTY"
+		;;
+	*) 
+		help
+		exit 2
+		;;
+esac
+
+
+
