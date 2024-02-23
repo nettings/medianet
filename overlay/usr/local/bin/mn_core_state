@@ -6,16 +6,17 @@ needroot
 
 function usage {
 	cat << EOF
-$PROGNAME displays core temperature and throttling status.
+$PROGNAME displays core temperatures and throttling status.
 
---help    Display this help.
+--help  Display this help.
  -h
 
---short   Compact one-line output, useful for logging
+--short Compact one-line output, useful for logging
  -s
 
---temp    Additionally display CPU and GPU temperature.
- -t
+--temp  Additionally display CPU and GPU temperature. On a Pi4, CM4 and
+ -t	Pi5, also display the PMIC (Power management integrated circuit)
+ 	temperature.
 EOF
 }
 
@@ -67,6 +68,7 @@ if [[ -n "$SHORT" ]] ; then
 	MSG[NONE]=""
 	MSG[CPU_TEMP]=""
 	MSG[GPU_TEMP]=""
+	MSG[PMIC_TEMP]=""
 else
 	MSG[NOW]="Ongoing events:\n"
 	MSG[NOW_UNDERVOLTAGE]="\tUndervoltage.\n"
@@ -81,6 +83,7 @@ else
 	MSG[NONE]="\t- none -\n"
 	MSG[CPU_TEMP]="CPU core temperature:\n\t"
 	MSG[GPU_TEMP]="\nGPU core temperature:\n\t"
+	MSG[PMIC_TEMP]="\nPMIC temperature:\n\t"
 fi
 
 # see https://www.raspberrypi.org/documentation/raspbian/applications/vcgencmd.md
@@ -115,13 +118,17 @@ if [[ -n "$TEMP" ]] ; then
 	TCPU1=$(($TCPU0/1000))
 	TCPU2=$(($TCPU0/100))
 	TCPUM=$(($TCPU2 % $TCPU1))
-	TGPU=$("$VCGENCMD" measure_temp | "$SED" -E "s/[^0-9]*([0-9]+\.[0-9]+).*/\1/")
+	EXTRACT_TEMP_REGEX="s/[^0-9]*([0-9]+\.[0-9]+).*/\1/"
+	TGPU=$("$VCGENCMD" measure_temp | "$SED" -E "$EXTRACT_TEMP_REGEX")
+	TPMIC=$("$VCGENCMD" measure_temp pmic | "$SED" -E "$EXTRACT_TEMP_REGEX") # only on Pi4/CM4 and Pi5
 	echo -en "${MSG[CPU_TEMP]}"
 	echo -n "${TCPU1}.${TCPUM}°C "
 	echo -en "${MSG[GPU_TEMP]}"
 	echo -n "${TGPU}°C "
+	if [[ -n "$TPMIC" ]] ; then
+		echo -en "${MSG[PMIC_TEMP]}"
+		echo -n "${TPMIC} °C "
+	fi
 fi
 echo
 
-# Do not irritate systemd
-exit 0
