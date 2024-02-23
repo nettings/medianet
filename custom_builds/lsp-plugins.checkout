@@ -1,6 +1,6 @@
-from_git https://github.com/sadko4u/lsp-plugins.git lsp-plugins master 3b4cf980f8bae6ef71e098c710e0a84b3a1e9821
+from_git https://github.com/sadko4u/lsp-plugins.git lsp-plugins master 546409ba7caccaf77fb3c258cbfe0ad0d677b11f
 from_package libcairo2-dev libsndfile1-dev libgl-dev liblilv-dev lilv-utils libxrandr-dev
 cd lsp-plugins
-make config FEATURES="lv2"
 make fetch
+make config FEATURES="lv2"
 cd ..
