@@ -1,4 +1,5 @@
 # [mn] medianet configuration
+
 The entire state of a medianet node is collected in
 `/etc/medianet/config.json`. This file is being watched for changes by 
 mn_config.path (a [systemd path
@@ -90,6 +91,15 @@ handled as simple key/value pairs:
 		"gpu_mem"  : 128
 	},
 ```
+> You can use any command that is allowed in the [Raspberry Pi config.txt
+> file](https://www.raspberrypi.com/documentation/computers/config_txt.html)
+> as a key/value pair in the `bootConfig` section.
+>
+> Caution: there is an implicit and not very well documented order to
+> dtoverlay/dtparam commands, and the config.json parser may get this
+> context-sensitivity wrong at times (see [issue
+> #108](https://github.com/nettings/medianet/issues/108)).
+
 All features of a medianet system are systemd services. They are
 configured as follows:
 ```
@@ -97,8 +107,13 @@ configured as follows:
 		{
 			"unit"      : "mn_foo",
 ```
+> Some services also exist as `systemd templates`, which means they can be
+> instatiated multiple times, for example as `mn_mpv@player_1`. Check
+> `/medianet/overlay/usr/local/lib/system/system/` for services ending in
+> `@`.
+
 This is redundant, because we do not currently handle
-unit types other than "service" in config.json, and the
+unit types other than `service` in config.json, and the
 option might go away in the future:
 ```
 			"type"      : "service",
@@ -113,19 +128,19 @@ here will disable it):
 JACK clients will honour the following option if the
 underlying program supports setting the client name. If
 it doesn't (such as with jackd itself, which always names
-itself "system"), it must be set to the actual value the
+itself `system`), it must be set to the actual value the
 jack client uses, so that connection management works
 correctly:
 ```
 			"jackName"  : "foo"
 ```
+The *options* mechanism is used for programs that can be
+completely configured via the command line:
 This is either the full set of command line options to the
 underlying program, or a partial set with some settings 
 hardcoded into the corresponding service file. Check
-`/medianet/overlay/usr/lib/systemd/system/mn_foo.service`
+`/medianet/overlay/usr/lib/systemd/system/mn_*.service`
 for details.
-The *options* mechanism is used for programs that can be
-completely configured via the command line:
 ```
 			"options"  : "-k -zMagic --anticipate_user_needs"
 ```
@@ -141,12 +156,12 @@ said file:
 				"second line of config statements"
 			],
 ```
-JACK clients can optionally define inPorts and outPorts.
+JACK clients can optionally define `inPorts` and `outPorts`.
 The ports thus defined are handled by the automatic
 connection management. You cannot change the names via
 this mechanism, port names have to match what the client
 is actually providing. inPorts and outPorts are arrays of
-objects. When the client name matches the jackName, you
+objects. When the client name matches the `jackName`, you
 only need to list the relative port names after the colon
 (see jack_lsp). If they don't, as is the case with
 mod-host for example, you will have to provide a fully
@@ -161,7 +176,7 @@ qualified port name:
 				}
 			],
 ```
-outPorts can optionally specifiy the targetUnit and port
+outPorts can optionally specifiy the `targetUnit` and `targetPort`
 index (of that unit's list of inPorts) they want to be
 connected to. The port index starts with 0. I regret that
 choice now, but we're stuck with it for the time being:
@@ -208,6 +223,9 @@ service will not fail even if some connection could not be made.
 ## Configuration examples
 
 ### JACK using the RPi 4b's built-in PWM minijack output
+
+> This is part of the default configuration. Unfortunately, the Pi5 does not
+> have a built-in mini jack output anymore, so it will break for Pi5 users.
 
 ```
 {
@@ -282,6 +300,7 @@ currently under investigation.
 > `zita-j2a` for the job and has performed reliably in a few installations.
 
 ### JACK using Hifiberry products
+
 #### HifiBerry DAC+ADC
 To enable the driver for this card, add
 ```
@@ -323,6 +342,7 @@ bootConfig : [
 ```
 If you need lower latency, it is possible to run Hifiberry cards at `-p 128`
 without any problems.
+
 #### Other Hifiberry products
 The JACK settings generally remain the same. Just add the correct overlay as
 per the Hifiberry documentation, and for devices without inputs, use `-P` 
@@ -330,9 +350,10 @@ per the Hifiberry documentation, and for devices without inputs, use `-P`
 `inPorts` array empty.
 
 ### mod-host
+
 mod-host provides an easy way to run a DSP chain of LV2 plugins on the Pi.
 Its setup is slightly tricky because each plugin running in mod-host
-presents as a separate JACK client called effect_N, where N is an index set
+presents as a separate JACK client called `effect_N`, where N is an index set
 during plugin instantiation.
 
 Not all mod-host client ports need to be declared as inPorts or outPorts -
@@ -355,14 +376,14 @@ mechanism will ensure their persistence.
 
 The medianet distribution comes with a simple web GUI to control the
 settings of plugins running in mod-host. It is accessible via
-http://$HOSTNAME/medianet/DSP and provided by the lv2rdf2html package. The
-GUI is machine-generated, but not dynamically: after changing the plugin
-configuration of mn_mod-host, you will have to re-run
-```
-$~> /medianet/sbin/mn_build lv2rdf2html
-```
-The generated plugin GUI will automatically be deployed to the web server
-docroot.
+http://$HOSTNAME/medianet/DSP and provided by the lv2rdf2html package. 
+
+> The GUI is machine-generated, but not dynamically: after changing the
+> plugin configuration of mn_mod-host, you will have to re-run
+> `$~> /medianet/sbin/mn_build lv2rdf2html`
+> The generated plugin GUI will automatically be deployed to the web server
+> docroot.
+
 ```
 {
 	"unit"    : "mn_mod-host",
@@ -440,6 +461,7 @@ docroot.
 The zita-njbridge package will enable you to stream very low-latency,
 uncompressed audio between hosts running JACK with unsynchronised sample
 clocks, using very-high-quality dynamic resampling.
+
 #### source configuration
 This snippet will send audio from the local JACK graph onto an
 administratively-scoped IPv4 multicast group, where it can be picked up by
@@ -473,6 +495,7 @@ the firewall when it detects an active zita-njbridge service.
 	]
 }
 ```
+
 #### sink configuration
 This snippet will receive audio from an administratively-scoped IPv4
 multicast group and make it available to the local JACK graph. Because the
@@ -555,100 +578,10 @@ supported by PulseAudio with its RAOP sink and source.
 	]
 }
 ```   
-### streaming low-latency video between two Pis
-
-This recipe essentially lets you create a HDMI over IP extender.
-The source Pi needs a USB HDMI grabber that can output 1080p at 30 frames
-per second, and the sink Pi just needs to be connected to a screen or
-projector. 
-
-The video is streamed in frame-by-frame MJPEG format, because
-that's what usually comes out of these USB gadgets. Since no further codecs
-are involved, the latency is low, but the bandwidth requirements can be
-substantial (peaking at 80-100 Mbit/s). Note that the video quality is
-ultimately limited by the USB grabber. Slight color banding in skies or dark
-areas and the occasional movement glich cannot be ruled out.
-
-Audio is handled by zita-njbridge via JACK as usual. The streams usually
-arrive reasonably synchronized, but you may have to double-check and adjust
-delays depending on your network.
-
-This example uses IP multicasting for audio and video. The big advantage is
-that it's easy to find and you can distribute the content to multiple sinks
-at no extra cost. The big downside is that this creates massive amounts of
-unnecessary traffic on dumb switches that do not implement IGMP snooping.
-
-#### source (sender)
-```
-{
-	"unit"    : "mn_hdmi_tx",
-	"type"    : "service",
-	"enabled" : 1,
-	"options" : "/dev/video0 239.192.17.43 29999"
-},
-{
-        "unit"    : "mn_zita-j2n",
-        "type"    : "service",
-        "enabled" : 1,
-        "jackName": "hdmi_sender",
-                        "options" : "--chan 2 239.192.17.44 30000 medianet0",
-                        "inPorts": [
-                                {
-                                        "portName" : "in_1"
-                                },
-                                {
-                                        "portName" : "in_2"
-                                }
-                        ]
-                },
-                {
-                        "unit"    : "mn_zita-a2j",
-                        "type"    : "service",
-                        "enabled" : 1,
-                        "jackName": "hdmi_grabber",
-                        "options" : "-d hw:MS2109 -c 2 -r 48000 -p 256 -n 3",
-                        "outPorts": [
-                                {
-                                        "portName"   : "capture_1",
-                                        "targetUnit" : "mn_zita-j2n",
-                                        "targetPort" : 0
-                                },
-                                {
-                                        "portName" : "capture_2",
-                                        "targetUnit" : "mn_zita-j2n",
-                                        "targetPort" : 1
-                                },
-
-
-```
-
-#### sink (receiver)
-```
-{
-	"unit"    : "mn_zita-n2j",
-	"type"    : "service",
-	"enabled" : 1,
-	"jackName": "hdmi_receiver",
-	"options" : "--chan 1,2 --buff 20 239.192.1.1 30000 medianet0",
-	"inPorts" : [],
-	"outPorts": [
-		{
-		"portName"   : "out_1",
-		"targetUnit" : "mn_mod-host",
-		"targetPort" : 4
-		},
-		{
-		"portName"   : "out_2",
-		"targetUnit" : "mn_mod-host",
-		"targetPort" : 5
-		}
-	]
-}
-```
 
 ### HDMI over IP
 With two Raspberry Pi 4B and a cheap HDMI USB2 grabber, it is possible
-to create a cheap HDMI over IP extender with reasonable, although not
+to create a low-cost HDMI over IP extender with reasonable, although not
 perfect, quality. Video is grabbed by a `gstreamer` chain and forwarded
 as quickly as possible, and received without buffer or resynchronisation
 by another gstreamer chain on the sink.
@@ -720,6 +653,7 @@ to the sink's JACK clock.
 ```   
 
 ### KODI
+
 This snippet will help you integrate KODI into your medianet setup. It is
 assumed that you have a 5.1 amplifier that is connected via HDMI, or (in my
 case), an HDMI audio extractor connected to an active 5.1 speaker set.
@@ -950,6 +884,7 @@ audio to play nicely over the HDMI output.
 	]
 }
 ```
+
 Since KODI does not support JACK natively, the signal flow is a bit
 convoluted:
 
