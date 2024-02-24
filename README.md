@@ -1,31 +1,27 @@
 # [mn] medianet
 
-The [mn] media**net** distribution is a derivative of Debian Linux/RaspiOS.
-It was created to turn Raspberry Pis into reliable media players, signal
-processors, and streaming endpoints.
+The [**mn**] media**net** distribution is a derivative of Debian Linux/RaspiOS.
+It was created to turn Raspberry Pis into reliable headless and unattended
+media players, signal processors, and streaming endpoints, to be used in art
+installations, theatrical performances, and home entertainment.
 
 The audio signal chain is built around the JACK Audio Connection Kit,
 complemented with the mod-host to run LV2 plugins, the zita-njbridge to
 provide clock decoupled uncompressed network audio streaming, and many other
 open-source audio tools.
+In addition to the audio focus, there are some video streaming features
+based on gstreamer and libcamera.
 
-The system is designed to run headless and unattended, and to be controlled
-via SSH.
+The system is designed to be controlled over the network via SSH.
 
-All parts of the audio signal chain are run as systemd services, and in the
-unlikely event that one process crashes, it will be restarted automatically
-and its JACK connections re-established.
+All parts of the audio signal chain and other media features are run as
+systemd services, and in the unlikely event that one process crashes, it
+will be restarted automatically and its JACK connections re-established.
 
 System-critical partitions (`/boot` and `/`) are mounted read-only during
 normal operation, so the system will tolerate hard shutdowns well. 
 
 ## Changes in RaspiOS "Bookworm"
-
-> This is a quite fresh port to the latest RaspiOS based on Debian
-> Bookworm. It is now deploying correctly and should have the same 
-> level of functionality with the example configuration.
-> Additionally, it has vastly better video performance and a much
-> simplified, faster and more robust JACK connection management.
 
 ### /boot is now /boot/firmware
 The bootfs partition is now mounted under /boot/firmware, which means that
@@ -113,8 +109,10 @@ not that strict, you can re-use the same key for both purposes.
 The system configuration is collected in a single file,
 [/etc/medianet/config.json](/overlay/etc/medianet/config.json), from which 
 all necessary application config files are generated whenever it changes,
-by means of a systemd.path watcher. Outside of hastily introduced new features,
-this file comprises the entire state of the system.
+by means of a systemd.path watcher. Outside of hastily introduced new
+features, this file comprises the entire state of the system.
+This makes deployment, maintenance and replacement of broken devices very
+straightforward.
 
 A work-in-progress documentation effort can be found in
 [CONFIGURATION.md](/CONFIGURATION.md).
@@ -175,7 +173,7 @@ will require port 8000 to be forwarded as well).
 
 ### Features
 
-As of November 2023, the medianet distribution integrates the following
+As of February 2024, the medianet distribution integrates the following
 applications ready-to-use:
 
 #### Audio
@@ -195,7 +193,6 @@ applications ready-to-use:
   with < 20ms latency either point-to-point or multicast)
 * Fons Adriaensen's zita-convolver convolution engine, useful to apply FIR
   filters to loudspeakers
-
 #### Video
 * mn_hdmi-[tx|rx], GStreamer-based HDMI-over-IP extender
 * the KODI media center
@@ -207,9 +204,9 @@ applications ready-to-use:
 * a persistent SSH-based maintenance tunnel with "phone home" capability
   that can help you traverse multiple layers of NAT (network address translation,
   aka home routers), very useful for museum deployments and the like
-* a somewhat hacky `mn_autostart` service that basically allows you to plug in any
-  bash commands and have systemd look after them (see the example
-  configuration for a use case)
+* somewhat hacky `mn_autostart@` and mn_autostart_root@` services that basically
+  allows you to run arbitrary bash commands at startup and have systemd look after
+  them for you (see the example configuration for a use case)
 
 Other services can be added easily if you don't mind dealing with a JSON parser
 written in BASH (but using JQ, so it's not that bad).
@@ -232,9 +229,10 @@ reproducible, discoverable way for reliable headless unattended low latency
 media operation. 
 
 Each installation step is a separate script that can be read as a HOWTO for
-accomplishing a particular task. Symlinking customized files into the base
-distribution rather than overwriting files will make modifications obvious
-and will help you customize or improve the system for your own needs.
+accomplishing a particular task. All changes to the base system are made via
+sybolic links into the `/medianet/overlay` tree, so you can always see at a 
+glance which aspects of the underlying RaspiOS have been tweaked, and how.
+This will help you customize or improve the system for your own needs.
 
 ## Updating your system
 
@@ -244,14 +242,16 @@ Updating the medianet part is still work in progress. Unless there have been
 major changes, applying the steps in
 [sbin/110-update_as_user_medianet](/sbin/110-update_as_user_medianet)
 should get you most of the way. More fundamental changes will necessitate
-other configuration steps which will be documented separately.
+other configuration steps which will be documented separately in
+[sbin/110-update_as_user_medianet/README.md](sbin/110-update_as_user_medianet/README.md).
 
 Doing a full distribution upgrade from one RaspiOS major release to the next
 is not officially supported by the RaspiOS team, but usually possible.
 For a dedicated system like this with minimal configuration and
 customization, it is however advisable to just back up your personal 
 configuration changes and roll a new image from scratch rather than updating
-in place.
+in place. For each major RaspiOS release, a new branch of the `medianet` overlay
+will be created.
 
 ## File system structure
 
