@@ -161,13 +161,16 @@
 				}
 			],
 			"config"  : [
-                                "general = {",
+                               "general = {",
                                 "  name = \"[mn] %h\";",
                                 "  interpolation = \"soxr\";",
                                 "  output_backend = \"jack\";",
                                 "  drift_tolerance_in_seconds = 0.015;",
                                 "  ignore_volume_control = \"no\";",
                                 "  interface = \"medianet0\";",
+                                "  airplay_device_id_offset = 0;",
+                                "  volume_control_profile = \"dasl_tapered\";",
+                                "  audio_backend_buffer_desired_length_in_seconds = 0.2;",
                                 "}",
                                 "jack = {",
                                 "  soxr_resample_quality = \"very high\"",
@@ -175,9 +178,11 @@
                                 "sessioncontrol = {",
                                 "//  run_this_before_play_begins = \"/usr/local/bin/mn_disconnect zita-n2j.service\";",
                                 "//  run_this_after_play_ends = \"/usr/local/bin/mn_connect zita-n2j.service\";",
+                                "  session_timeout = 30;",
                                 "}",
                                 "diagnostics = {",
                                 "  statistics = \"no\";",
+                                "  log_verbosity = 1;",
                                 "}"
 			]
 		},
