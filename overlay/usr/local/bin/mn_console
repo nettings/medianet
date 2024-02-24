@@ -6,7 +6,7 @@ needroot
 
 SETTERM=/usr/bin/setterm
 LOGGER=/usr/bin/logger
-TERM=linux 
+TERMINAL=linux
 TTY=/dev/tty0
 
 function help {
@@ -58,14 +58,14 @@ done
 
 case "$MODE" in
 	blank)
-		"$SETTERM" --foreground=black > "$TTY"
-		"$SETTERM" --clear=all >"$TTY"
-		"$SETTERM" --cursor=off > "$TTY"
+		TERM="$TERMINAL" "$SETTERM" --foreground=black > "$TTY"
+		TERM="$TERMINAL" "$SETTERM" --clear=all >"$TTY"
+		TERM="$TERMINAL" "$SETTERM" --cursor=off > "$TTY"
 		"$LOGGER" "$PROGNAME blanked the console on tty0."
 		;;
 	unblank)
-		"$SETTERM" --foreground=default > "$TTY"
-		"$SETTERM" --cursor=on > "$TTY"
+		TERM="$TERMINAL" "$SETTERM" --foreground=default > "$TTY"
+		TERM="$TERMINAL" "$SETTERM" --cursor=on > "$TTY"
 		"$LOGGER" "$PROGNAME unblanked the console on tty0."
 		echo "..." > "$TTY"
 		;;
