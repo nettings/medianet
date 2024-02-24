@@ -1,20 +1,21 @@
-This is a Raspbian distribtion overlay funded by
+This is a Debian/RaspbiOS distribtion overlay which was initially funded by
 
 [mn] medianet | Home Automation | Sound Systems | Software Solutions
-
 Inh. Margit Hermsen
 Am Taubhaus 29
 D 63303 Dreieich
-
-+49 (0) 6103/6977 84
-+49 (0) 6103/6977 85
 info@medianet-home.de 
-
 https://www.medianet-home.de
+
+from 2018 to 2021, and has since been developed independently.
+
+The principal contributer so far is
+Jörn Nettingsmeier <nettings@luchtbeweging.nl>
 
 All configuration files you find here are in the public domain, or, in 
 jurisdictions where that is not possible, licensed to you under the GNU
 General Public License v3.
+
 All scripts and helper programs based on external open source works are
 subject to the license of the original work.
 All original work found in this repository (installation and maintenance
@@ -39,11 +40,10 @@ under the same license terms.
 Unchanged software is pulled in via the Raspbian repository, where all other
 sources are available. If you as a user of medianet products have trouble 
 locating those original sources to exercise your rights granted by the 
-respective licenses, please write to nettings@medianet-home.de and we will
-assist you in obtaining those sources.
+respective licenses, please write to nettings@luchtbeweging.nl for assistance in
+obtaining those sources.
 
 If you notice anything amiss with license compliance or are not happy with how
 your own work is handled in the context of this project, please contact
-nettings@medianet-home.de so that we can resolve the issue as quickly as
-possible. The project is at an early stage, and we're still getting our
-infrastructure in place.
+nettings@luchtbeweging.nl so that we can resolve the issue amicably and as
+quickly as possible.
