@@ -5,14 +5,19 @@ This is a Debian/RaspbiOS distribtion overlay which was initially funded by
 > [**mn**] media**net** | Home Automation | Sound Systems | Software Solutions
 > 
 > Inh. Margit Hermsen
+> 
 > Am Taubhaus 29
+> 
 > D 63303 Dreieich
+>
 > info@medianet-home.de 
+>
 > https://www.medianet-home.de
 
 from 2018 to 2021, and has since been developed independently.
 
-The principal contributer is Jörn Nettingsmeier <nettings@luchtbeweging.nl>.
+The principal contributor and copyright holder is:
+> Jörn Nettingsmeier (nettings@luchtbeweging.nl)
 
 ## Configuration files
 
@@ -23,7 +28,7 @@ jurisdictions where that is not possible, licensed to you under the
 ## Scripts and utilities based on open source works by others
 
 All scripts and helper programs based on third-party open source works are
-subject to the **license of the original work**.
+subject to the **license of the work they are derived from**.
 
 ## Original scripts and utilities
 
@@ -50,10 +55,10 @@ Where required by the licenses of any third-party software used, this repository
 contains the source code and build infrastructure to any in-house modifications
 under the same license terms.
 Unchanged software is pulled in via the Raspbian repository, where all other
-sources are available. If you as a user of medianet products have trouble 
-locating those original sources to exercise your rights granted by the 
-respective licenses, please write to nettings@luchtbeweging.nl for assistance in
-obtaining those sources.
+sources are available. 
+If you as a user of medianet products have trouble locating those original
+sources to exercise your rights granted by the respective licenses, please write
+to `info@medianet-home.de` for assistance in obtaining those sources.
 
 ## Conflict resolution
 
