@@ -1,34 +1,46 @@
+# Licensing terms
+
 This is a Debian/RaspbiOS distribtion overlay which was initially funded by
 
-[mn] medianet | Home Automation | Sound Systems | Software Solutions
-Inh. Margit Hermsen
-Am Taubhaus 29
-D 63303 Dreieich
-info@medianet-home.de 
-https://www.medianet-home.de
+> [**mn**] media**net** | Home Automation | Sound Systems | Software Solutions
+> 
+> Inh. Margit Hermsen
+> Am Taubhaus 29
+> D 63303 Dreieich
+> info@medianet-home.de 
+> https://www.medianet-home.de
 
 from 2018 to 2021, and has since been developed independently.
 
-The principal contributer so far is
-Jörn Nettingsmeier <nettings@luchtbeweging.nl>
+The principal contributer is Jörn Nettingsmeier <nettings@luchtbeweging.nl>.
 
-All configuration files you find here are in the public domain, or, in 
-jurisdictions where that is not possible, licensed to you under the GNU
-General Public License v3.
+## Configuration files
 
-All scripts and helper programs based on external open source works are
-subject to the license of the original work.
+All configuration files you find here are in the **public domain**, or, in 
+jurisdictions where that is not possible, licensed to you under the
+**GNU General Public License v3**.
+
+## Scripts and utilities based on open source works by others
+
+All scripts and helper programs based on third-party open source works are
+subject to the **license of the original work**.
+
+## Original scripts and utilities
+
 All original work found in this repository (installation and maintenance
 scripts and other custom system features) are licensed to you under the
-GNU General Public License v3.
+**GNU General Public License v3**.
+
 You are welcome to use all or parts of this derivative work. Please respect
-the rights of [mn] medianet Margit Hermsen and do not use the company name in
-any other way than to give credit. Specifically, do not misrepresent it, such
-as by suggesting a derivative work you made is the work of [mn] medianet 
-Margit Hermsen.
+the rights of [**mn**] media**net** Margit Hermsen and do not use the company
+name in any other way than to give credit. Specifically, do not misrepresent
+it, such as by suggesting a derivative work you made is the work of [**mn**] 
+media**net** Margit Hermsen.
 
 "SCLAN" is a German registered trademark ("eingetragenes Warenzeichen") of
 Margit Hermsen.
+
+## Obtaining sources and exercising your rights
 
 This project and derived products owe their existence to the amazing work and
 generosity of the free software community. It is offered to the community in
@@ -42,6 +54,8 @@ sources are available. If you as a user of medianet products have trouble
 locating those original sources to exercise your rights granted by the 
 respective licenses, please write to nettings@luchtbeweging.nl for assistance in
 obtaining those sources.
+
+## Conflict resolution
 
 If you notice anything amiss with license compliance or are not happy with how
 your own work is handled in the context of this project, please contact
