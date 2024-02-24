@@ -21,45 +21,6 @@ will be restarted automatically and its JACK connections re-established.
 System-critical partitions (`/boot` and `/`) are mounted read-only during
 normal operation, so the system will tolerate hard shutdowns well. 
 
-## Changes in RaspiOS "Bookworm"
-
-### /boot is now /boot/firmware
-The bootfs partition is now mounted under /boot/firmware, which means that
-the kernel images, initrds and other stuff now reside on the main system
-partition. Only the bootloaders and device trees remain.
-
-> Upgrading between major releases has never been supported really. As
-> usual, you are much better off taking your configuration file off your old
-> system and dropping it into a fresh one.
-
-### cpufrequtils is deprecated
-If you are using `mn_cpufreq.service`, please replace it with
-`mn_cpupower.service`. The old service will likely be removed with the next
-major Debian update.
-
-### zita-njbridge is now up to date upstream
-We no longer have to make our own custom build, and the .checkout and .build
-scripts have therefore been removed.
-
-### zita-lrx has been removed
-If you have been relying on the speaker crossover functionality of zita-lrx,
-please consider moving to the LSP crossover plugin - you can add it to
-mod-host via the LV2 URL http://lsp-plug.in/plugins/lv2/crossover_stereo.
-
-### jackminimix has been removed
-Nobody ever used it, and the x42 matrix mixer is a suitable replacement (its
-LV2 URL is http://gareus.org/oss/lv2/matrixmixer#i12o10).
-
-### mod-host is again tracking HEAD
-With a more up-to-date jackd in Bookworm, we can finally track the latest
-mod-host development again after having to freeze it for most of bullseye.
-
-### more surgical configuration
-Where possible, we are now no longer replacing the distro config files, but
-using drop-ins as much as possible. This allows us to apply the changes we
-need, and still benefit from baseline configuration updates provided by
-upstream. This affects `lighttpd`, `systemd-logind`, and `systemd-journald`.
-
 ## 64-bit vs. 32-bit
 
 As of RaspiOS *Bookworm*, there is no longer a 32-bit image or branch. If 
@@ -239,18 +200,18 @@ This will help you customize or improve the system for your own needs.
 It is generally safe to apply all minor Debian/RaspiOS rolling upgrades
 within the same release at any time (`sudo apt update ; sudo apt upgrade`).
 Updating the medianet part is still work in progress. Unless there have been 
-major changes, applying the steps in
-[sbin/110-update_as_user_medianet](/sbin/110-update_as_user_medianet)
+major changes, applying the steps in [sbin/110-update](/sbin/110-update)
 should get you most of the way. More fundamental changes will necessitate
 other configuration steps which will be documented separately in
-[sbin/110-update_as_user_medianet/README.md](sbin/110-update_as_user_medianet/README.md).
+[sbin/110-update/README.md](sbin/110-update/README.md).
 
 Doing a full distribution upgrade from one RaspiOS major release to the next
-is not officially supported by the RaspiOS team, but usually possible.
-For a dedicated system like this with minimal configuration and
-customization, it is however advisable to just back up your personal 
-configuration changes and roll a new image from scratch rather than updating
-in place. For each major RaspiOS release, a new branch of the `medianet` overlay
+is not officially supported by the RaspiOS team.
+For a dedicated system like this with minimal configuration and customization,
+it is always advisable to just back up your personal `config.json` and roll a
+new image from scratch rather than updating in place. 
+
+For each major RaspiOS release, a new branch of the `medianet` overlay
 will be created.
 
 ## File system structure
