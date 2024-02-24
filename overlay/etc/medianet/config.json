@@ -15,16 +15,34 @@
 	},
 	"systemdUnits": [
 		{
-			"unit"    : "mn_autostart",
+			"unit"    : "mn_shell-command-root@blank",
 			"type"    : "service",
 			"enabled" : 1,
-			"options" : "while [[ ! -S /run/mpv/mpv-player_1.socket ]] ; do sleep 1 ; done ; mn_wait_jack effect_0:in1 effect_0:in2 ; mn_test_mpv && sleep infinity"
+			"options" : "/usr/local/bin/mn_console --blank"
+		},
+		{
+			"unit"    : "mn_shell-process-root@example",
+			"type"    : "service",
+			"enabled" : 0,
+			"options" : "while : ; do echo \\\\\"%n will run with root permissions (EUID=$EUID). Output goes to journal.\\\\\" ; sleep 60 ; done"
+		},
+		{
+			"unit"    : "mn_shell-command@test-mpv",
+			"type"    : "service",
+			"enabled" : 1,
+			"options" : "while [[ ! -S /run/mpv/mpv-player_1.socket ]] ; do sleep 1 ; done ; mn_wait_jack effect_0:in1 effect_0:in2 ; mn_test_mpv"
+		},
+		{
+			"unit"    : "mn_shell-process@example",
+			"type"    : "service",
+			"enabled" : 0,
+			"options" : "while : ; do echo \\\\\"%n will run with medianet permissions (EUID=$EUID). Output goes to journal.\\\\\" ; sleep 60 ; done"
 		},
 		{
 			"unit"    : "mn_cpupower",
 			"type"    : "service",
 			"enabled" : 1,
-			"options" : "-g performance --min 600MHz --max 1500MHz"
+			"options" : "-g schedutil --min 600MHz --max 1800MHz"
 		},
 		{
 			"unit"    : "mn_icecast2",
