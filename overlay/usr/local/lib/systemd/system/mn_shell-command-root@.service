@@ -1,0 +1,15 @@
+[Unit]
+Description=[mn] execute one-shot shell command at startup as root [%I]
+
+[Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/mn_shell-command-root@%i.service.d/mn_shell-command-root@%i.service.conf
+# created by mn_config_update
+Type=oneshot
+User=root
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+ExecStart=/bin/bash -c "${OPTIONS}"
+
+[Install]
+WantedBy=multi-user.target

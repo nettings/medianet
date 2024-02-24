@@ -1,0 +1,17 @@
+[Unit]
+Description=[mn] execute non-terminating shell process at startup [%I]
+
+[Service]
+# we read Environment= from a drop-in file
+# /etc/systemd/system/mn_shell-process@%i.service.d/mn_shell-process@%i.service.conf
+# created by mn_config_update
+Type=exec
+User=medianet
+LimitRTPRIO=85
+LimitMEMLOCK=700000000
+ExecStart=/bin/bash -c "${OPTIONS}"
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
