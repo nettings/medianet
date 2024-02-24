@@ -1,5 +1,5 @@
 [Unit]
-Description=[mn] execute shell command at startup
+Description=[mn] mn_autostart is deprecated, use mn_shell-{command|process}@foo instead!
 
 [Service]
 # we read Environment= from a drop-in file

@@ -1,5 +1,5 @@
 [Unit]
-Description=[mn] execute shell command at startup as root [%I]
+Description=[mn] mn_autostart-root@%i is deprecated, use mn_shell-{process|command}-root@%i instead!
 
 [Service]
 # we read Environment= from a drop-in file
