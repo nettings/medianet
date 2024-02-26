@@ -270,21 +270,49 @@ Due to a minor bug in jackd, the audio device will only open successfully if
 we additionally specify zero input channels and two output channels (`-i`
 and `-o`), although this should be implied by `-P` already.
 
-### JACK using the RPi 4B's HDMI output
+### JACK using the HDMI output
+This setup will enable 7.1 surround playback via the HDMI port to a sufficiently
+equipped A/V home cinema amplifier or a HDMI audio extractor.
 
+It has been tested on a Raspberry Pi 4B running KODI. It should also run on other
+Pi boards, and shorter period sizes (at least down to 512) should be possible.
+
+> For 5.1 or stereo-only playback, you could limit the number of output channels
+> to 6 (`-o 6`) or 2, and and use fewer `inPorts`, but the savings in CPU load are
+> usually negligible.
+
+For a complete surround setup using KODI, see the [KODI](#kodi) example below.
 ```
 {
 	"unit"    : "mn_jackd",
 	"type"    : "service",
 	"enabled" : 1,
 	"jackName": "system",
-	"options" : "-R -P40 -d alsa -d hdmi:CARD=vc4hdmi0,DEV=0 -r 48000 -n 2 -p 512", 
+	"options" : "-R -P40 -d alsa -d hdmi:vc4hdmi0 -P -S -p 1024 -n 2 -r 48000 -i 0 -o 8"
 	"inPorts": [
 		{
 			"portName"   : "playback_1"
 		},
 		{
 			"portName"   : "playback_2"
+		},
+		{
+			"portName"   : "playback_3"
+		},
+		{
+			"portName"   : "playback_4"
+		},
+		{
+			"portName"   : "playback_5"
+		},
+		{
+			"portName"   : "playback_6"
+		},
+		{
+			"portName"   : "playback_7"
+		},
+		{
+			"portName"   : "playback_8"
 		}
 	],
 	"outPorts": [
@@ -676,11 +704,52 @@ The JACK server can run in dummy mode or on any other sound device, such as
 the built-in mini-jack via the PWM device. `zita-j2a` will resample your
 audio to play nicely over the HDMI output.
 
+The channel order is L, R, C, Sub, SL, SR. We add a stereo EQ plugin each for
+L/R and SL/SR, and a mono EQ for center and sub. Loudspeaker management
+plugins are used to delay the surround speakers by 10 ms so that they don't
+hit before the screen ones, and the center is delayed by 0.6 ms because in my
+setup it sits slightly in front of the screen.
+
 > The settings below will add about 10 ms of latency, around a quarter frame
 > for cinema content and well below tolerance thresholds. If it bothers you, 
 > you can adjust it via the settings icon in the KODI player. Remember to
 > make it the default for all media. 
 ```
+{
+	"unit"    : "mn_jackd", 
+	"type"    : "service",
+	"enabled" : 1,
+	"jackName": "system",
+	"options" : "-R -P40 -d alsa -d hdmi:vc4hdmi0 -P -S -p 1024 -n 2 -r 48000 -i 0 -o 8",
+	"inPorts": [
+		{
+			"portName"   : "playback_1"
+		},
+		{
+			"portName"   : "playback_2"
+		},
+		{
+			"portName"   : "playback_3"
+		},
+		{
+			"portName"   : "playback_4"
+		},
+		{
+			"portName"   : "playback_5"
+		},
+		{
+			"portName"   : "playback_6"
+		},
+		{
+			"portName"   : "playback_7"
+		},
+		{
+			"portName"   : "playback_8"
+		}
+	],
+	"outPorts": [
+	]
+},
 {
 	"unit"    : "mn_kodi",
 	"type"    : "service",
@@ -733,27 +802,27 @@ audio to play nicely over the HDMI output.
 	"outPorts": [
 		{
 			"portName"   : "effect_19:outL",
-			"targetUnit" : "mn_zita-j2a",
+			"targetUnit" : "mn_jackd",
 			"targetPort" : 0
 		},{
 			"portName"   : "effect_19:outR",
-			"targetUnit" : "mn_zita-j2a",
+			"targetUnit" : "mn_jackd",
 			"targetPort" : 1
 		},{
 			"portName"   : "effect_39:out",
-			"targetUnit" : "mn_zita-j2a",
+			"targetUnit" : "mn_jackd",
 			"targetPort" : 3
 		},{
 			"portName"   : "effect_49:out",
-			"targetUnit" : "mn_zita-j2a",
+			"targetUnit" : "mn_jackd",
 			"targetPort" : 2
 		},{
 			"portName"   : "effect_59:outL",
-			"targetUnit" : "mn_zita-j2a",
+			"targetUnit" : "mn_jackd",
 			"targetPort" : 4
 		},{
 			"portName"   : "effect_59:outR",
-			"targetUnit" : "mn_zita-j2a",
+			"targetUnit" : "mn_jackd",
 			"targetPort" : 5
 		},{
 			"portName"   : "effect_0:out9",
@@ -850,52 +919,20 @@ audio to play nicely over the HDMI output.
 		"  output_backend = \"jack\";",
 		"  drift_tolerance_in_seconds = 0.015;",
 		"  ignore_volume_control = \"no\";",
+		"  volume_control_profile = \"dasl_tapered\";",
 		"  interface = \"medianet0\";",
 		"}",
 		"jack = {",
-		"  soxr_resample_quality = \"very high\"",
+			"  soxr_resample_quality = \"very high\"",
 		"}",
 		"sessioncontrol = {",
 		"//  run_this_before_play_begins = \"/usr/local/bin/mn_disconnect zita-n2j.service\";",
 		"//  run_this_after_play_ends = \"/usr/local/bin/mn_connect zita-n2j.service\";",
 		"}",
 		"diagnostics = {",
-		"  statistics = \"yes\";",
-		"  log_verbosity = 1",
+		"  statistics = \"no\";",
+		"  log_verbosity = 0",
 		"}"
-	]
-},
-{
-	"unit"    : "mn_zita-j2a",
-	"type"    : "service",
-	"enabled" : 1,
-	"jackName": "zita-j2a",
-	"options" : "-d hdmi:vc4hdmi0 -p 256 -n 2 -r 48000 -c 8",
-	"inPorts" : [
-		{
-			"portName" : "playback_1"
-		},
-		{
-			"portName" : "playback_2"
-		},
-		{
-			"portName" : "playback_3"
-		},
-		{
-			"portName" : "playback_4"
-		},
-		{
-			"portName" : "playback_5"
-		},
-		{
-			"portName" : "playback_6"
-		},
-		{
-			"portName" : "playback_7"
-		},
-		{
-			"portName" : "playback_8"
-		}
 	]
 }
 ```
