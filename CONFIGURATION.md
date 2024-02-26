@@ -490,6 +490,12 @@ The zita-njbridge package will enable you to stream very low-latency,
 uncompressed audio between hosts running JACK with unsynchronised sample
 clocks, using very-high-quality dynamic resampling.
 
+> It is usually not a good idea to run the JACK graph on the built-in PWM
+> device - its timing stability is not very good and will lead to
+> unsatisfactory zita-njbridge performance, as it will have to compensate
+> for both the deviations at the remote *and* the local end. Use a physical
+> sound card if at all possible.
+
 #### source configuration
 This snippet will send audio from the local JACK graph onto an
 administratively-scoped IPv4 multicast group, where it can be picked up by
@@ -506,6 +512,9 @@ address.
 
 Stick to port 30000 - `mn_config_update` will automatically open that port in
 the firewall when it detects an active zita-njbridge service.
+
+> For latency and debugging hints, consult the `zita-njbridge` man page.
+
 ```
 {
 	"unit"    : "mn_zita-j2n",
