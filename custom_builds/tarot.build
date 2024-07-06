@@ -1,3 +1,6 @@
 sudo mkdir -m 755 /medianet/overlay/local/images
 sudo chown medianet:www-data /medianet/overlay/local/images
+echo ">>> Ignore initial error during systemd service activation:"
+sudo STATE_PATH=/local/lib/tarot DESTDIR="$DESTDIR" ./install.sh
+echo ">>> Now that we have deployed the overlay, it works:"
 sudo STATE_PATH=/local/lib/tarot DESTDIR="$DESTDIR" ./install.sh
