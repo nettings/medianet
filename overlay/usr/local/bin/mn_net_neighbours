@@ -77,8 +77,9 @@ function refresh {
 		echo -ne "$c:\t"
 		case "$c" in
 			IP4)
-				CMD="${NMAP} -sn -T5 --min-parallelism 512 ${NET_IP4_ADDR}"
-										;;
+#				CMD="${NMAP} -sn -T5 --min-parallelism 512 ${NET_IP4_ADDR}"
+                                CMD="${NMAP} -sn -T4 -n --max-rtt-timeout 60ms ${NET_IP4_ADDR}"
+                                ;;
 			IP6L)
 				CMD="${PING} -c 2 -6 -I ${NET_IP6_DEFAULTDEV} ff02::1"
 				;;
@@ -225,7 +226,7 @@ OUI_ENTRIES=$("$GREP" -Ei "$OUI_MATCH" "$IEEE_OUI_DATA")
 for m in ${!N_STAT[@]} ; do
 	OUI=$("$GREP" -i "${N_OUI[$m]}" <<< "$OUI_ENTRIES")
 	VNDR=$("$CSVTOOL" col 3 - <<< "$OUI")
-	N_VNDR[$m]="$VNDR"
+	N_VNDR[$m]=$(echo "$VNDR" | "$TR" -d \'\")
 done
 
 # prepare output
@@ -249,7 +250,7 @@ for m in ${!N_STAT[@]} ; do
 	OUTPUT+="\n"
 done
 
-OUTPUT=$(echo -e "$OUTPUT" | "$SORT" -d -t ';' -k 1)
+OUTPUT=$(echo -e "$OUTPUT" | "$SORT" -V -t ';' -k 1)
 OUTPUT="$HEADER\n$OUTPUT"
 echo
 echo -e "$OUTPUT" | "$COLUMN" -t -s ';'
