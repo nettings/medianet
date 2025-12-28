@@ -9,4 +9,4 @@ scream "Performing  base system update:"
 echo -e "\n\nUpdating package libraries:\n"
 "$APT" update
 echo -e "\n\nUpgrading system:\n"
-"$APT" upgrade
+"$APT" full-upgrade
