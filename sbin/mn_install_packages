@@ -17,4 +17,4 @@ cat "$CONF_FILE_PACKAGES" | while read line ; do
 			echo -n "$package "
 		fi
 	done
-done | DEBIAN_FRONTEND=noninteractive "$XARGS" -n 32 "$APT" -y install --no-install-recommends
+done | DEBIAN_FRONTEND=noninteractive "$XARGS" "$APT" -y install --no-install-recommends
