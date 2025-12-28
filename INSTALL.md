@@ -94,7 +94,7 @@ need a screen and keyboard attached, all should work headless via SSH.
 
 1. Log into the system as user *medianet* with the password specified
 before.
-`ssh -A medianet@raspberrypi`
+`ssh -A medianet@mn-bootstrap`
 
 >The default password is likewise *medianet*, and leaving it like
 >this opens a window of vulnerability until it is replaced by a key-based
