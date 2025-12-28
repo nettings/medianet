@@ -96,6 +96,7 @@ CUSTOM_BUILDS="
 	x42-plugins
 	lsp-plugins
 	lv2rdf2html
+	jack_capture
 "
 
 declare -A CUSTOM_BUILD_GCCFLAGS

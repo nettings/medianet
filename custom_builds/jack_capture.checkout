@@ -1,0 +1,5 @@
+from_git https://github.com/kmatheussen/jack_capture.git
+	jack_capture \
+	master \
+	a539d444d388c4cfed7279e385830e7767d59c41
+from_package 
